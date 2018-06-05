@@ -26,6 +26,9 @@ public class TradingClient {
   private String tradeCurrency;
   private String symbol;
 
+  public TradingClient() {
+  }
+
   TradingClient(String baseCurrency, String tradeCurrency, String key, String secret) {
     this.baseCurrency = baseCurrency;
     this.tradeCurrency = tradeCurrency;

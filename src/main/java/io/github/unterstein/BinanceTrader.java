@@ -25,40 +25,57 @@ public class BinanceTrader {
   private int panicSellCounter;
   private double trackingLastPrice;
 
+  private double lastKnownTradingBalance;
+  private double lastBid;
+  private double lastAsk;
+  private double buyPrice;
+  private double sellPrice;
+  private double profitablePrice;
+
+  private String tradeCurrency;
+
   BinanceTrader(double tradeDifference, double tradeProfit, int tradeAmount, String baseCurrency, String tradeCurrency, String key, String secret) {
     client = new TradingClient(baseCurrency, tradeCurrency, key, secret);
     trackingLastPrice = client.lastPrice();
+    this.tradeCurrency = tradeCurrency;
     this.tradeAmount = tradeAmount;
     this.tradeProfit = tradeProfit;
     this.tradeDifference = tradeDifference;
     clear();
   }
 
+  public void setClient(TradingClient client) {
+    this.client = client;
+  }
+
   void tick() {
+
     double lastPrice = 0;
     try {
       OrderBook orderBook = client.getOrderBook();
       lastPrice = client.lastPrice();
       AssetBalance tradingBalance = client.getTradingBalance();
-      double lastKnownTradingBalance = client.getAllTradingBalance();
-      double lastBid = Double.valueOf(orderBook.getBids().get(0).getPrice());
-      double lastAsk = Double.valueOf(orderBook.getAsks().get(0).getPrice());
-      double buyPrice = lastBid + tradeDifference;
-      double sellPrice = lastAsk - tradeDifference;
-      double profitablePrice = buyPrice + (buyPrice * tradeProfit / 100);
+      lastKnownTradingBalance = client.getAllTradingBalance();
+      lastBid = Double.valueOf(orderBook.getBids().get(0).getPrice());
+      lastAsk = Double.valueOf(orderBook.getAsks().get(0).getPrice());
+      buyPrice = lastBid + tradeDifference;
+      sellPrice = lastAsk - tradeDifference;
+      profitablePrice = buyPrice + (buyPrice * tradeProfit / 100);
 
 
-      logger.info(String.format("buyPrice:%.8f sellPrice:%.8f bid:%.8f ask:%.8f price:%.8f profit:%.8f diff:%.8f\n", buyPrice, sellPrice, lastAsk, lastAsk, lastPrice, profitablePrice, (lastAsk - profitablePrice)));
+      logger.info(String.format("buyPrice:%.8f sellPrice:%.8f bid:%.8f ask:%.8f price:%.8f profit:%.8f diff:%.8f\n",
+              buyPrice, sellPrice, lastAsk, lastAsk, lastPrice, profitablePrice, (lastAsk - profitablePrice)));
 
-      if (orderId == null) {
+      if (noOrders()) {
         logger.info("nothing bought, let`s check");
         // find a burst to buy
         // but make sure price is ascending!
-        if (lastAsk >= profitablePrice) {
-          if (lastPrice > trackingLastPrice) {
+        if (isBurst()) {
+          if (isPriceAscending(lastPrice)) {
             logger.info("Buy burst detected");
             currentlyBoughtPrice = profitablePrice;
             orderId = client.buy(tradeAmount, buyPrice).getOrderId();
+            logger.info("Bought " + tradeAmount + " tokens " + tradeCurrency + " order id: " + orderId);
             panicBuyCounter = 0;
             panicSellCounter = 0;
           } else {
@@ -73,12 +90,12 @@ public class BinanceTrader {
       } else {
         Order order = client.getOrder(orderId);
         OrderStatus status = order.getStatus();
-        if (status != OrderStatus.CANCELED) {
+        if (notCanceled(status)) {
           // not new and not canceled, check for profit
           logger.info("Tradingbalance: " + tradingBalance);
           if ("0".equals("" + tradingBalance.getLocked().charAt(0)) &&
               lastAsk >= currentlyBoughtPrice) {
-            if (status == OrderStatus.NEW) {
+            if (isNew(status)) {
               // nothing happened here, maybe cancel as well?
               panicBuyCounter++;
               logger.info(String.format("order still new, time %d\n", panicBuyCounter));
@@ -92,11 +109,12 @@ public class BinanceTrader {
                 clear();
               } else if (status == OrderStatus.PARTIALLY_FILLED || status == OrderStatus.FILLED) {
                 logger.info("Order filled with status " + status);
-                if (lastAsk >= profitablePrice) {
-                  logger.info("still gaining profitable profits HODL!!");
+                if (isBurst()) {
+                  logger.info("still gaining profitable profits HOLD!!");
                 } else {
                   logger.info("Not gaining enough profit anymore, let`s sell");
-                  logger.info(String.format("Bought %d for %.8f and sell it for %.8f, this is %.8f coins profit", tradeAmount, currentlyBoughtPrice, sellPrice, (1.0 * currentlyBoughtPrice - sellPrice) * tradeAmount));
+                  logger.info(String.format("Bought %d for %.8f and sell it for %.8f, this is %.8f coins profit",
+                          tradeAmount, currentlyBoughtPrice, sellPrice, (1.0 * currentlyBoughtPrice - sellPrice) * tradeAmount));
                   client.sell(tradeAmount, sellPrice);
                 }
               } else {
@@ -121,6 +139,26 @@ public class BinanceTrader {
       logger.error("Unable to perform ticker", e);
     }
     trackingLastPrice = lastPrice;
+  }
+
+  private boolean isNew(OrderStatus status) {
+    return status == OrderStatus.NEW;
+  }
+
+  private boolean notCanceled(OrderStatus status) {
+    return status != OrderStatus.CANCELED;
+  }
+
+  private boolean isPriceAscending(double lastPrice) {
+    return lastPrice > trackingLastPrice;
+  }
+
+  private boolean isBurst() {
+    return lastAsk >= profitablePrice;
+  }
+
+  private boolean noOrders() {
+    return orderId == null;
   }
 
   private void panicSellForCondition(double lastPrice, double lastKnownTradingBalance, boolean condition) {

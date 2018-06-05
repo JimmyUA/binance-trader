@@ -39,10 +39,10 @@ public class BinanceBotApplication {
   @Value("${TRADE_CURRENCY:XVG}")
   private String tradeCurrency;
 
-  @Value("${API_KEY}")
+  @Value("${API_KEY:KEY}")
   private String apiKey;
 
-  @Value("${API_SECRET}")
+  @Value("${API_SECRET:SECRET}")
   private String apiSecret;
 
   @PostConstruct
