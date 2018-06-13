@@ -2,7 +2,6 @@ package io.github.unterstein;
 
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.market.OrderBook;
 
 import org.slf4j.Logger;
@@ -10,173 +9,214 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
+import static java.lang.Thread.sleep;
+
 public class BinanceTrader {
 
-  private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
+    private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
-  private TradingClient client;
-  private final double tradeDifference;
-  private final double tradeProfit;
-  private final int tradeAmount;
+    private TradingClient client;
+    private final double tradeDifference;
+    private final double tradeProfit;
+    private final int tradeAmount;
 
-  private Double currentlyBoughtPrice;
-  private Long orderId;
-  private int panicBuyCounter;
-  private int panicSellCounter;
-  private double trackingLastPrice;
-
-  private double lastKnownTradingBalance;
-  private double lastBid;
-  private double lastAsk;
-  private double buyPrice;
-  private double sellPrice;
-  private double profitablePrice;
-
-  private String tradeCurrency;
-
-  BinanceTrader(double tradeDifference, double tradeProfit, int tradeAmount, String baseCurrency, String tradeCurrency, String key, String secret) {
-    client = new TradingClient(baseCurrency, tradeCurrency, key, secret);
-    trackingLastPrice = client.lastPrice();
-    this.tradeCurrency = tradeCurrency;
-    this.tradeAmount = tradeAmount;
-    this.tradeProfit = tradeProfit;
-    this.tradeDifference = tradeDifference;
-    clear();
-  }
-
-  public void setClient(TradingClient client) {
-    this.client = client;
-  }
-
-  void tick() {
-
-    double lastPrice = 0;
-    try {
-      OrderBook orderBook = client.getOrderBook();
-      lastPrice = client.lastPrice();
-      AssetBalance tradingBalance = client.getTradingBalance();
-      lastKnownTradingBalance = client.getAllTradingBalance();
-      lastBid = Double.valueOf(orderBook.getBids().get(0).getPrice());
-      lastAsk = Double.valueOf(orderBook.getAsks().get(0).getPrice());
-      buyPrice = lastBid + tradeDifference;
-      sellPrice = lastAsk - tradeDifference;
-      profitablePrice = buyPrice + (buyPrice * tradeProfit / 100);
+    private Double currentBoughtPrice;
+    private Long orderId;
+    private int panicBuyCounter;
+    private int panicSellCounter;
+    private double trackingLastPrice;
+    private OrderBook orderBook;
 
 
-      logger.info(String.format("buyPrice:%.8f sellPrice:%.8f bid:%.8f ask:%.8f price:%.8f profit:%.8f diff:%.8f\n",
-              buyPrice, sellPrice, lastAsk, lastAsk, lastPrice, profitablePrice, (lastAsk - profitablePrice)));
+    private double lastKnownTradingBalance;
+    private double lastBid;
+    private double lastAsk;
+    private double buyPrice;
+    private double sellPrice;
+    private double profitablePrice;
 
-      if (noOrders()) {
-        logger.info("nothing bought, let`s check");
-        // find a burst to buy
-        // but make sure price is ascending!
-        if (isBurst()) {
-          if (isPriceAscending(lastPrice)) {
-            logger.info("Buy burst detected");
-            currentlyBoughtPrice = profitablePrice;
-            orderId = client.buy(tradeAmount, buyPrice).getOrderId();
-            logger.info("Bought " + tradeAmount + " tokens " + tradeCurrency + " order id: " + orderId);
-            panicBuyCounter = 0;
-            panicSellCounter = 0;
-          } else {
-            logger.warn("woooops, price is falling?!? don`t do something!");
-            panicSellForCondition(lastPrice, lastKnownTradingBalance, client.tradingBalanceAvailable(tradingBalance));
-          }
-        } else {
-          logger.info(String.format("No profit detected, difference %.8f\n", lastAsk - profitablePrice));
-          currentlyBoughtPrice = null;
-          panicSellForCondition(lastPrice, lastKnownTradingBalance, client.tradingBalanceAvailable(tradingBalance));
-        }
-      } else {
-        Order order = client.getOrder(orderId);
-        OrderStatus status = order.getStatus();
-        if (notCanceled(status)) {
-          // not new and not canceled, check for profit
-          logger.info("Tradingbalance: " + tradingBalance);
-          if ("0".equals("" + tradingBalance.getLocked().charAt(0)) &&
-              lastAsk >= currentlyBoughtPrice) {
-            if (isNew(status)) {
-              // nothing happened here, maybe cancel as well?
-              panicBuyCounter++;
-              logger.info(String.format("order still new, time %d\n", panicBuyCounter));
-              if (panicBuyCounter > 4) {
-                client.cancelOrder(orderId);
-                clear();
-              }
-            } else {
-              if ("0".equals("" + tradingBalance.getFree().charAt(0))) {
-                logger.warn("no balance in trading money, clearing out");
-                clear();
-              } else if (status == OrderStatus.PARTIALLY_FILLED || status == OrderStatus.FILLED) {
-                logger.info("Order filled with status " + status);
-                if (isBurst()) {
-                  logger.info("still gaining profitable profits HOLD!!");
-                } else {
-                  logger.info("Not gaining enough profit anymore, let`s sell");
-                  logger.info(String.format("Bought %d for %.8f and sell it for %.8f, this is %.8f coins profit",
-                          tradeAmount, currentlyBoughtPrice, sellPrice, (1.0 * currentlyBoughtPrice - sellPrice) * tradeAmount));
-                  client.sell(tradeAmount, sellPrice);
+    private String tradeCurrency;
+    private String baseCurrency;
+    private double antiBurstValue;
+    private double antiBurstPercentage;
+    private double boughtPrice;
+    private double goalSellPrice;
+
+    private static double[] trend = new double[200];
+    private static int pointer = 0;
+
+    BinanceTrader(double tradeDifference, double tradeProfit, int tradeAmount, String baseCurrency, String tradeCurrency, String key, String secret) {
+        client = new TradingClient(baseCurrency, tradeCurrency, key, secret);
+        trackingLastPrice = client.lastPrice();
+        this.tradeCurrency = tradeCurrency;
+        this.baseCurrency = baseCurrency;
+        this.tradeAmount = tradeAmount;
+        this.tradeProfit = tradeProfit;
+        this.tradeDifference = tradeDifference;
+        clear();
+    }
+
+    public void setClient(TradingClient client) {
+        this.client = client;
+    }
+
+    public void setTrackingLastPrice(double trackingLastPrice) {
+        this.trackingLastPrice = trackingLastPrice;
+    }
+
+    void tick() {
+
+        double lastPrice = 0;
+        try {
+            getLatestOrderBook();
+            lastPrice = client.lastPrice();
+            AssetBalance tradingBalance = client.getTradingBalance();
+            lastKnownTradingBalance = client.getAllTradingBalance();
+            lastBid = getLastBid();
+            lastAsk = getLastAsk();
+            profitablePrice = lastBid + (lastBid * tradeProfit / 100);
+            antiBurstValue = lastAsk - profitablePrice;
+            antiBurstPercentage = antiBurstValue / lastAsk * 100.0;
+
+
+            double burstDetectionDifference = lastAsk - profitablePrice;
+            logger.info(String.format("bid:%.8f ask:%.8f price:%.8f profitablePrice:%.8f diff:%.8f\n  ",
+                    lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
+            checkShutDown();
+            if (isFall() && isUpTrend()) {
+                logger.info("Fall burst detected");
+                int rightMomentCounter = 0;
+                client.buyMarket(tradeAmount);
+                logger.info(String.format("Bought %d coins to market! at %.8f rate", tradeAmount, lastAsk));
+                boughtPrice = lastAsk;
+                goalSellPrice = boughtPrice + (boughtPrice * 0.2 / 100);
+                while (lastBid < goalSellPrice) {
+                    logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"", goalSellPrice - lastBid, lastBid, goalSellPrice));
+                    sleepSeconds(3);
+                    lastBid = getLastBid();
+                    rightMomentCounter++;
+                    if (rightMomentCounter == 180) {
+                        break;
+                    }
                 }
-              } else {
-                // WTF?!
-                logger.error("DETECTED WTF!!!!!");
-                logger.error("Order: " + order + " , Order-Status: " + status);
-                client.panicSell(lastKnownTradingBalance, lastPrice);
-                clear();
-              }
+                client.sellMarket(tradeAmount);
+                logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
+                logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
+
+//      } else if(isBurst()){
+//
+//        client.buyMarket(tradeAmount);
+//        boughtPrice = lastAsk;
+//        logger.info(String.format("Bought %d coins to market! at %.8f rate", tradeAmount, boughtPrice));
+//        goalSellPrice = boughtPrice + (boughtPrice * 0.2 / 100);
+//        int rightMomentCounter = 0;
+//        while (lastBid < goalSellPrice){
+//          logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"", goalSellPrice - lastBid, lastBid, goalSellPrice));
+//          sleepSeconds(3);
+//          lastBid = getLastBid();
+//          rightMomentCounter++;
+//          if (rightMomentCounter == 20){
+//            break;
+//          }
+//        }
+//        client.sellMarket(tradeAmount);
+//        logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
+//        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid)*tradeAmount));
+            } else {
+
+                logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
             }
-          } else {
-            panicSellCounter++;
-            logger.info(String.format("sell request not successful, increasing time %d\n", panicSellCounter));
-            panicSellForCondition(lastPrice, lastKnownTradingBalance, panicSellCounter > 3);
-          }
-        } else {
-          logger.warn("Order was canceled, cleaning up.");
-          clear(); // Order was canceled, so clear and go on
+
+        } catch (Exception e) {
+            logger.error("Unable to perform ticker", e);
+        } finally {
+            trackingLastPrice = lastPrice;
+            trend[pointer++] = lastPrice;
+            if (pointer == 200) {
+                pointer = 0;
+            }
         }
-      }
-    } catch (Exception e) {
-      logger.error("Unable to perform ticker", e);
     }
-    trackingLastPrice = lastPrice;
-  }
 
-  private boolean isNew(OrderStatus status) {
-    return status == OrderStatus.NEW;
-  }
-
-  private boolean notCanceled(OrderStatus status) {
-    return status != OrderStatus.CANCELED;
-  }
-
-  private boolean isPriceAscending(double lastPrice) {
-    return lastPrice > trackingLastPrice;
-  }
-
-  private boolean isBurst() {
-    return lastAsk >= profitablePrice;
-  }
-
-  private boolean noOrders() {
-    return orderId == null;
-  }
-
-  private void panicSellForCondition(double lastPrice, double lastKnownTradingBalance, boolean condition) {
-    if (condition) {
-      logger.info("panicSellForCondition");
-      client.panicSell(lastKnownTradingBalance, lastPrice);
-      clear();
+    private boolean isUpTrend() {
+        if (trend[pointer] > trend[0]) {
+            logger.info("Up-trend detected");
+            return true;
+        }
+        logger.info("Down-trend detected");
+        return false;
     }
-  }
 
-  private void clear() {
-    panicBuyCounter = 0;
-    panicSellCounter = 0;
-    orderId = null;
-    currentlyBoughtPrice = null;
-  }
+    private void getLatestOrderBook() {
+        orderBook = client.getOrderBook();
+    }
 
-  List<AssetBalance> getBalances() {
-    return client.getBalances();
-  }
+    private Double getLastAsk() {
+        getLatestOrderBook();
+        return Double.valueOf(orderBook.getAsks().get(0).getPrice());
+    }
+
+    private Double getLastBid() {
+        getLatestOrderBook();
+        return Double.valueOf(orderBook.getBids().get(0).getPrice());
+    }
+
+    private boolean isFall() {
+        return antiBurstPercentage < -0.8;
+    }
+
+    private void sleepSeconds(int seconds) {
+        try {
+            sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkShutDown() {
+        if (shutDown) {
+            logger.info("\n\nShutting down!\n\n");
+            System.exit(0);
+        }
+    }
+
+    private boolean isNew(OrderStatus status) {
+        return status == OrderStatus.NEW;
+    }
+
+    private boolean notCanceled(OrderStatus status) {
+        return status != OrderStatus.CANCELED;
+    }
+
+    private boolean isPriceAscending(double lastPrice) {
+        return lastPrice > trackingLastPrice;
+    }
+
+    private boolean isBurst() {
+        return lastAsk >= profitablePrice;
+    }
+
+    private boolean noOrders() {
+        return orderId == null;
+    }
+
+    private void panicSellForCondition(double lastPrice, double lastKnownTradingBalance, boolean condition) {
+        if (condition) {
+            logger.info("panicSellForCondition");
+            client.panicSell(lastKnownTradingBalance, lastPrice);
+            clear();
+        }
+    }
+
+    private void clear() {
+        panicBuyCounter = 0;
+        panicSellCounter = 0;
+        orderId = null;
+        currentBoughtPrice = null;
+    }
+
+    List<AssetBalance> getBalances() {
+        return client.getBalances();
+    }
 }

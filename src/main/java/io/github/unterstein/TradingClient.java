@@ -40,7 +40,7 @@ public class TradingClient {
   // The bid price represents the maximum price that a buyer is willing to pay for a security.
   // The ask price represents the minimum price that a seller is willing to receive.
   public OrderBook getOrderBook() {
-    return client.getOrderBook(symbol, 5);
+    return client.getOrderBook(symbol, 10);
   }
 
   public AssetBalance getBaseBalance() {
@@ -84,6 +84,16 @@ public class TradingClient {
     logger.info(String.format("Buying %d for %s\n", quantity, priceString));
     NewOrder order = new NewOrder(symbol, OrderSide.BUY, OrderType.LIMIT, TimeInForce.GTC, "" + quantity, priceString);
     return client.newOrder(order);
+  }
+
+  public void buyMarket(int quantity) {
+    if (quantity > 0) {
+      logger.info("Buying from MARKET with quantity " + quantity);
+      NewOrder order = new NewOrder(symbol, OrderSide.BUY, OrderType.MARKET, null, "" + quantity);
+      client.newOrder(order);
+    } else {
+      logger.info("not executing - 0 quantity bought");
+    }
   }
 
   public void sell(int quantity, double price) {

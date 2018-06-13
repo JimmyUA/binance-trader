@@ -1,0 +1,76 @@
+2018-06-11 08:08:34.513  INFO 9236 --- [main] i.g.unterstein.BinanceBotApplication     : Starting BinanceBotApplication on comp.ua.exirigo-upos.pl with PID 9236 (/home/jimmy/idea/binance-trader/target/classes started by jimmy in /home/jimmy/idea/binance-trader)
+2018-06-11 08:08:34.518  INFO 9236 --- [main] i.g.unterstein.BinanceBotApplication     : No active profile set, falling back to default profiles: default
+2018-06-11 08:08:34.629  INFO 9236 --- [main] ationConfigEmbeddedWebApplicationContext : Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@56de5251: startup date [Mon Jun 11 08:08:34 EEST 2018]; root of context hierarchy
+2018-06-11 08:08:36.411  INFO 9236 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat initialized with port(s): 8081 (http)
+2018-06-11 08:08:36.421  INFO 9236 --- [main] o.apache.catalina.core.StandardService   : Starting service Tomcat
+2018-06-11 08:08:36.422  INFO 9236 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.5.6
+2018-06-11 08:08:36.478  INFO 9236 --- [localhost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2018-06-11 08:08:36.479  INFO 9236 --- [localhost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1855 ms
+2018-06-11 08:08:36.590  INFO 9236 --- [localhost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Mapping servlet: 'dispatcherServlet' to [/]
+2018-06-11 08:08:36.593  INFO 9236 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2018-06-11 08:08:36.594  INFO 9236 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2018-06-11 08:08:36.594  INFO 9236 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2018-06-11 08:08:36.594  INFO 9236 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2018-06-11 08:08:36.625  INFO 9236 --- [main] i.g.unterstein.BinanceBotApplication     : Starting app with diff=0.00000001, profit=1.00000000 amount=100 base=ETH trade=WINGS
+2018-06-11 08:08:37.746  INFO 9236 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@56de5251: startup date [Mon Jun 11 08:08:34 EEST 2018]; root of context hierarchy
+2018-06-11 08:08:37.801  INFO 9236 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/]}" onto public java.util.List<com.binance.api.client.domain.account.AssetBalance> io.github.unterstein.BinanceBotApplication.getBalances()
+2018-06-11 08:08:37.805  INFO 9236 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-06-11 08:08:37.806  INFO 9236 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-06-11 08:08:37.832  INFO 9236 --- [main] o.s.w.s.h.BeanNameUrlHandlerMapping      : Root mapping to handler '/'
+2018-06-11 08:08:37.841  INFO 9236 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-11 08:08:37.841  INFO 9236 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-11 08:08:37.879  INFO 9236 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-11 08:08:38.020  INFO 9236 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2018-06-11 08:08:38.032  INFO 9236 --- [main] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2018-06-11 08:08:38.068  INFO 9236 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8081 (http)
+2018-06-11 08:08:38.073  INFO 9236 --- [main] i.g.unterstein.BinanceBotApplication     : Started BinanceBotApplication in 3.962 seconds (JVM running for 4.793)
+2018-06-11 08:08:39.281  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057341 sellPrice:0.00057599 bid:0.00057340 ask:0.00057600 price:0.00057580 profitablePrice:0.00057914 diff:-0.00000314
+  
+2018-06-11 08:08:39.281  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:39.282  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000314
+
+2018-06-11 08:08:41.253  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057371 sellPrice:0.00057599 bid:0.00057370 ask:0.00057600 price:0.00057580 profitablePrice:0.00057945 diff:-0.00000345
+  
+2018-06-11 08:08:41.254  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:41.255  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000345
+
+2018-06-11 08:08:43.261  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057401 sellPrice:0.00057599 bid:0.00057400 ask:0.00057600 price:0.00057580 profitablePrice:0.00057975 diff:-0.00000375
+  
+2018-06-11 08:08:43.261  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:43.261  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000375
+
+2018-06-11 08:08:45.509  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057580 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:45.509  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:45.510  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+
+2018-06-11 08:08:47.246  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057580 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:47.246  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:47.247  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+
+2018-06-11 08:08:50.761  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057580 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:50.762  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:50.762  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+
+2018-06-11 08:08:53.021  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057570 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:53.021  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:53.021  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+
+2018-06-11 08:08:54.249  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057570 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:54.249  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:54.250  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+
+2018-06-11 08:08:55.988  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057570 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:55.989  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:55.989  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+
+2018-06-11 08:08:57.225  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : buyPrice:0.00057431 sellPrice:0.00057599 bid:0.00057430 ask:0.00057600 price:0.00057570 profitablePrice:0.00058005 diff:-0.00000405
+  
+2018-06-11 08:08:57.226  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-11 08:08:57.226  INFO 9236 --- [pool-1-thread-1] io.github.unterstein.BinanceTrader       : No profit detected, difference -0.00000405
+

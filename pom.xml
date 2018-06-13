@@ -5,7 +5,7 @@
 
     <groupId>io.github.unterstein</groupId>
     <artifactId>binancebot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1-Alex</version>
     <packaging>jar</packaging>
 
     <name>binancebot</name>
@@ -39,13 +39,19 @@
         <dependency>
             <groupId>com.binance.api</groupId>
             <artifactId>binance-api-client</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-Demo</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.15</version>
         </dependency>
 
     </dependencies>

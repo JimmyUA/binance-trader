@@ -1,0 +1,20 @@
+2018-06-07 14:59:21.578  INFO 32175 --- [main] io.github.unterstein.BinanceTraderTest   : Starting BinanceTraderTest on comp.ua.exirigo-upos.pl with PID 32175 (started by jimmy in /home/jimmy/idea/binance-trader)
+2018-06-07 14:59:21.579  INFO 32175 --- [main] io.github.unterstein.BinanceTraderTest   : The following profiles are active: test
+2018-06-07 14:59:21.746  INFO 32175 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@1033576a: startup date [Thu Jun 07 14:59:21 EEST 2018]; root of context hierarchy
+2018-06-07 14:59:25.011  INFO 32175 --- [main] i.g.unterstein.BinanceBotApplication     : Starting app with diff=0.00000001, profit=0.90000000 amount=15 base=ETH trade=AE
+2018-06-07 14:59:28.451  INFO 32175 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.web.context.support.GenericWebApplicationContext@1033576a: startup date [Thu Jun 07 14:59:21 EEST 2018]; root of context hierarchy
+2018-06-07 14:59:28.655  INFO 32175 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/]}" onto public java.util.List<com.binance.api.client.domain.account.AssetBalance> io.github.unterstein.BinanceBotApplication.getBalances()
+2018-06-07 14:59:28.677  INFO 32175 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-06-07 14:59:28.679  INFO 32175 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-06-07 14:59:28.733  INFO 32175 --- [main] o.s.w.s.h.BeanNameUrlHandlerMapping      : Root mapping to handler '/'
+2018-06-07 14:59:28.760  INFO 32175 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-07 14:59:28.761  INFO 32175 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-07 14:59:28.861  INFO 32175 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-06-07 14:59:29.220  INFO 32175 --- [main] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2018-06-07 14:59:29.236  INFO 32175 --- [main] io.github.unterstein.BinanceTraderTest   : Started BinanceTraderTest in 8.78 seconds (JVM running for 10.533)
+2018-06-07 14:59:29.884  INFO 32175 --- [main] io.github.unterstein.BinanceTrader       : buyPrice:0.03600100 sellPrice:0.39999900 bid:0.40000000 ask:0.40000000 price:0.30000000 profit:0.03646901 diff:0.36353099
+
+2018-06-07 14:59:29.885  INFO 32175 --- [main] io.github.unterstein.BinanceTrader       : nothing bought, let`s check
+2018-06-07 14:59:29.886  INFO 32175 --- [main] io.github.unterstein.BinanceTrader       : Buy burst detected
+2018-06-07 14:59:29.887  INFO 32175 --- [main] io.github.unterstein.BinanceTrader       : Bought 10 tokens XMR order id: 1
+2018-06-07 14:59:30.005  INFO 32175 --- [Thread-1] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@1033576a: startup date [Thu Jun 07 14:59:21 EEST 2018]; root of context hierarchy
