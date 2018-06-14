@@ -20,11 +20,12 @@ public class TrendAnalizer {
                 lastTenAmount += trend[pointer - i];
             }
             lastTenAverage = lastTenAmount/10;
+            if (lastTenAverage > trend[0]) {
+                logger.info("Up-trend detected");
+                return true;
+            }
         }
-        if (lastTenAverage > trend[0]) {
-            logger.info("Up-trend detected");
-            return true;
-        }
+
         logger.info("Down-trend detected");
         return false;
     }

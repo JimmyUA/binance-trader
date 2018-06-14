@@ -23,11 +23,8 @@ public class BinanceTrader {
     private TradingClient client;
     private TrendAnalizer trendAnalizer;
 
-    @Value("${TRADE_DIFFERENCE}")
     private  double tradeDifference;
-    @Value("${TRADE_PROFIT}")
     private  double tradeProfit;
-    @Value("${TRADE_AMOUNT}")
     private  int tradeAmount;
 
     private Double currentBoughtPrice;
@@ -51,8 +48,6 @@ public class BinanceTrader {
     private double goalSellPrice;
     private double goalBuyPrice;
 
-    public BinanceTrader() {
-    }
 
     @Autowired
     BinanceTrader(TradingClient client, TrendAnalizer trendAnalizer) {
@@ -70,6 +65,18 @@ public class BinanceTrader {
 
     public void setTrackingLastPrice(double trackingLastPrice) {
         this.trackingLastPrice = trackingLastPrice;
+    }
+
+    public void setTradeDifference(double tradeDifference) {
+        this.tradeDifference = tradeDifference;
+    }
+
+    public void setTradeProfit(double tradeProfit) {
+        this.tradeProfit = tradeProfit;
+    }
+
+    public void setTradeAmount(int tradeAmount) {
+        this.tradeAmount = tradeAmount;
     }
 
     void tick() {

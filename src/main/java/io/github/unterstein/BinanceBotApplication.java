@@ -27,8 +27,6 @@ public class BinanceBotApplication {
 
   private static Logger logger = LoggerFactory.getLogger(BinanceBotApplication.class);
 
-  private BinanceTrader trader;
-
   @Value("${TRADE_DIFFERENCE}")
   private double tradeDifference;
 
@@ -58,10 +56,12 @@ public class BinanceBotApplication {
   @Autowired
   private TradingClient tradingClient;
 
+  @Autowired
+  private BinanceTrader trader;
+
   @PostConstruct
   public void init() {
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
-    trader = new BinanceTrader(tradingClient, trendAnalizer);
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);
   }
 

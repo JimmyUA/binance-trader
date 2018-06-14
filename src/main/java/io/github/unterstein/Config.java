@@ -7,6 +7,15 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Config {
+    @Value("${TRADE_DIFFERENCE}")
+    private double tradeDifference;
+
+    @Value("${TRADE_PROFIT}")
+    private double tradeProfit;
+
+    @Value("${TRADE_AMOUNT}")
+    private int tradeAmount;
+
     @Value("${BASE_CURRENCY}")
     private String baseCurrency;
 
@@ -27,5 +36,14 @@ public class Config {
     @Bean
     public TrendAnalizer trendAnalizer(){
         return new TrendAnalizer();
+    }
+
+    @Bean
+    public BinanceTrader binanceTrader(){
+        BinanceTrader binanceTrader = new BinanceTrader(tradingClient(), trendAnalizer());
+        binanceTrader.setTradeDifference(tradeDifference);
+        binanceTrader.setTradeAmount(tradeAmount);
+        binanceTrader.setTradeProfit(tradeProfit);
+        return binanceTrader;
     }
 }
