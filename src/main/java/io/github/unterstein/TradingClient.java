@@ -29,7 +29,15 @@ public class TradingClient {
   public TradingClient() {
   }
 
-  TradingClient(String baseCurrency, String tradeCurrency, String key, String secret) {
+    public String getBaseCurrency() {
+        return baseCurrency;
+    }
+
+    public String getTradeCurrency() {
+        return tradeCurrency;
+    }
+
+    TradingClient(String baseCurrency, String tradeCurrency, String key, String secret) {
     this.baseCurrency = baseCurrency;
     this.tradeCurrency = tradeCurrency;
     BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(key, secret);
@@ -96,7 +104,7 @@ public class TradingClient {
     }
   }
 
-  public void sell(int quantity, double price) {
+  public void setLimitOrder(int quantity, double price) {
     String priceString = String.format("%.8f", price).replace(",", ".");
     logger.info(String.format("Selling %d for %s\n", quantity, priceString));
     NewOrder order = new NewOrder(symbol, OrderSide.SELL, OrderType.LIMIT, TimeInForce.GTC, "" + quantity, priceString);
@@ -109,7 +117,7 @@ public class TradingClient {
       NewOrder order = new NewOrder(symbol, OrderSide.SELL, OrderType.MARKET, null, "" + quantity);
       client.newOrder(order);
     } else {
-      logger.info("not executing - 0 quantity sell");
+      logger.info("not executing - 0 quantity setLimitOrder");
     }
   }
 

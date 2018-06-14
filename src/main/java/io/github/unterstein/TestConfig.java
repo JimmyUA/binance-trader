@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import io.github.unterstein.statistic.TrendAnalizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -12,4 +13,7 @@ public class TestConfig {
     public TradingClient tradingClient(){
         return new TradingClient();
     }
+
+    @Bean
+    public TrendAnalizer trendAnalizer(){return new TrendAnalizer();}
 }

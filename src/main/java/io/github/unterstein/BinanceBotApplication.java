@@ -2,6 +2,7 @@ package io.github.unterstein;
 
 import com.binance.api.client.domain.account.AssetBalance;
 import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
+import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +53,15 @@ public class BinanceBotApplication {
   static LastPriceVSOrderBook lastPriceVSOrderBook;
 
   @Autowired
+  private TrendAnalizer trendAnalizer;
+
+  @Autowired
   private TradingClient tradingClient;
 
   @PostConstruct
   public void init() {
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
-    trader = new BinanceTrader(tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency, apiKey, apiSecret);
+    trader = new BinanceTrader(tradingClient, trendAnalizer);
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);
   }
 

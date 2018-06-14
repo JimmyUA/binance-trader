@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import io.github.unterstein.statistic.TrendAnalizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,5 +22,10 @@ public class Config {
     @Bean
     public TradingClient tradingClient(){
         return new TradingClient(baseCurrency, tradeCurrency, apiKey, apiSecret);
+    }
+
+    @Bean
+    public TrendAnalizer trendAnalizer(){
+        return new TrendAnalizer();
     }
 }
