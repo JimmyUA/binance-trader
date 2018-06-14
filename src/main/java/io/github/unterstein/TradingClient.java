@@ -94,13 +94,14 @@ public class TradingClient {
     return client.newOrder(order);
   }
 
-  public void buyMarket(int quantity) {
+  public NewOrderResponse buyMarket(int quantity) {
     if (quantity > 0) {
       logger.info("Buying from MARKET with quantity " + quantity);
       NewOrder order = new NewOrder(symbol, OrderSide.BUY, OrderType.MARKET, null, "" + quantity);
-      client.newOrder(order);
+      return client.newOrder(order);
     } else {
       logger.info("not executing - 0 quantity bought");
+      return new NewOrderResponse();
     }
   }
 
@@ -140,4 +141,5 @@ public class TradingClient {
     cancelAllOrders();
     sellMarket(Double.valueOf(getTradingBalance().getFree()).intValue());
   }
+
 }

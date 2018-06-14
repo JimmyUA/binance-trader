@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import io.github.unterstein.statistic.MovingAverage;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -45,5 +46,10 @@ public class Config {
         binanceTrader.setTradeAmount(tradeAmount);
         binanceTrader.setTradeProfit(tradeProfit);
         return binanceTrader;
+    }
+
+    @Bean
+    public MovingAverage movingAverage(){
+        return new MovingAverage();
     }
 }

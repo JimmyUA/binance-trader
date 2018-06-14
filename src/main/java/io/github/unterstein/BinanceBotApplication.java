@@ -2,6 +2,7 @@ package io.github.unterstein;
 
 import com.binance.api.client.domain.account.AssetBalance;
 import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
+import io.github.unterstein.statistic.MovingAverage;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,9 @@ public class BinanceBotApplication {
   @Autowired
   private BinanceTrader trader;
 
+  @Autowired
+  private MovingAverage movingAverage;
+
   @PostConstruct
   public void init() {
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
@@ -69,6 +73,12 @@ public class BinanceBotApplication {
   @Scheduled(fixedRate = 2000)
   public void schedule() {
     trader.tick();
+  }
+
+  @Scheduled(fixedRate = 60 * 1000)
+  public void MAFetching() {
+    double lastPrice = tradingClient.lastPrice();
+    movingAverage.add(lastPrice);
   }
 
 //    @Scheduled(fixedRate = 1000)
@@ -86,6 +96,14 @@ public class BinanceBotApplication {
   public String stop() {
     shutDown = true;
     return "Stopped!";
+  }
+
+  @RequestMapping("/sellAll")
+  public String sellAll() {
+    String tradingBalance = tradingClient.getTradingBalance().getFree();
+    Double tradingBalanceDoubleValue = Double.parseDouble(tradingBalance);
+    tradingClient.sellMarket(tradingBalanceDoubleValue.intValue());
+    return "All trading balance is sold!";
   }
 
   public static void main(String[] args) {

@@ -2,6 +2,8 @@ package io.github.unterstein;
 
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.AssetBalance;
+import com.binance.api.client.domain.account.NewOrderResponse;
+import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.market.OrderBook;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ public class BinanceTrader {
     private int lastKnownTradingBalance;
     private double lastBid;
     private double lastAsk;
+    private double lastTrakingAsk;
     private double profitablePrice;
 
     private String tradeCurrency;
@@ -98,37 +101,41 @@ public class BinanceTrader {
             logger.info(String.format("bid:%.8f ask:%.8f price:%.8f profitablePrice:%.8f diff:%.8f\n  ",
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
-            if (isFall() && trendAnalizer.isUpTrend()) {//Relocate to Conditions enum
+            if (isFall() && trendAnalizer.isUptrendByAsk(lastAsk)) {//Relocate to Conditions enum
                 logger.info("Fall burst detected");
-                goalBuyPrice = lastAsk - (lastAsk * 0.3 / 100);
+//                goalBuyPrice = lastTrakingAsk - (lastTrakingAsk * 0.2 / 100);
                 int rightMomentCounter = 0;
-                while (lastAsk > goalBuyPrice){
-                    logger.info(String.format("waiting price to fall enough, difference %.8f, Last minAsk: %.8f, goalSellPrice: %.8f\"",
-                            lastAsk - goalBuyPrice, lastAsk, goalBuyPrice));
-                    sleepSeconds(1);
-                    lastAsk = getLastAsk();
-                    rightMomentCounter++;
-                    if (rightMomentCounter == 20) {
-                        logger.info("Price did not fall enough, out!");
-                        return;
-                    }
-                }
-                client.buyMarket(tradeAmount);// TODO lastAsk amount
+//                while (lastAsk > goalBuyPrice){
+//                    logger.info(String.format("waiting price to fall enough, difference %.8f, Last minAsk: %.8f, goalSellPrice: %.8f\"",
+//                            lastAsk - goalBuyPrice, lastAsk, goalBuyPrice));
+//                    sleepSeconds(1);
+//                    lastAsk = getLastAsk();
+//                    rightMomentCounter++;
+//                    if (rightMomentCounter == 20) {
+//                        logger.info("Price did not fall enough, out!");
+//                        return;
+//                    }
+//                }
+                NewOrderResponse order = client.buyMarket(tradeAmount);// TODO lastAsk amount
                 lastKnownTradingBalance = tradeAmount;
                 logger.info(String.format("Bought %d coins to market! at %.8f rate", tradeAmount, lastAsk));
                 boughtPrice = lastAsk;
                 goalSellPrice = boughtPrice + (boughtPrice * 0.2 / 100);
-                while (lastBid < goalSellPrice) {
+                while (lastBid < goalSellPrice || trendAnalizer.isUptrendByBid(lastBid)) {
                     logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
                             goalSellPrice - lastBid, lastBid, goalSellPrice));
                     sleepSeconds(3);
                     lastBid = getLastBid();
                     rightMomentCounter++;
                     //if bid is too low - set limit order
-                    if (rightMomentCounter == 180) {
-                        client.setLimitOrder(lastKnownTradingBalance, goalSellPrice);
-                        logger.info(String.format("Set limit order %d coins to market! Rate: %.8f", lastKnownTradingBalance, goalSellPrice));
-                        return;
+                    if (rightMomentCounter > 180 && !trendAnalizer.isUptrendByBid(lastBid)) {
+                        try {
+                            client.setLimitOrder(lastKnownTradingBalance, goalSellPrice);
+                            logger.info(String.format("Set limit order %d coins to market! Rate: %.8f", lastKnownTradingBalance, goalSellPrice));
+                            return;
+                        } catch (Exception e){
+                            logger.error("Too small amount to set LIMIT order");
+                        }
                     }
                 }
                 client.sellMarket(tradeAmount);
@@ -143,7 +150,7 @@ public class BinanceTrader {
             logger.error("Unable to perform ticker", e);
         } finally {
             trackingLastPrice = lastPrice;
-            trendAnalizer.setCurrentPrice(lastPrice);
+            lastTrakingAsk = lastAsk;
         }
     }
 
@@ -163,7 +170,7 @@ public class BinanceTrader {
     }
 
     private boolean isFall() {
-        return antiBurstPercentage < -0.8;
+        return antiBurstPercentage < -0.75;
     }
 
     private void sleepSeconds(int seconds) {
@@ -218,5 +225,11 @@ public class BinanceTrader {
 
     List<AssetBalance> getBalances() {
         return client.getBalances();
+    }
+
+    public double getBoughtPrice(NewOrderResponse order) {
+        orderId = order.getOrderId();
+        String price = client.getOrder(orderId).getStopPrice();
+        return Double.parseDouble(price);
     }
 }
