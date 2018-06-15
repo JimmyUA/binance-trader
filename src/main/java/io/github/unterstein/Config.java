@@ -1,6 +1,7 @@
 package io.github.unterstein;
 
-import io.github.unterstein.statistic.MovingAverage;
+import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -51,5 +52,10 @@ public class Config {
     @Bean
     public MovingAverage movingAverage(){
         return new MovingAverage();
+    }
+
+    @Bean
+    public PricesAccumulator pricesAccumulator(){
+        return new PricesAccumulator();
     }
 }

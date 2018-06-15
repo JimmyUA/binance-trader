@@ -2,7 +2,8 @@ package io.github.unterstein;
 
 import com.binance.api.client.domain.account.AssetBalance;
 import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
-import io.github.unterstein.statistic.MovingAverage;
+import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class BinanceBotApplication {
   private BinanceTrader trader;
 
   @Autowired
-  private MovingAverage movingAverage;
+  private PricesAccumulator pricesAccumulator;
 
   @PostConstruct
   public void init() {
@@ -78,7 +79,7 @@ public class BinanceBotApplication {
   @Scheduled(fixedRate = 60 * 1000)
   public void MAFetching() {
     double lastPrice = tradingClient.lastPrice();
-    movingAverage.add(lastPrice);
+    pricesAccumulator.add(lastPrice);
   }
 
 //    @Scheduled(fixedRate = 1000)

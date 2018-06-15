@@ -1,8 +1,6 @@
 package io.github.unterstein.statistic;
 
-import io.github.unterstein.BinanceTrader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.unterstein.statistic.MA.MovingAverage;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TrendAnalizer {

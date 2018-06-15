@@ -6,18 +6,14 @@ import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.market.OrderBook;
 import io.github.unterstein.statistic.TrendAnalizer;
-import io.github.unterstein.tasks.BuyTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
-import static java.lang.Thread.sleep;
 import static util.Slepper.sleepSeconds;
 
 @Component
@@ -90,6 +86,10 @@ public class BinanceTrader {
 
 
         double lastPrice = 0;
+        if (lastKnownTradingBalance > tradeAmount * 3){
+            logger.info("Sold enough already1 Lets sell first");
+            return;
+        }
         try {
             client.getLatestOrderBook();
             lastPrice = client.lastPrice();
@@ -107,29 +107,34 @@ public class BinanceTrader {
             checkShutDown();
             if (isFall() && trendAnalizer.isUptrendByAsk(lastAsk)) {//Relocate to Conditions enum
                 logger.info("Fall burst detected");
-//                goalBuyPrice = lastTrakingAsk - (lastTrakingAsk * 0.2 / 100);
-                int rightMomentCounter = 0;
-//                while (lastAsk > goalBuyPrice){
-//                    logger.info(String.format("waiting price to fall enough, difference %.8f, Last minAsk: %.8f, goalSellPrice: %.8f\"",
-//                            lastAsk - goalBuyPrice, lastAsk, goalBuyPrice));
-//                    sleepSeconds(1);
-//                    lastAsk = getLastAsk();
-//                    rightMomentCounter++;
-//                    if (rightMomentCounter == 20) {
-//                        logger.info("Price did not fall enough, out!");
-//                        return;
-//                    }
-//                }
+
                 NewOrderResponse order = client.buyMarket(tradeAmount);// TODO lastAsk amount
                 lastKnownTradingBalance = tradeAmount;
                 logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, lastAsk));
                 boughtPrice = lastAsk;
-                BuyTask buyTask = new BuyTask();
-                buyTask.setBoughtPrice(boughtPrice)
-                        .setTradeAmount(tradeAmount);
 
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(buyTask);
+                int rightMomentCounter = 0;
+                goalSellPrice = boughtPrice + (boughtPrice * 0.2 / 100);
+                Double stopLossPrice = boughtPrice - (boughtPrice * 1.5 / 100);
+                while (lastBid < goalSellPrice) {
+                    logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
+                            goalSellPrice - lastBid, lastBid, goalSellPrice));
+                    sleepSeconds(3);
+                    lastBid = getLastBid();
+                    rightMomentCounter++;
+                    //if bid is too low - set limit order
+                    if (rightMomentCounter > 360 || lastBid < stopLossPrice) {
+                        sellToMarket(lastBid);
+                        return;
+                    }
+                }
+                while (trendAnalizer.isUptrendByBid(lastBid)){
+                    sleepSeconds(3);
+                    lastBid = getLastBid();
+                    logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
+                            goalSellPrice - lastBid, lastBid, goalSellPrice));
+                }
+                sellToMarket(lastBid);
             } else {
 
                 logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
@@ -207,5 +212,11 @@ public class BinanceTrader {
         orderId = order.getOrderId();
         String price = client.getOrder(orderId).getStopPrice();
         return Double.parseDouble(price);
+    }
+
+    private void sellToMarket(Double lastBid) {
+        client.sellMarket(tradeAmount);
+        logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
+        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
     }
 }
