@@ -142,4 +142,18 @@ public class TradingClient {
     sellMarket(Double.valueOf(getTradingBalance().getFree()).intValue());
   }
 
+  public OrderBook getLatestOrderBook() {
+    return getOrderBook();
+  }
+
+  public Double getLastAsk() {
+    OrderBook orderBook = getLatestOrderBook();
+    return Double.valueOf(orderBook.getAsks().get(0).getPrice());
+  }
+
+  public Double getLastBid() {
+    OrderBook orderBook = getLatestOrderBook();
+    return Double.valueOf(orderBook.getBids().get(0).getPrice());
+  }
+
 }

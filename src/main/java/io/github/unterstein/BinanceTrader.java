@@ -1,21 +1,24 @@
 package io.github.unterstein;
 
+
 import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.account.NewOrderResponse;
-import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.market.OrderBook;
 import io.github.unterstein.statistic.TrendAnalizer;
+import io.github.unterstein.tasks.BuyTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static java.lang.Thread.sleep;
+import static util.Slepper.sleepSeconds;
 
 @Component
 public class BinanceTrader {
@@ -50,6 +53,7 @@ public class BinanceTrader {
     private double boughtPrice;
     private double goalSellPrice;
     private double goalBuyPrice;
+    private double stopLossPrice;
 
 
     @Autowired
@@ -87,7 +91,7 @@ public class BinanceTrader {
 
         double lastPrice = 0;
         try {
-            getLatestOrderBook();
+            client.getLatestOrderBook();
             lastPrice = client.lastPrice();
             AssetBalance tradingBalance = client.getTradingBalance();
             lastBid = getLastBid();
@@ -118,29 +122,14 @@ public class BinanceTrader {
 //                }
                 NewOrderResponse order = client.buyMarket(tradeAmount);// TODO lastAsk amount
                 lastKnownTradingBalance = tradeAmount;
-                logger.info(String.format("Bought %d coins to market! at %.8f rate", tradeAmount, lastAsk));
+                logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, lastAsk));
                 boughtPrice = lastAsk;
-                goalSellPrice = boughtPrice + (boughtPrice * 0.2 / 100);
-                while (lastBid < goalSellPrice || trendAnalizer.isUptrendByBid(lastBid)) {
-                    logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
-                            goalSellPrice - lastBid, lastBid, goalSellPrice));
-                    sleepSeconds(3);
-                    lastBid = getLastBid();
-                    rightMomentCounter++;
-                    //if bid is too low - set limit order
-                    if (rightMomentCounter > 180 && !trendAnalizer.isUptrendByBid(lastBid)) {
-                        try {
-                            client.setLimitOrder(lastKnownTradingBalance, goalSellPrice);
-                            logger.info(String.format("Set limit order %d coins to market! Rate: %.8f", lastKnownTradingBalance, goalSellPrice));
-                            return;
-                        } catch (Exception e){
-                            logger.error("Too small amount to set LIMIT order");
-                        }
-                    }
-                }
-                client.sellMarket(tradeAmount);
-                logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
-                logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
+                BuyTask buyTask = new BuyTask();
+                buyTask.setBoughtPrice(boughtPrice)
+                        .setTradeAmount(tradeAmount);
+
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(buyTask);
             } else {
 
                 logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
@@ -154,32 +143,19 @@ public class BinanceTrader {
         }
     }
 
-
-    private void getLatestOrderBook() {
-        orderBook = client.getOrderBook();
+    private double getLastAsk() {
+        return client.getLastAsk();
     }
 
-    private Double getLastAsk() {
-        getLatestOrderBook();
-        return Double.valueOf(orderBook.getAsks().get(0).getPrice());
+    private double getLastBid() {
+        return client.getLastBid();
     }
 
-    private Double getLastBid() {
-        getLatestOrderBook();
-        return Double.valueOf(orderBook.getBids().get(0).getPrice());
-    }
 
     private boolean isFall() {
         return antiBurstPercentage < -0.75;
     }
 
-    private void sleepSeconds(int seconds) {
-        try {
-            sleep(seconds * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void checkShutDown() {
         if (shutDown) {
