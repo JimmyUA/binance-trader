@@ -33,6 +33,9 @@ public class Config {
     @Value("${API_SECRET:fkIlfKwNV3YX0l3PUBoCyjffnhoa86M5vQ5ZSjhMUou8RI2oQeD1zz9YEfdGpB0y}")
     private String apiSecret;
 
+    @Value("${RSI_PERIODS}")
+    private String periods;
+
     @Bean
     public TradingClient tradingClient(){
         return new TradingClient(baseCurrency, tradeCurrency, apiKey, apiSecret);
@@ -64,12 +67,16 @@ public class Config {
 
     @Bean
     public BuyDecisionMaker buyDecisionMaker(){
-        return new BuyDecisionMaker();
+        BuyDecisionMaker buyDecisionMaker = new BuyDecisionMaker();
+        buyDecisionMaker.setPeriods(Integer.parseInt(periods));
+        return buyDecisionMaker;
     }
 
     @Bean
     public SellDecisionMaker sellDecisionMaker(){
-        return new SellDecisionMaker();
+        SellDecisionMaker sellDecisionMaker = new SellDecisionMaker();
+        sellDecisionMaker.setPeriods(Integer.parseInt(periods));
+        return sellDecisionMaker;
     }
 
     @Bean

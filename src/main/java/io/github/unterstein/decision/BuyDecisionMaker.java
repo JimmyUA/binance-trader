@@ -7,6 +7,7 @@ import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
@@ -15,12 +16,12 @@ public class BuyDecisionMaker {
 
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
-
     @Autowired
     private TrendAnalizer trendAnalizer;
 
     @Autowired
     private RSI rsi;
+    private Integer periods;
 
     public boolean isRightMomentToBuy(Double ask){
         if (isUptrend(ask) && isRSIHighEnough() && isUpTrendLongPeriod()){
@@ -35,7 +36,7 @@ public class BuyDecisionMaker {
     }
 
     private boolean isRSIHighEnough() {
-        Double rsi = this.rsi.getRSI(14);
+        Double rsi = this.rsi.getRSI(21);
         logger.info(String.format("RSI is %.8f", rsi));
         return rsi > 50;
     }
@@ -45,4 +46,7 @@ public class BuyDecisionMaker {
     }
 
 
+    public void setPeriods(Integer periods) {
+        this.periods = periods;
+    }
 }

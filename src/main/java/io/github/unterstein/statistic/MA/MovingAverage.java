@@ -33,7 +33,7 @@ public class MovingAverage {
     }
 
     public boolean isUpTrendLongPeriod(){
-        if (MA(15) >= MA(100)){
+        if (MA(15) >= MA(50)){
             logger.info("Up-trend detected long period");
             return true;
         } else {

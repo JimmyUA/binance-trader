@@ -4,6 +4,7 @@ import com.binance.api.client.domain.account.AssetBalance;
 import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.PricesAccumulator;
+import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,9 @@ public class BinanceBotApplication {
   @Value("${API_SECRET:fkIlfKwNV3YX0l3PUBoCyjffnhoa86M5vQ5ZSjhMUou8RI2oQeD1zz9YEfdGpB0y}")
   private String apiSecret;
 
+  @Value("${RSI_PERIODS}")
+  private String periods;
+
   static LastPriceVSOrderBook lastPriceVSOrderBook;
 
   @Autowired
@@ -63,6 +67,12 @@ public class BinanceBotApplication {
 
   @Autowired
   private PricesAccumulator pricesAccumulator;
+
+  @Autowired
+  private RSI rsi;
+
+  @Autowired
+  private MovingAverage movingAverage;
 
   @PostConstruct
   public void init() {
@@ -105,6 +115,17 @@ public class BinanceBotApplication {
     Double tradingBalanceDoubleValue = Double.parseDouble(tradingBalance);
     tradingClient.sellMarket(tradingBalanceDoubleValue.intValue());
     return "All trading balance is sold!";
+  }
+
+  @RequestMapping("/stats")
+  public String stats() {
+    String message = "";
+    int periods = Integer.parseInt(this.periods);
+    Double rsiValue = rsi.getRSI(periods);
+    message += String.format("RSI %d = %.8f<br>", periods, rsiValue);
+    message += "Is up-trend short period: " + movingAverage.isUpTrendShortPeriod() + "<br>";
+    message += "Is up-trend long period: " + movingAverage.isUpTrendLongPeriod() + "<br>";
+    return message;
   }
 
   public static void main(String[] args) {

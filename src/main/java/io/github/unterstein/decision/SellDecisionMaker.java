@@ -20,10 +20,11 @@ public class SellDecisionMaker {
 
     @Autowired
     private RSI rsi;
+    private Integer periods;
 
 
-    public boolean isRightMomentToSell(Double bid){
-        if (isDownTrend(bid) && isRSITooLow()){
+    public boolean isRightMomentToSell(Double bid) {
+        if (isDownTrend(bid) && isRSITooLow()) {
             return true;
         } else {
             return false;
@@ -38,5 +39,9 @@ public class SellDecisionMaker {
 
     private boolean isDownTrend(Double bid) {
         return !trendAnalizer.isUptrendByBid(bid);
+    }
+
+    public void setPeriods(Integer periods) {
+        this.periods = periods;
     }
 }

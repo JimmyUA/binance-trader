@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class        RSI {
+public class RSI {
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
     @Autowired
