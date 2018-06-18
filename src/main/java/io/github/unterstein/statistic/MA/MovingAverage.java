@@ -22,12 +22,22 @@ public class MovingAverage {
     }
 
 
-    public boolean isUpTrend(){
+    public boolean isUpTrendShortPeriod(){
         if (MA(5) >= MA(15)){
-            logger.info("Up-trend detected");
+            logger.info("Up-trend detected short period");
             return true;
         } else {
-            logger.info("Down-trend detected");
+            logger.info("Down-trend detected short period");
+            return false;
+        }
+    }
+
+    public boolean isUpTrendLongPeriod(){
+        if (MA(15) >= MA(100)){
+            logger.info("Up-trend detected long period");
+            return true;
+        } else {
+            logger.info("Down-trend detected long period");
             return false;
         }
     }
@@ -40,11 +50,11 @@ public class MovingAverage {
     }
 
     public boolean isUpTrendByAsk(Double lastAsk) {
-        return isUpTrend() && lastAsk >= MA(5);
+        return isUpTrendShortPeriod() && lastAsk >= MA(5);
 
     }
 
     public boolean isUpTrendByBid(Double lastBid) {
-        return isUpTrend() && lastBid >= MA(5);
+        return isUpTrendShortPeriod() && lastBid >= MA(5);
     }
 }

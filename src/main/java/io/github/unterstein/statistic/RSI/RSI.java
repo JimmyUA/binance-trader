@@ -5,11 +5,13 @@ import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RSI {
+@Component
+public class        RSI {
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
     @Autowired
@@ -26,7 +28,7 @@ public class RSI {
     }
 
     public Double getRSI(int periods){
-        this.periods = periods + 1;
+        this.periods = periods;
         initPrices();
         Double rs = RS();
         return 100 - (100 / (1 + rs));
@@ -40,18 +42,20 @@ public class RSI {
     private void initGainsAndLosses() {
         gains = new ArrayList<>();
         losses = new ArrayList<>();
-        for (int i = 0; i < periods - 1; i++) {
-            double difference = prises.get(i + 1) - prises.get(i);
+        for (int i = 0; i < periods; i++) {
+            Double last = prises.get(prises.size() - (i + 1));
+            Double previous = prises.get(prises.size() - (i + 2));
+            double difference = last - previous;
             if (difference >= 0.0){
                 gains.add(difference);
-                if (i == periods - 2){
+                if (i == 0){
                     currentGain = difference;
                     currentLoss = 0.0;
                 }
             } else {
                 difference = Math.abs(difference);
                 losses.add(difference);
-                if (i == periods - 2){
+                if (i == 0){
                     currentGain = 0.0;
                     currentLoss = difference;
                 }

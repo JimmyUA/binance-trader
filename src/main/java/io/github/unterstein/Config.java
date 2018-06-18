@@ -1,7 +1,10 @@
 package io.github.unterstein;
 
+import io.github.unterstein.decision.BuyDecisionMaker;
+import io.github.unterstein.decision.SellDecisionMaker;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.PricesAccumulator;
+import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -57,5 +60,20 @@ public class Config {
     @Bean
     public PricesAccumulator pricesAccumulator(){
         return new PricesAccumulator();
+    }
+
+    @Bean
+    public BuyDecisionMaker buyDecisionMaker(){
+        return new BuyDecisionMaker();
+    }
+
+    @Bean
+    public SellDecisionMaker sellDecisionMaker(){
+        return new SellDecisionMaker();
+    }
+
+    @Bean
+    public RSI rsi(){
+        return new RSI();
     }
 }

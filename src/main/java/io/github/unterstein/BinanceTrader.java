@@ -5,6 +5,8 @@ import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.AssetBalance;
 import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.market.OrderBook;
+import io.github.unterstein.decision.BuyDecisionMaker;
+import io.github.unterstein.decision.SellDecisionMaker;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,11 @@ public class BinanceTrader {
     private double goalBuyPrice;
     private double stopLossPrice;
 
+    @Autowired
+    private BuyDecisionMaker buyDecisionMaker;
+
+    @Autowired
+    private SellDecisionMaker sellDecisionMaker;
 
     @Autowired
     BinanceTrader(TradingClient client, TrendAnalizer trendAnalizer) {
@@ -94,7 +101,7 @@ public class BinanceTrader {
             client.getLatestOrderBook();
             lastPrice = client.lastPrice();
             AssetBalance tradingBalance = client.getTradingBalance();
-            lastBid = getLastBid();
+            updateLastBid();
             lastAsk = getLastAsk();
             profitablePrice = lastBid + (lastBid * tradeProfit / 100);
             antiBurstValue = lastAsk - profitablePrice;
@@ -105,10 +112,10 @@ public class BinanceTrader {
             logger.info(String.format("bid:%.8f ask:%.8f price:%.8f profitablePrice:%.8f diff:%.8f\n  ",
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
-            if (isFall() && trendAnalizer.isUptrendByAsk(lastAsk)) {//Relocate to Conditions enum
+            if (isFall() && isRightMomentToBuy()) {//Relocate to Conditions enum
                 logger.info("Fall burst detected");
 
-                NewOrderResponse order = client.buyMarket(tradeAmount);// TODO lastAsk amount
+                client.buyMarket(tradeAmount);// TODO lastAsk amount
                 lastKnownTradingBalance = tradeAmount;
                 logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, lastAsk));
                 boughtPrice = lastAsk;
@@ -120,7 +127,7 @@ public class BinanceTrader {
                     logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
                             goalSellPrice - lastBid, lastBid, goalSellPrice));
                     sleepSeconds(3);
-                    lastBid = getLastBid();
+                    updateLastBid();
                     rightMomentCounter++;
                     //if bid is too low - set limit order
                     if (rightMomentCounter > 360 || lastBid < stopLossPrice) {
@@ -128,9 +135,13 @@ public class BinanceTrader {
                         return;
                     }
                 }
-                while (trendAnalizer.isUptrendByBid(lastBid)){
+                while (notAMomentToSell()){
+                    if (lastBid > goalSellPrice + (0.005 * goalBuyPrice)){
+                        logger.info("price is high enough");
+                        break;
+                    }
                     sleepSeconds(3);
-                    lastBid = getLastBid();
+                    updateLastBid();
                     logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
                             goalSellPrice - lastBid, lastBid, goalSellPrice));
                 }
@@ -146,6 +157,18 @@ public class BinanceTrader {
             trackingLastPrice = lastPrice;
             lastTrakingAsk = lastAsk;
         }
+    }
+
+    private boolean isRightMomentToBuy() {
+        return buyDecisionMaker.isRightMomentToBuy(lastAsk);
+    }
+
+    private void updateLastBid() {
+        lastBid = getLastBid();
+    }
+
+    private boolean notAMomentToSell() {
+        return !sellDecisionMaker.isRightMomentToSell(lastBid);
     }
 
     private double getLastAsk() {

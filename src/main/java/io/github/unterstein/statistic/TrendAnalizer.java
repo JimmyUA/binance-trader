@@ -9,7 +9,7 @@ public class TrendAnalizer {
     private MovingAverage movingAverage;
 
     public boolean isUpTrend() {
-        return movingAverage.isUpTrend();
+        return movingAverage.isUpTrendShortPeriod() && movingAverage.isUpTrendLongPeriod();
     }
 
     public boolean isUptrendByAsk(Double lastAsk){
