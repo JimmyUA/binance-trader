@@ -129,7 +129,13 @@ public class BinanceTrader {
                             goalSellPrice - lastBid, lastBid, goalSellPrice));
                 }
                 while(true){
-                    if (lastBid > goalSellPrice + (0.002 * goalSellPrice)){
+                    logger.info("Trend changed and price did not rise enough, waiting");
+                    goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
+                    sleepSeconds(3);
+                    updateLastBid();
+                    logger.info(String.format("Waiting while reach goal price, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
+                            goalSellPrice - lastBid, lastBid, goalSellPrice));
+                    if (lastBid > goalSellPrice){
                         logger.info("price is high enough");
                         break;
                     }
