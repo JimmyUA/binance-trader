@@ -2,12 +2,12 @@ package io.github.unterstein.decision;
 
 
 import io.github.unterstein.BinanceTrader;
+import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
@@ -20,15 +20,28 @@ public class BuyDecisionMaker {
     private TrendAnalizer trendAnalizer;
 
     @Autowired
+    private TradingClient tradingClient;
+
+    @Autowired
     private RSI rsi;
     private Integer periods;
 
     public boolean isRightMomentToBuy(Double ask){
-        if (isUptrend(ask) && isRSIHighEnough() && isUpTrendLongPeriod()){
+        if (priceNotNearResistanceLine(ask) && isUptrend(ask) && isUpTrendLongPeriod() && isRSIHighEnough() ){
             return true;
         } else {
             return false;
         }
+    }
+
+    public boolean priceNotNearResistanceLine(Double ask) {
+        Double highestPrice = tradingClient.getHighestPrice();
+        Double limit = highestPrice - (highestPrice * 0.01);
+        logger.info(String.format("Current price is below highest price 24 hour price: %.8f percent", (highestPrice - ask)/highestPrice * 100));
+        if (ask > limit){
+            return false;
+        }
+        return true;
     }
 
     private boolean isUpTrendLongPeriod() {

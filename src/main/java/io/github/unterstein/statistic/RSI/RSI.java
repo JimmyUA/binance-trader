@@ -73,7 +73,7 @@ public class RSI {
         double fullLoss = onlyPreviousLoss + currentLoss;
         double averageGain = fullGain / periods;
         double averageLoss = fullLoss / periods;
-        return averageGain / averageLoss;
+        return previousAverageGain() / previousAverageLoss();
     }
 
 

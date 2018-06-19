@@ -117,6 +117,13 @@ public class BinanceBotApplication {
     return "All trading balance is sold!";
   }
 
+  @RequestMapping("/buy")
+  public String buy() {
+    tradingClient.buyMarket(tradeAmount);
+    String lastAsk = tradingClient.getOrderBook().getAsks().get(0).getPrice();
+    return String.format("Bought %d coins at price %s", tradeAmount, lastAsk);
+  }
+
   @RequestMapping("/stats")
   public String stats() {
     String message = "";

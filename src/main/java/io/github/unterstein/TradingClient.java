@@ -156,4 +156,8 @@ public class TradingClient {
     return Double.valueOf(orderBook.getBids().get(0).getPrice());
   }
 
+  public Double getHighestPrice() {
+    String highestPrice = client.get24HrPriceStatistics(symbol).getHighPrice();
+    return Double.parseDouble(highestPrice);
+  }
 }

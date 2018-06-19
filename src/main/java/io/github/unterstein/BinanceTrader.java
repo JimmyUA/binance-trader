@@ -121,29 +121,18 @@ public class BinanceTrader {
                 boughtPrice = lastAsk;
 
                 int rightMomentCounter = 0;
-                goalSellPrice = boughtPrice + (boughtPrice * 0.2 / 100);
-                Double stopLossPrice = boughtPrice - (boughtPrice * 1.5 / 100);
-                while (lastBid < goalSellPrice) {
-                    logger.info(String.format("waiting price to rise enough, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
-                            goalSellPrice - lastBid, lastBid, goalSellPrice));
-                    sleepSeconds(3);
-                    updateLastBid();
-                    rightMomentCounter++;
-                    //if bid is too low - set limit order
-                    if (rightMomentCounter > 360 || lastBid < stopLossPrice) {
-                        sellToMarket(lastBid);
-                        return;
-                    }
-                }
+                goalSellPrice = boughtPrice + (boughtPrice * 0.002);
                 while (notAMomentToSell()){
-                    if (lastBid > goalSellPrice + (0.005 * goalBuyPrice)){
-                        logger.info("price is high enough");
-                        break;
-                    }
                     sleepSeconds(3);
                     updateLastBid();
                     logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
                             goalSellPrice - lastBid, lastBid, goalSellPrice));
+                }
+                while(true){
+                    if (lastBid > goalSellPrice + (0.002 * goalSellPrice)){
+                        logger.info("price is high enough");
+                        break;
+                    }
                 }
                 sellToMarket(lastBid);
             } else {
@@ -181,7 +170,7 @@ public class BinanceTrader {
 
 
     private boolean isFall() {
-        return antiBurstPercentage < -0.75;
+        return antiBurstPercentage < -0.85;
     }
 
 
