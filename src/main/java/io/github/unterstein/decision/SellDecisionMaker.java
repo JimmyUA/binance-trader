@@ -24,7 +24,7 @@ public class SellDecisionMaker {
 
 
     public boolean isRightMomentToSell(Double bid) {
-        if (isDownTrend(bid) && isRSITooLow()) {
+        if (isDownTrend(bid) || isRSITooLow()) {
             return true;
         } else {
             return false;

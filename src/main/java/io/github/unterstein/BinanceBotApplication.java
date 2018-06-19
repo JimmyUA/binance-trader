@@ -3,6 +3,7 @@ package io.github.unterstein;
 import com.binance.api.client.domain.account.AssetBalance;
 import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
 import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.statistic.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalizer;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
@@ -74,22 +78,23 @@ public class BinanceBotApplication {
   @Autowired
   private MovingAverage movingAverage;
 
+  @Autowired
+  private PriceFetchingTask priceFetchingTask;
+
   @PostConstruct
   public void init() {
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);
+    logger.info("Starting fetching prices every minute");
+    ScheduledExecutorService service = Executors
+            .newSingleThreadScheduledExecutor();
+    service.scheduleAtFixedRate(priceFetchingTask, 0, 1, TimeUnit.MINUTES);
   }
 
   // tick every 2 seconds
   @Scheduled(fixedRate = 2000)
   public void schedule() {
     trader.tick();
-  }
-
-  @Scheduled(fixedRate = 60 * 1000)
-  public void MAFetching() {
-    double lastPrice = tradingClient.lastPrice();
-    pricesAccumulator.add(lastPrice);
   }
 
 //    @Scheduled(fixedRate = 1000)
@@ -122,6 +127,13 @@ public class BinanceBotApplication {
     tradingClient.buyMarket(tradeAmount);
     String lastAsk = tradingClient.getOrderBook().getAsks().get(0).getPrice();
     return String.format("Bought %d coins at price %s", tradeAmount, lastAsk);
+  }
+
+  @RequestMapping("/sell")
+  public String sell() {
+    tradingClient.sellMarket(tradeAmount);
+    String lastBid = tradingClient.getOrderBook().getBids().get(0).getPrice();
+    return String.format("Sold %d coins at price %s", tradeAmount, lastBid);
   }
 
   @RequestMapping("/stats")

@@ -3,6 +3,7 @@ package io.github.unterstein;
 import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.decision.SellDecisionMaker;
 import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.statistic.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalizer;
@@ -82,5 +83,10 @@ public class Config {
     @Bean
     public RSI rsi(){
         return new RSI();
+    }
+
+    @Bean
+    public PriceFetchingTask priceFetchingTask(){
+        return new PriceFetchingTask();
     }
 }
