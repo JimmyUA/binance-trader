@@ -19,4 +19,8 @@ public class TrendAnalizer {
     public boolean isUptrendByBid(Double lastBid){
         return movingAverage.isUpTrendByBid(lastBid);
     }
+
+    public boolean isDownTrendLongPeriod() {
+        return !movingAverage.isUpTrendLongPeriod();
+    }
 }

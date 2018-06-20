@@ -128,9 +128,10 @@ public class BinanceTrader {
                     logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
                             goalSellPrice - lastBid, lastBid, goalSellPrice));
                 }
+                goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
+                stopLossPrice = boughtPrice - (boughtPrice * 0.015);
                 while(true){
                     logger.info("Trend changed and price did not rise enough, waiting");
-                    goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
                     sleepSeconds(3);
                     updateLastBid();
                     logger.info(String.format("Waiting while reach goal price, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
@@ -138,8 +139,12 @@ public class BinanceTrader {
                     if (lastBid > goalSellPrice){
                         logger.info("price is high enough");
                         break;
+                    } else if(lastBid < stopLossPrice && sellDecisionMaker.isTooDangerous()){
+                        logger.info(String.format("Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail", lastBid, stopLossPrice));
+                        sellToMarket(lastBid);
                     }
                 }
+
                 sellToMarket(lastBid);
             } else {
 
@@ -148,6 +153,7 @@ public class BinanceTrader {
 
         } catch (Exception e) {
             logger.error("Unable to perform ticker", e);
+            sellToMarket(lastBid);
         } finally {
             trackingLastPrice = lastPrice;
             lastTrakingAsk = lastAsk;

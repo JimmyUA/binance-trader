@@ -44,4 +44,12 @@ public class SellDecisionMaker {
     public void setPeriods(Integer periods) {
         this.periods = periods;
     }
+
+    public boolean isTooDangerous() {
+        if (isRSITooLow() && trendAnalizer.isDownTrendLongPeriod()){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
