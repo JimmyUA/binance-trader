@@ -146,14 +146,18 @@ public class TradingClient {
     return getOrderBook();
   }
 
-  public Double getLastAsk() {
+  public Double getLastAsk(Integer tradingAmount) {
     OrderBook orderBook = getLatestOrderBook();
-    return Double.valueOf(orderBook.getAsks().get(0).getPrice());
+    return Double.valueOf(orderBook.getAsks().stream()
+            .filter(ask -> Double.parseDouble(ask.getQty()) > tradingAmount)
+            .findFirst().get().getPrice());
   }
 
-  public Double getLastBid() {
+  public Double getLastBid(Integer tradingAmount) {
     OrderBook orderBook = getLatestOrderBook();
-    return Double.valueOf(orderBook.getBids().get(0).getPrice());
+    return Double.valueOf(orderBook.getBids().stream()
+            .filter(bid -> Double.parseDouble(bid.getQty()) > tradingAmount)
+            .findFirst().get().getPrice());
   }
 
   public Double getHighestPrice() {

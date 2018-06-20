@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
@@ -119,12 +120,14 @@ public class BinanceTrader {
                 executePurchase();
                 sellingProcess();
 
-            } else if (isGoingToBeTurnUpByRSI()) {
+            }
+            else if (minutesFromStart > 100 && isGoingToBeTurnUpByRSI()) {
 
                 executePurchase();
                 sellingProcess();
 
-            } else {
+            }
+            else {
 
                 logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
             }
@@ -209,11 +212,11 @@ public class BinanceTrader {
     }
 
     private double getLastAsk() {
-        return client.getLastAsk();
+        return client.getLastAsk(tradeAmount);
     }
 
     private double getLastBid() {
-        return client.getLastBid();
+        return client.getLastBid(tradeAmount);
     }
 
 
