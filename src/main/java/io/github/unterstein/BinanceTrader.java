@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
+import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
 
 @Component
@@ -26,9 +27,9 @@ public class BinanceTrader {
     private TradingClient client;
     private TrendAnalizer trendAnalizer;
 
-    private  double tradeDifference;
-    private  double tradeProfit;
-    private  int tradeAmount;
+    private double tradeDifference;
+    private double tradeProfit;
+    private int tradeAmount;
 
     private Double currentBoughtPrice;
     private Long orderId;
@@ -58,6 +59,7 @@ public class BinanceTrader {
 
     @Autowired
     private SellDecisionMaker sellDecisionMaker;
+    private boolean wasOverGoalPrice = false;
 
     @Autowired
     BinanceTrader(TradingClient client, TrendAnalizer trendAnalizer) {
@@ -93,7 +95,7 @@ public class BinanceTrader {
 
 
         double lastPrice = 0;
-        if (lastKnownTradingBalance > tradeAmount * 3){
+        if (lastKnownTradingBalance > tradeAmount * 3) {
             logger.info("Sold enough already1 Lets sell first");
             return;
         }
@@ -113,39 +115,15 @@ public class BinanceTrader {
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
             if (isFall() && isRightMomentToBuy()) {//Relocate to Conditions enum
-                logger.info("Fall burst detected");
 
-                client.buyMarket(tradeAmount);// TODO lastAsk amount
-                lastKnownTradingBalance = tradeAmount;
-                logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, lastAsk));
-                boughtPrice = lastAsk;
+                executePurchase();
+                sellingProcess();
 
-                int rightMomentCounter = 0;
-                goalSellPrice = boughtPrice + (boughtPrice * 0.002);
-                while (notAMomentToSell()){
-                    sleepSeconds(3);
-                    updateLastBid();
-                    logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
-                            goalSellPrice - lastBid, lastBid, goalSellPrice));
-                }
-                goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
-                stopLossPrice = boughtPrice - (boughtPrice * 0.015);
-                while(true){
-                    logger.info("Trend changed and price did not rise enough, waiting");
-                    sleepSeconds(3);
-                    updateLastBid();
-                    logger.info(String.format("Waiting while reach goal price, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
-                            goalSellPrice - lastBid, lastBid, goalSellPrice));
-                    if (lastBid > goalSellPrice){
-                        logger.info("price is high enough");
-                        break;
-                    } else if(lastBid < stopLossPrice && sellDecisionMaker.isTooDangerous()){
-                        logger.info(String.format("Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail", lastBid, stopLossPrice));
-                        sellToMarket(lastBid);
-                    }
-                }
+            } else if (isGoingToBeTurnUpByRSI()) {
 
-                sellToMarket(lastBid);
+                executePurchase();
+                sellingProcess();
+
             } else {
 
                 logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
@@ -158,6 +136,64 @@ public class BinanceTrader {
             trackingLastPrice = lastPrice;
             lastTrakingAsk = lastAsk;
         }
+    }
+
+    private boolean isGoingToBeTurnUpByRSI() {
+        return buyDecisionMaker.isGoingToBeTurnUpByRSI();
+    }
+
+    private void sellingProcess() {
+        int rightMomentCounter = 0;
+        goalSellPrice = boughtPrice + (boughtPrice * 0.002);
+        while (notAMomentToSell()) {
+            sleepSeconds(3);
+            updateLastBid();
+            if (lastBid > goalSellPrice){
+                wasOverGoalPrice = true;
+            }
+            logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
+                    goalSellPrice - lastBid, lastBid, goalSellPrice));
+            if (stopTicker){
+                return;
+            }
+        }
+        if (wasOverGoalPrice){
+            logger.info("Trend changed and price was over goal price!");
+            sellToMarket(lastBid);
+            return;
+        }
+        goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
+        stopLossPrice = boughtPrice - (boughtPrice * 0.015);
+        while (true) {
+            logger.info("Trend changed and price did not rise enough, waiting");
+            sleepSeconds(3);
+            updateLastBid();
+            logger.info(String.format("Waiting while reach goal price, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
+                    goalSellPrice - lastBid, lastBid, goalSellPrice));
+            if (lastBid > goalSellPrice) {
+                logger.info("price is high enough");
+                sellToMarket(lastBid);
+                sleepSeconds(180);
+                break;
+            } else if (lastBid < stopLossPrice && sellDecisionMaker.isTooDangerous()) {
+                logger.info(String.format("Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail", lastBid, stopLossPrice));
+                sellToMarket(lastBid);
+            }
+            if (stopTicker){
+                return;
+            }
+        }
+
+    }
+
+
+    private void executePurchase() {
+        logger.info("Fall burst detected");
+
+        client.buyMarket(tradeAmount);// TODO lastAsk amount
+        lastKnownTradingBalance = tradeAmount;
+        logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, lastAsk));
+        boughtPrice = lastAsk;
     }
 
     private boolean isRightMomentToBuy() {

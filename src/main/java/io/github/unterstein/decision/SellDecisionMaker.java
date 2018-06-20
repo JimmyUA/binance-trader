@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static java.lang.Thread.sleep;
+import static util.Slepper.sleepSeconds;
+
 @Component
 public class SellDecisionMaker {
 
@@ -32,9 +35,13 @@ public class SellDecisionMaker {
     }
 
     private boolean isRSITooLow() {
-        Double rsi = this.rsi.getRSI(14);
+        Double rsi = getRSI();
         logger.info(String.format("RSI is %.8f", rsi));
         return rsi < 50;
+    }
+
+    private Double getRSI() {
+        return this.rsi.getRSI(21);
     }
 
     private boolean isDownTrend(Double bid) {
@@ -52,4 +59,6 @@ public class SellDecisionMaker {
             return false;
         }
     }
+
+
 }

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static util.Slepper.sleepSeconds;
+
 
 @Component
 public class BuyDecisionMaker {
@@ -49,9 +51,13 @@ public class BuyDecisionMaker {
     }
 
     private boolean isRSIHighEnough() {
-        Double rsi = this.rsi.getRSI(21);
+        Double rsi = getRSI();
         logger.info(String.format("RSI is %.8f", rsi));
         return rsi > 50;
+    }
+
+    private Double getRSI() {
+        return this.rsi.getRSI(21);
     }
 
     private boolean isUptrend(Double ask) {
@@ -61,5 +67,19 @@ public class BuyDecisionMaker {
 
     public void setPeriods(Integer periods) {
         this.periods = periods;
+    }
+
+    public boolean isGoingToBeTurnUpByRSI(){
+        if (getRSI() > 22.0){
+            return false;
+        } else {
+            for (int i = 0; i < 5; i++) {
+                sleepSeconds(60);
+                if (getRSI() > 40.0){
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

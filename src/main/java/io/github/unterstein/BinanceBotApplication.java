@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
+import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 
 @EnableScheduling
 @SpringBootApplication
@@ -119,6 +120,7 @@ public class BinanceBotApplication {
     String tradingBalance = tradingClient.getTradingBalance().getFree();
     Double tradingBalanceDoubleValue = Double.parseDouble(tradingBalance);
     tradingClient.sellMarket(tradingBalanceDoubleValue.intValue());
+    stopTicker = true;
     return "All trading balance is sold!";
   }
 
@@ -133,6 +135,7 @@ public class BinanceBotApplication {
   public String sell() {
     tradingClient.sellMarket(tradeAmount);
     String lastBid = tradingClient.getOrderBook().getBids().get(0).getPrice();
+    stopTicker = true;
     return String.format("Sold %d coins at price %s", tradeAmount, lastBid);
   }
 
