@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
@@ -33,7 +32,6 @@ public class BinanceTrader {
     private int tradeAmount;
 
     private Double currentBoughtPrice;
-    private Long orderId;
     private int panicBuyCounter;
     private int panicSellCounter;
     private double trackingLastPrice;
@@ -188,10 +186,10 @@ public class BinanceTrader {
     private void executePurchase() {
         logger.info("Fall burst detected");
 
-        client.buyMarket(tradeAmount);// TODO lastAsk amount
+        NewOrderResponse orderResponse = client.buyMarket(tradeAmount);// TODO lastAsk amount
+        boughtPrice = getBoughtPrice(orderResponse);
         lastKnownTradingBalance = tradeAmount;
-        logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, lastAsk));
-        boughtPrice = lastAsk;
+        logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
     }
 
     private boolean isRightMomentToBuy() {
@@ -207,11 +205,11 @@ public class BinanceTrader {
     }
 
     private double getLastAsk() {
-        return client.getLastAsk(tradeAmount);
+        return client.getLastAsksAverage(tradeAmount, 3);
     }
 
     private double getLastBid() {
-        return client.getLastBid(tradeAmount);
+        return client.getLastBidsAverage(tradeAmount, 3);
     }
 
 
@@ -243,10 +241,6 @@ public class BinanceTrader {
         return lastAsk >= profitablePrice;
     }
 
-    private boolean noOrders() {
-        return orderId == null;
-    }
-
     private void panicSellForCondition(double lastPrice, double lastKnownTradingBalance, boolean condition) {
         if (condition) {
             logger.info("panicSellForCondition");
@@ -258,7 +252,6 @@ public class BinanceTrader {
     private void clear() {
         panicBuyCounter = 0;
         panicSellCounter = 0;
-        orderId = null;
         currentBoughtPrice = null;
     }
 
@@ -267,8 +260,8 @@ public class BinanceTrader {
     }
 
     public double getBoughtPrice(NewOrderResponse order) {
-        orderId = order.getOrderId();
-        String price = client.getOrder(orderId).getStopPrice();
+        Long orderId = order.getOrderId();
+        String price = client.getOrder(orderId).getPrice();
         return Double.parseDouble(price);
     }
 

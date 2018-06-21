@@ -146,22 +146,43 @@ public class TradingClient {
     return getOrderBook();
   }
 
-  public Double getLastAsk(Integer tradingAmount) {
+  public Double getLastAsk(Integer coinsAmount) {
     OrderBook orderBook = getLatestOrderBook();
     return Double.valueOf(orderBook.getAsks().stream()
-            .filter(ask -> Double.parseDouble(ask.getQty()) > tradingAmount)
+            .filter(ask -> Double.parseDouble(ask.getQty()) > coinsAmount)
             .findFirst().get().getPrice());
   }
 
-  public Double getLastBid(Integer tradingAmount) {
+  public Double getLastBid(Integer coinsAmount) {
     OrderBook orderBook = getLatestOrderBook();
     return Double.valueOf(orderBook.getBids().stream()
-            .filter(bid -> Double.parseDouble(bid.getQty()) > tradingAmount)
+            .filter(bid -> Double.parseDouble(bid.getQty()) > coinsAmount)
             .findFirst().get().getPrice());
+  }
+
+  public Double getLastBidsAverage(Integer coinsAmount, Integer bidsAmount){
+    OrderBook orderBook = getLatestOrderBook();
+    return orderBook.getBids().stream()
+            .filter(bid -> Double.parseDouble(bid.getQty()) > coinsAmount)
+            .limit(bidsAmount)
+            .mapToDouble(bid -> Double.parseDouble(bid.getPrice()))
+            .average().getAsDouble();
+  }
+
+  public Double getLastAsksAverage(Integer coinsAmount, Integer asksAmount){
+    OrderBook orderBook = getLatestOrderBook();
+    return orderBook.getAsks().stream()
+            .filter(ask -> Double.parseDouble(ask.getQty()) > coinsAmount)
+            .limit(asksAmount)
+            .mapToDouble(ask -> Double.parseDouble(ask.getPrice()))
+            .average().getAsDouble();
   }
 
   public Double getHighestPrice() {
     String highestPrice = client.get24HrPriceStatistics(symbol).getHighPrice();
     return Double.parseDouble(highestPrice);
   }
+
+
+
 }
