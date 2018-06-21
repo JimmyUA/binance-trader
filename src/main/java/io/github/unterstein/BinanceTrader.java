@@ -121,7 +121,7 @@ public class BinanceTrader {
                 sellingProcess();
 
             }
-            else if (minutesFromStart > 100 && isGoingToBeTurnUpByRSI()) {
+            else if (minutesFromStart > 22 && isGoingToBeTurnUpByRSI()) {
 
                 executePurchase();
                 sellingProcess();

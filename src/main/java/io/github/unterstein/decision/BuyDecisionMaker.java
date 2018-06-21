@@ -40,7 +40,7 @@ public class BuyDecisionMaker {
         Double highestPrice = tradingClient.getHighestPrice();
         Double limit = highestPrice - (highestPrice * 0.01);
         logger.info(String.format("Current price is below highest price 24 hour price: %.8f percent", (highestPrice - ask)/highestPrice * 100));
-        if (ask > limit){
+        if (ask > limit && ask < highestPrice){
             return false;
         }
         return true;
@@ -73,9 +73,11 @@ public class BuyDecisionMaker {
         if (getRSI() > 22.0){
             return false;
         } else {
+            logger.info("RSI fall below 22% here should be turn around, waiting");
             for (int i = 0; i < 5; i++) {
                 sleepSeconds(60);
                 if (getRSI() > 40.0){
+                    logger.info("RSI increased enough looks like a turn to up-trend");
                     return true;
                 }
             }
