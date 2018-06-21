@@ -81,19 +81,4 @@ public class BuyDecisionMaker {
         this.periods = periods;
     }
 
-    public boolean isGoingToBeTurnUpByRSI(){
-        if (getRSI() > 22.0){
-            return false;
-        } else {
-            logger.info("RSI fall below 22% here should be turn around, waiting");
-            for (int i = 0; i < 5; i++) {
-                sleepSeconds(60);
-                if (getRSI() > 40.0){
-                    logger.info("RSI increased enough looks like a turn to up-trend");
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }

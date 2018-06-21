@@ -126,12 +126,6 @@ public class BinanceTrader {
                 sellingProcess();
 
             }
-            else if (minutesFromStart > 22 && isGoingToBeTurnUpByRSI()) {
-
-                executePurchase();
-                sellingProcess();
-
-            }
             else {
 
                 logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
@@ -144,10 +138,6 @@ public class BinanceTrader {
             trackingLastPrice = lastPrice;
             lastTrakingAsk = lastAsk;
         }
-    }
-
-    private boolean isGoingToBeTurnUpByRSI() {
-        return buyDecisionMaker.isGoingToBeTurnUpByRSI();
     }
 
     private void sellingProcess() {
