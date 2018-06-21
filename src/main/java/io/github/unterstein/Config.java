@@ -3,6 +3,7 @@ package io.github.unterstein;
 import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.decision.SellDecisionMaker;
 import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
@@ -83,6 +84,11 @@ public class Config {
     @Bean
     public RSI rsi(){
         return new RSI();
+    }
+
+    @Bean
+    public MACD macd(){
+        return new MACD();
     }
 
     @Bean

@@ -27,6 +27,7 @@ public class BuyDecisionMaker {
     @Autowired
     private RSI rsi;
     private Integer periods;
+    private Double highestPrice;
 
     public boolean isRightMomentToBuy(Double ask){
         if (priceNotNearResistanceLine(ask) && isUptrend(ask) && isUpTrendLongPeriod() && isRSIHighEnough() ){
@@ -37,13 +38,24 @@ public class BuyDecisionMaker {
     }
 
     public boolean priceNotNearResistanceLine(Double ask) {
-        Double highestPrice = tradingClient.getHighestPrice();
+        if (highestPrice == null) {
+            highestPrice = tradingClient.getHighestPrice();
+        }
         Double limit = highestPrice - (highestPrice * 0.01);
         logger.info(String.format("Current price is below highest price 24 hour price: %.8f percent", (highestPrice - ask)/highestPrice * 100));
-        if (ask > limit && ask < highestPrice){
+        if (ask > limit && isHighestPriceNotCrossed(ask)){
             return false;
         }
         return true;
+    }
+
+    private boolean isHighestPriceNotCrossed(Double ask) {
+        if (ask < highestPrice + (highestPrice * 0.005)) {
+            return true;
+        } else {
+            highestPrice += highestPrice * 0.015;
+            return false;
+        }
     }
 
     private boolean isUpTrendLongPeriod() {

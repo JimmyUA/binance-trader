@@ -15,7 +15,7 @@ public class PricesAccumulator {
         samples = new LinkedList<>();
         samplesCapacity = 100;
         for (int i = 0; i < samplesCapacity; i++) {
-            samples.add(1.0);
+            samples.add(10.0);
         }
     }
 
