@@ -61,6 +61,7 @@ public class BinanceTrader {
     @Autowired
     private SellDecisionMaker sellDecisionMaker;
     private boolean wasOverGoalPrice = false;
+    private double spreadDifference;
 
     @Autowired
     BinanceTrader(TradingClient client, TrendAnalizer trendAnalizer) {
@@ -90,6 +91,10 @@ public class BinanceTrader {
 
     public void setTradeAmount(int tradeAmount) {
         this.tradeAmount = tradeAmount;
+    }
+
+    public void setSpreadDifference(double spredDifference) {
+        this.spreadDifference = spredDifference;
     }
 
     void tick() {
@@ -221,7 +226,7 @@ public class BinanceTrader {
 
 
     private boolean isFall() {
-        return antiBurstPercentage < -0.85;
+        return antiBurstPercentage < spreadDifference;
     }
 
 

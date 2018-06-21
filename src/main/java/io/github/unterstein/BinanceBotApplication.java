@@ -59,6 +59,9 @@ public class BinanceBotApplication {
   @Value("${RSI_PERIODS}")
   private String periods;
 
+  @Value("${SPREAD_DIFFERENCE}")
+  private double spreadDifference;
+
   static LastPriceVSOrderBook lastPriceVSOrderBook;
 
   @Autowired

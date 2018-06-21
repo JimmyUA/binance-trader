@@ -38,6 +38,9 @@ public class Config {
     @Value("${RSI_PERIODS}")
     private String periods;
 
+    @Value("${SPREAD_DIFFERENCE}")
+    private double spreadDifference;
+
     @Bean
     public TradingClient tradingClient(){
         return new TradingClient(baseCurrency, tradeCurrency, apiKey, apiSecret);
@@ -54,6 +57,7 @@ public class Config {
         binanceTrader.setTradeDifference(tradeDifference);
         binanceTrader.setTradeAmount(tradeAmount);
         binanceTrader.setTradeProfit(tradeProfit);
+        binanceTrader.setSpreadDifference(spreadDifference);
         return binanceTrader;
     }
 
