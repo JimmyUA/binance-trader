@@ -78,6 +78,7 @@ public class BinanceBotApplication {
 
   @PostConstruct
   public void init() {
+    marketAnalyzer.setRsiPeriod(rsiPeriods);
     ManagementConstants.rsiPeriods = rsiPeriods;
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);

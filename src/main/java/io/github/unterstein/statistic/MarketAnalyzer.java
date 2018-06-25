@@ -1,7 +1,11 @@
 package io.github.unterstein.statistic;
 
+import io.github.unterstein.BinanceTrader;
+import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.RSI.RSI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,16 +14,30 @@ import static io.github.unterstein.remoteManagment.ManagementConstants.rsiPeriod
 @Component
 public class MarketAnalyzer {
 
+
+    private static Logger logger = LoggerFactory.getLogger(MarketAnalyzer.class);
+
     private static final String newLineForHTML = "<br>";
 
     @Autowired
     private RSI rsi;
 
     @Autowired
+    private TradingClient tradingClient;
+
+    @Autowired
     private TrendAnalyzer trendAnalyzer;
 
     @Autowired
     private MACD macd;
+
+    private int rsiPeriod;
+    private Double highestPrice;
+
+
+    public void setRsiPeriod(int rsiPeriod) {
+        this.rsiPeriod = rsiPeriod;
+    }
 
     public String getMarketConditions(){
         String message = "";
@@ -32,5 +50,45 @@ public class MarketAnalyzer {
         return message;
     }
 
+
+    public boolean isUpTrend() {
+        return trendAnalyzer.isUpTrend();
+    }
+
+    public boolean isUptrendByAsk(Double ask) {
+        return trendAnalyzer.isUptrendByAsk(ask);
+    }
+
+    public boolean isRSIHighEnough() {
+        Double rsi = getRSI();
+        logger.info(String.format("RSI is %.8f", rsi));
+        return rsi > 50;
+    }
+
+    private Double getRSI() {
+        return rsi.getRSI(rsiPeriod);
+    }
+
+
+    public boolean priceNotNearResistanceLine(Double ask) {
+        if (highestPrice == null) {
+            highestPrice = tradingClient.getHighestPrice();
+        }
+        Double limit = highestPrice - (highestPrice * 0.01);
+        logger.info(String.format("Current price is below highest price 24 hour price: %.8f percent", (highestPrice - ask)/highestPrice * 100));
+        if (ask > limit && isHighestPriceNotCrossed(ask)){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isHighestPriceNotCrossed(Double ask) {
+        if (ask < highestPrice + (highestPrice * 0.005)) {
+            return true;
+        } else {
+            highestPrice += highestPrice * 0.015;
+            return false;
+        }
+    }
 
 }
