@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
+import static io.github.unterstein.remoteManagment.ManagementConstants.sleepSomeTime;
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
 
@@ -101,6 +102,7 @@ public class BinanceTrader {
         double lastPrice = 0;
 
         try {
+            checkWaitSomeTime();
             client.getLatestOrderBook();
             lastPrice = client.lastPrice();
             AssetBalance tradingBalance = client.getTradingBalance();
@@ -139,6 +141,13 @@ public class BinanceTrader {
             trackingLastPrice = lastPrice;
             lastTrakingAsk = lastAsk;
         }
+    }
+
+    private void checkWaitSomeTime() {
+        if (sleepSomeTime){
+            sleepSeconds(180);
+        }
+        sleepSomeTime = false;
     }
 
     private void sellingProcess() {
