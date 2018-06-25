@@ -99,14 +99,17 @@ public class BinanceTrader {
 
 
         double lastPrice = 0;
-        if (lastKnownTradingBalance > tradeAmount * 3) {
-            logger.info("Sold enough already1 Lets sell first");
-            return;
-        }
+
         try {
             client.getLatestOrderBook();
             lastPrice = client.lastPrice();
             AssetBalance tradingBalance = client.getTradingBalance();
+            String freeTradingBalance = tradingBalance.getFree();
+            double freeTradingBalanceValue = Double.parseDouble(freeTradingBalance);
+            if (freeTradingBalanceValue > tradeAmount){
+                logger.info("Looks like something was bought manually, lets wait");
+                sleepSeconds(3600);
+            }
             updateLastBid();
             lastAsk = getLastAsk();
             profitablePrice = lastBid + (lastBid * tradeProfit / 100);
@@ -186,8 +189,8 @@ public class BinanceTrader {
     private void executePurchase() {
         logger.info("Fall burst detected");
 
-        NewOrderResponse orderResponse = client.buyMarket(tradeAmount);// TODO lastAsk amount
-        boughtPrice = getBoughtPrice(orderResponse);
+        client.buyMarket(tradeAmount);// TODO lastAsk amount
+        boughtPrice = getLastAsk();
         lastKnownTradingBalance = tradeAmount;
         logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
     }
