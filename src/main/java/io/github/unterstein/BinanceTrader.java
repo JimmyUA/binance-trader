@@ -7,7 +7,7 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.market.OrderBook;
 import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.decision.SellDecisionMaker;
-import io.github.unterstein.statistic.TrendAnalizer;
+import io.github.unterstein.statistic.TrendAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class BinanceTrader {
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
     private TradingClient client;
-    private TrendAnalizer trendAnalizer;
+    private TrendAnalyzer trendAnalyzer;
 
     private double tradeDifference;
     private double tradeProfit;
@@ -62,10 +62,10 @@ public class BinanceTrader {
     private double spreadDifference;
 
     @Autowired
-    BinanceTrader(TradingClient client, TrendAnalizer trendAnalizer) {
+    BinanceTrader(TradingClient client, TrendAnalyzer trendAnalyzer) {
         trackingLastPrice = client.lastPrice();
         this.client = client;
-        this.trendAnalizer = trendAnalizer;
+        this.trendAnalyzer = trendAnalyzer;
         this.tradeCurrency = client.getTradeCurrency();
         this.baseCurrency = client.getBaseCurrency();
         clear();

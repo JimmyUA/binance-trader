@@ -3,7 +3,7 @@ package io.github.unterstein.statistic;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class TrendAnalizer {
+public class TrendAnalyzer {
 
     @Autowired
     private MovingAverage movingAverage;
@@ -22,5 +22,13 @@ public class TrendAnalizer {
 
     public boolean isDownTrendLongPeriod() {
         return !movingAverage.isUpTrendLongPeriod();
+    }
+
+    public boolean isUpTrendShortPeriod() {
+        return movingAverage.isUpTrendShortPeriod();
+    }
+
+    public boolean isUpTrendLongPeriod() {
+        return movingAverage.isUpTrendLongPeriod();
     }
 }

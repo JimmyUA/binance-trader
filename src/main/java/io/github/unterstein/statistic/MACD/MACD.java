@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import javax.management.openmbean.TabularData;
 import java.util.LinkedList;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
+
 @Component
 public class MACD {
 
@@ -20,6 +22,8 @@ public class MACD {
     private LinkedList<Double> shortEMAs;
     private LinkedList<Double> longEMAs;
     private LinkedList<Double> MACDs;
+    private LinkedList<Double> signals;
+    private LinkedList<Double> histograms;
 
     @Autowired
     private PricesAccumulator pricesAccumulator;
@@ -34,8 +38,11 @@ public class MACD {
         shortEMAs = new LinkedList<>();
         longEMAs = new LinkedList<>();
         MACDs = new LinkedList<>();
+        signals = new LinkedList<>();
+        histograms = new LinkedList<>();
     }
 
+    //Used only for tests
     protected void setPricesAccumulator(PricesAccumulator pricesAccumulator) {
         this.pricesAccumulator = pricesAccumulator;
     }
@@ -79,7 +86,7 @@ public class MACD {
 
     public double MACD() {
         double MACD = EMA(shortPeriod) - EMA(longPeriod);
-        MACDs.add(MACD);
+        MACDs.addLast(MACD);
         if (MACDs.size() > 100){
             MACDs.pollFirst();
         }
@@ -87,17 +94,46 @@ public class MACD {
     }
 
     public Double signal(){
-        return MACDs.stream()
+        double signal = MACDs.stream()
                 .skip(MACDs.size() - signalPeriod)
                 .mapToDouble(macd -> macd)
                 .average().getAsDouble();
+        signals.addLast(signal);
+        if (signals.size() > 100) {
+            signals.pollFirst();
+        }
+
+        return signal;
     }
 
     public Double histogramm(){
-        return getLastMACD() - signal();
+        return getLastMACD() - getLastSignal();
+    }
+
+    private Double getLastSignal() {
+        return signals.getLast();
     }
 
     private Double getLastMACD() {
         return MACDs.getLast();
+    }
+
+
+    public void calculateCurrentHistogram(){
+        MACD();
+        if (minutesFromStart > longPeriod) {
+            signal();
+            histograms.addLast(histogramm());
+            if (histograms.size() > 100) {
+                histograms.pollFirst();
+            }
+        }
+    }
+
+    public Double getLastHistogram() {
+        if (minutesFromStart > longPeriod && histograms.size() > 0) {
+            return histograms.getLast();
+        }
+        return 0.0;
     }
 }

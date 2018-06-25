@@ -6,7 +6,7 @@ import com.binance.api.client.domain.account.NewOrderResponse;
 import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.market.OrderBook;
 import com.binance.api.client.domain.market.OrderBookEntry;
-import io.github.unterstein.statistic.TrendAnalizer;
+import io.github.unterstein.statistic.TrendAnalyzer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ public class BinanceTraderTest {
     @MockBean
     private TradingClient tradingClient;
     @MockBean
-    private TrendAnalizer trendAnalizer;
+    private TrendAnalyzer trendAnalyzer;
     private BinanceTrader binanceTrader;
     private int tradeAmount;
     private double tradeDifference;
@@ -50,7 +50,7 @@ public class BinanceTraderTest {
         tradeAmount = 10;
         tradeDifference = 0.00000001;
         tradeProfit = 1.3;
-        binanceTrader = new BinanceTrader(tradingClient, trendAnalizer);
+        binanceTrader = new BinanceTrader(tradingClient, trendAnalyzer);
 
         binanceTrader.setClient(tradingClient);
 
@@ -100,7 +100,7 @@ public class BinanceTraderTest {
     public void DATASellImitation09_06_19_20() throws Exception {
         tradeAmount = 120;
         tradeProfit = 1.0;
-        binanceTrader = new BinanceTrader(tradingClient, trendAnalizer);
+        binanceTrader = new BinanceTrader(tradingClient, trendAnalyzer);
         binanceTrader.setClient(tradingClient);
 
 

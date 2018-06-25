@@ -4,13 +4,11 @@ package io.github.unterstein.decision;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.RSI.RSI;
-import io.github.unterstein.statistic.TrendAnalizer;
+import io.github.unterstein.statistic.TrendAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static util.Slepper.sleepSeconds;
 
 
 @Component
@@ -19,7 +17,7 @@ public class BuyDecisionMaker {
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
     @Autowired
-    private TrendAnalizer trendAnalizer;
+    private TrendAnalyzer trendAnalyzer;
 
     @Autowired
     private TradingClient tradingClient;
@@ -59,7 +57,7 @@ public class BuyDecisionMaker {
     }
 
     private boolean isUpTrendLongPeriod() {
-        return trendAnalizer.isUpTrend();
+        return trendAnalyzer.isUpTrend();
     }
 
     private boolean isRSIHighEnough() {
@@ -73,7 +71,7 @@ public class BuyDecisionMaker {
     }
 
     private boolean isUptrend(Double ask) {
-        return trendAnalizer.isUptrendByAsk(ask);
+        return trendAnalyzer.isUptrendByAsk(ask);
     }
 
 

@@ -3,14 +3,13 @@ package io.github.unterstein.decision;
 
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.statistic.RSI.RSI;
-import io.github.unterstein.statistic.TrendAnalizer;
+import io.github.unterstein.statistic.TrendAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static java.lang.Thread.sleep;
-import static util.Slepper.sleepSeconds;
 
 @Component
 public class SellDecisionMaker {
@@ -19,7 +18,7 @@ public class SellDecisionMaker {
 
 
     @Autowired
-    private TrendAnalizer trendAnalizer;
+    private TrendAnalyzer trendAnalyzer;
 
     @Autowired
     private RSI rsi;
@@ -45,7 +44,7 @@ public class SellDecisionMaker {
     }
 
     private boolean isDownTrend(Double bid) {
-        return !trendAnalizer.isUptrendByBid(bid);
+        return !trendAnalyzer.isUptrendByBid(bid);
     }
 
     public void setPeriods(Integer periods) {
@@ -53,7 +52,7 @@ public class SellDecisionMaker {
     }
 
     public boolean isTooDangerous() {
-        if (isRSITooLow() && trendAnalizer.isDownTrendLongPeriod()){
+        if (isRSITooLow() && trendAnalyzer.isDownTrendLongPeriod()){
             return true;
         } else {
             return false;

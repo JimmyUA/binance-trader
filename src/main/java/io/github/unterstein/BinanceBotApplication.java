@@ -2,11 +2,9 @@ package io.github.unterstein;
 
 import com.binance.api.client.domain.account.AssetBalance;
 import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
-import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.remoteManagment.ManagementConstants;
+import io.github.unterstein.statistic.MarketAnalyzer;
 import io.github.unterstein.statistic.PriceFetchingTask;
-import io.github.unterstein.statistic.PricesAccumulator;
-import io.github.unterstein.statistic.RSI.RSI;
-import io.github.unterstein.statistic.TrendAnalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +55,13 @@ public class BinanceBotApplication {
   private String apiSecret;
 
   @Value("${RSI_PERIODS}")
-  private String periods;
+  private int rsiPeriods;
 
   @Value("${SPREAD_DIFFERENCE}")
   private double spreadDifference;
 
   static LastPriceVSOrderBook lastPriceVSOrderBook;
 
-  @Autowired
-  private TrendAnalizer trendAnalizer;
 
   @Autowired
   private TradingClient tradingClient;
@@ -74,19 +70,15 @@ public class BinanceBotApplication {
   private BinanceTrader trader;
 
   @Autowired
-  private PricesAccumulator pricesAccumulator;
-
-  @Autowired
-  private RSI rsi;
-
-  @Autowired
-  private MovingAverage movingAverage;
-
-  @Autowired
   private PriceFetchingTask priceFetchingTask;
+
+  @Autowired
+  private MarketAnalyzer marketAnalyzer;
+
 
   @PostConstruct
   public void init() {
+    ManagementConstants.rsiPeriods = rsiPeriods;
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);
     logger.info("Starting fetching prices every minute");
@@ -144,13 +136,7 @@ public class BinanceBotApplication {
 
   @RequestMapping("/stats")
   public String stats() {
-    String message = "";
-    int periods = Integer.parseInt(this.periods);
-    Double rsiValue = rsi.getRSI(periods);
-    message += String.format("RSI %d = %.8f<br>", periods, rsiValue);
-    message += "Is up-trend short period: " + movingAverage.isUpTrendShortPeriod() + "<br>";
-    message += "Is up-trend long period: " + movingAverage.isUpTrendLongPeriod() + "<br>";
-    return message;
+    return marketAnalyzer.getMarketConditions();
   }
 
   public static void main(String[] args) {
