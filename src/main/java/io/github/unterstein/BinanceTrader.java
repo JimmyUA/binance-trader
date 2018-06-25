@@ -142,9 +142,8 @@ public class BinanceTrader {
     }
 
     private void sellingProcess() {
-        int rightMomentCounter = 0;
         goalSellPrice = boughtPrice + (boughtPrice * 0.002);
-        while (notAMomentToSell()) {
+        while (isUpTrending()) {
             sleepSeconds(3);
             updateLastBid();
             if (lastBid > goalSellPrice){
@@ -156,7 +155,7 @@ public class BinanceTrader {
                 return;
             }
         }
-        if (wasOverGoalPrice){
+        if (wasOverGoalPrice && lastBid > minimumProfitablePrice()){
             logger.info("Trend changed and price was over goal price!");
             sellToMarket(lastBid);
             return;
@@ -185,6 +184,10 @@ public class BinanceTrader {
 
     }
 
+    private double minimumProfitablePrice() {
+        return boughtPrice + (boughtPrice * 0.0015);
+    }
+
 
     private void executePurchase() {
         logger.info("Fall burst detected");
@@ -203,8 +206,8 @@ public class BinanceTrader {
         lastBid = getLastBid();
     }
 
-    private boolean notAMomentToSell() {
-        return !sellDecisionMaker.isRightMomentToSell(lastBid);
+    private boolean isUpTrending() {
+        return !sellDecisionMaker.isTrendChanged(lastBid);
     }
 
     private double getLastAsk() {

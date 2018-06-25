@@ -55,6 +55,6 @@ public class MovingAverage {
     }
 
     public boolean isUpTrendByBid(Double lastBid) {
-        return isUpTrendShortPeriod() && lastBid >= MA(5);
+        return isUpTrendShortPeriod();
     }
 }

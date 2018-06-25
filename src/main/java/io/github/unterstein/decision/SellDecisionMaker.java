@@ -26,7 +26,7 @@ public class SellDecisionMaker {
     private Integer periods;
 
 
-    public boolean isRightMomentToSell(Double bid) {
+    public boolean isTrendChanged(Double bid) {
         if (isDownTrend(bid) || isRSITooLow()) {
             return true;
         } else {
