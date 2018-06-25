@@ -86,7 +86,6 @@ public class Config {
     @Bean
     public BuyDecisionMaker buyDecisionMaker(){
         BuyDecisionMaker buyDecisionMaker = new BuyDecisionMaker();
-        buyDecisionMaker.setPeriods(Integer.parseInt(periods));
         return buyDecisionMaker;
     }
 
