@@ -25,7 +25,7 @@ public class MACDTest {
 
     @Before
     public void setUp() throws Exception {
-        macd = new MACD(12, 26, 8);
+        macd = new MACD(63, 26, 11);
         macd.setPricesAccumulator(pricesAccumulator);
         stubAccumulator();
     }
@@ -47,6 +47,16 @@ public class MACDTest {
         assertEquals(expectedSecondLongEMA, macd.longEMA(), 0.01);
     }
 
+    @Test
+    public void shouldCalculateMACDHundreedTImes() {
+        stubAccumulatorForLongTest();
+        for (int i = 0; i < 63; i++) {
+            macd.calculateCurrentHistogram();
+            pricesAccumulator.add(440.23 + i);
+        }
+        macd.signal();
+        macd.histogramm();
+    }
 
     private void stubAccumulator() {
         LinkedList<Double> prices = new LinkedList<>(Arrays.asList(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0,
