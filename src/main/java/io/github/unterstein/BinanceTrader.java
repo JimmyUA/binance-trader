@@ -1,13 +1,8 @@
 package io.github.unterstein;
 
 
-import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.account.AssetBalance;
-import com.binance.api.client.domain.account.NewOrderResponse;
-import com.binance.api.client.domain.market.OrderBook;
-import io.github.unterstein.decision.BuyDecisionMaker;
-import io.github.unterstein.decision.SellDecisionMaker;
-import io.github.unterstein.statistic.TrendAnalyzer;
+import io.github.unterstein.executor.TradeExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +12,6 @@ import java.util.List;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static io.github.unterstein.remoteManagment.ManagementConstants.sleepSomeTime;
-import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
 
 @Component
@@ -25,64 +19,33 @@ public class BinanceTrader {
 
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
-    private TradingClient client;
-    private TrendAnalyzer trendAnalyzer;
 
-    private double tradeDifference;
+
+    private TradingClient client;
+
     private double tradeProfit;
     private int tradeAmount;
 
-    private Double currentBoughtPrice;
-    private int panicBuyCounter;
-    private int panicSellCounter;
-    private double trackingLastPrice;
-    private OrderBook orderBook;
-
-
-    private int lastKnownTradingBalance;
     private double lastBid;
-    private double lastAsk;
-    private double lastTrakingAsk;
-    private double profitablePrice;
 
-    private String tradeCurrency;
-    private String baseCurrency;
-    private double antiBurstValue;
     private double antiBurstPercentage;
-    private double boughtPrice;
-    private double goalSellPrice;
-    private double goalBuyPrice;
-    private double stopLossPrice;
 
     @Autowired
-    private BuyDecisionMaker buyDecisionMaker;
+    private TradeExecutor tradeExecutor;
 
-    @Autowired
-    private SellDecisionMaker sellDecisionMaker;
-    private boolean wasOverGoalPrice = false;
     private double spreadDifference;
 
     @Autowired
-    BinanceTrader(TradingClient client, TrendAnalyzer trendAnalyzer) {
-        trackingLastPrice = client.lastPrice();
+    BinanceTrader(TradingClient client) {
         this.client = client;
-        this.trendAnalyzer = trendAnalyzer;
-        this.tradeCurrency = client.getTradeCurrency();
-        this.baseCurrency = client.getBaseCurrency();
-        clear();
+
     }
 
     public void setClient(TradingClient client) {
         this.client = client;
     }
 
-    public void setTrackingLastPrice(double trackingLastPrice) {
-        this.trackingLastPrice = trackingLastPrice;
-    }
 
-    public void setTradeDifference(double tradeDifference) {
-        this.tradeDifference = tradeDifference;
-    }
 
     public void setTradeProfit(double tradeProfit) {
         this.tradeProfit = tradeProfit;
@@ -103,19 +66,12 @@ public class BinanceTrader {
 
         try {
             checkWaitSomeTime();
-            client.getLatestOrderBook();
             lastPrice = client.lastPrice();
-            AssetBalance tradingBalance = client.getTradingBalance();
-            String freeTradingBalance = tradingBalance.getFree();
-            double freeTradingBalanceValue = Double.parseDouble(freeTradingBalance);
-            if (freeTradingBalanceValue > tradeAmount){
-                logger.info("Looks like something was bought manually, lets wait");
-                sleepSeconds(3600);
-            }
+            checkIfBoughtManualy();
             updateLastBid();
-            lastAsk = getLastAsk();
-            profitablePrice = lastBid + (lastBid * tradeProfit / 100);
-            antiBurstValue = lastAsk - profitablePrice;
+            double lastAsk = getLastAsk();
+            double profitablePrice = lastBid + (lastBid * tradeProfit / 100);
+            double antiBurstValue = lastAsk - profitablePrice;
             antiBurstPercentage = antiBurstValue / lastAsk * 100.0;
 
 
@@ -123,10 +79,12 @@ public class BinanceTrader {
             logger.info(String.format("bid:%.8f ask:%.8f price:%.8f profitablePrice:%.8f diff:%.8f\n  ",
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
-            if (isFall() && isRightMomentToBuy()) {//Relocate to Conditions enum
 
-                executePurchase();
-                sellingProcess();
+            if (isFall()) {
+                logger.info("Fall burst detected");
+
+                tradeExecutor.buyProcess();
+                tradeExecutor.sellProcess();
 
             }
             else {
@@ -137,9 +95,16 @@ public class BinanceTrader {
         } catch (Exception e) {
             logger.error("Unable to perform ticker", e);
             sellToMarket(lastBid);
-        } finally {
-            trackingLastPrice = lastPrice;
-            lastTrakingAsk = lastAsk;
+        }
+    }
+
+    private void checkIfBoughtManualy() {
+        AssetBalance tradingBalance = client.getTradingBalance();
+        String freeTradingBalance = tradingBalance.getFree();
+        double freeTradingBalanceValue = Double.parseDouble(freeTradingBalance);
+        if (freeTradingBalanceValue > tradeAmount){
+            logger.info("Looks like something was bought manually, lets wait");
+            sleepSeconds(3600);
         }
     }
 
@@ -150,73 +115,11 @@ public class BinanceTrader {
         sleepSomeTime = false;
     }
 
-    private void sellingProcess() {
-        goalSellPrice = boughtPrice + (boughtPrice * 0.002);
-        while (isUpTrending()) {
-            sleepSeconds(3);
-            updateLastBid();
-            if (lastBid > goalSellPrice){
-                wasOverGoalPrice = true;
-            }
-            logger.info(String.format("Market in Up-trend still, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
-                    goalSellPrice - lastBid, lastBid, goalSellPrice));
-            if (stopTicker){
-                return;
-            }
-        }
-        if (wasOverGoalPrice && lastBid > minimumProfitablePrice()){
-            logger.info("Trend changed and price was over goal price!");
-            sellToMarket(lastBid);
-            return;
-        }
-        goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
-        stopLossPrice = boughtPrice - (boughtPrice * 0.015);
-        while (true) {
-            logger.info("Trend changed and price did not rise enough, waiting");
-            sleepSeconds(3);
-            updateLastBid();
-            logger.info(String.format("Waiting while reach goal price, difference %.8f, Last maxBid: %.8f, goalSellPrice: %.8f\"",
-                    goalSellPrice - lastBid, lastBid, goalSellPrice));
-            if (lastBid > goalSellPrice) {
-                logger.info("price is high enough");
-                sellToMarket(lastBid);
-                sleepSeconds(180);
-                break;
-            } else if (lastBid < stopLossPrice && sellDecisionMaker.isTooDangerous()) {
-                logger.info(String.format("Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail", lastBid, stopLossPrice));
-                sellToMarket(lastBid);
-            }
-            if (stopTicker){
-                return;
-            }
-        }
-
-    }
-
-    private double minimumProfitablePrice() {
-        return boughtPrice + (boughtPrice * 0.0015);
-    }
 
 
-    private void executePurchase() {
-        logger.info("Fall burst detected");
-
-        client.buyMarket(tradeAmount);// TODO lastAsk amount
-        boughtPrice = getLastAsk();
-        lastKnownTradingBalance = tradeAmount;
-        logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
-    }
-
-    private boolean isRightMomentToBuy() {
-        return buyDecisionMaker.isRightMomentToBuy(lastAsk);
-    }
 
     private void updateLastBid() {
         lastBid = getLastBid();
-    }
-
-    private boolean isUpTrending() {
-        return !sellDecisionMaker.isTrendChanged(lastBid);
     }
 
     private double getLastAsk() {
@@ -240,49 +143,13 @@ public class BinanceTrader {
         }
     }
 
-    private boolean isNew(OrderStatus status) {
-        return status == OrderStatus.NEW;
-    }
-
-    private boolean notCanceled(OrderStatus status) {
-        return status != OrderStatus.CANCELED;
-    }
-
-    private boolean isPriceAscending(double lastPrice) {
-        return lastPrice > trackingLastPrice;
-    }
-
-    private boolean isBurst() {
-        return lastAsk >= profitablePrice;
-    }
-
-    private void panicSellForCondition(double lastPrice, double lastKnownTradingBalance, boolean condition) {
-        if (condition) {
-            logger.info("panicSellForCondition");
-            client.panicSell(lastKnownTradingBalance, lastPrice);
-            clear();
-        }
-    }
-
-    private void clear() {
-        panicBuyCounter = 0;
-        panicSellCounter = 0;
-        currentBoughtPrice = null;
-    }
 
     List<AssetBalance> getBalances() {
         return client.getBalances();
     }
 
-    public double getBoughtPrice(NewOrderResponse order) {
-        Long orderId = order.getOrderId();
-        String price = client.getOrder(orderId).getPrice();
-        return Double.parseDouble(price);
-    }
-
     private void sellToMarket(Double lastBid) {
         client.sellMarket(tradeAmount);
         logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
-        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
     }
 }

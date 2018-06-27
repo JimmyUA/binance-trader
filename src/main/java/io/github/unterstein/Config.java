@@ -2,6 +2,7 @@ package io.github.unterstein;
 
 import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.decision.SellDecisionMaker;
+import io.github.unterstein.executor.TradeExecutor;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.MarketAnalyzer;
@@ -9,6 +10,8 @@ import io.github.unterstein.statistic.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalyzer;
+import io.github.unterstein.strategy.MAandRSIStrategy;
+import io.github.unterstein.strategy.Strategy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,8 +68,7 @@ public class Config {
 
     @Bean
     public BinanceTrader binanceTrader(){
-        BinanceTrader binanceTrader = new BinanceTrader(tradingClient(), trendAnalizer());
-        binanceTrader.setTradeDifference(tradeDifference);
+        BinanceTrader binanceTrader = new BinanceTrader(tradingClient());
         binanceTrader.setTradeAmount(tradeAmount);
         binanceTrader.setTradeProfit(tradeProfit);
         binanceTrader.setSpreadDifference(spreadDifference);
@@ -114,5 +116,17 @@ public class Config {
     @Bean
     public MarketAnalyzer marketAnalyzer(){
         return new MarketAnalyzer();
+    }
+
+    @Bean
+    public TradeExecutor tradeExecutor(){
+        TradeExecutor tradeExecutor = new TradeExecutor(strategy());
+        tradeExecutor.setTradeAmount(tradeAmount);
+        return tradeExecutor;
+    }
+
+    @Bean
+    public Strategy strategy(){
+        return new MAandRSIStrategy();
     }
 }

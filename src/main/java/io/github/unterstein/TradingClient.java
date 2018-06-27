@@ -15,9 +15,11 @@ import com.binance.api.client.domain.account.request.OrderStatusRequest;
 import com.binance.api.client.domain.market.OrderBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class TradingClient {
   private static Logger logger = LoggerFactory.getLogger(TradingClient.class);
 
