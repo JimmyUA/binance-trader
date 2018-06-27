@@ -44,7 +44,7 @@ public class MarketAnalyzer {
         Double rsiValue = rsi.getRSI(rsiPeriods);
         Double histogram = macd.getLastHistogram();
         message += String.format("RSI %d = %.8f<br>", rsiPeriods, rsiValue);
-        message += String.format("Last histogram %.8f<br>", histogram);
+        message += String.format("Last histogram %.11f<br>", histogram);
         message += "Is up-trend short period: " + trendAnalyzer.isUpTrendShortPeriod() + newLineForHTML;
         message += "Is up-trend long period: " + trendAnalyzer.isUpTrendLongPeriod() + newLineForHTML;
         return message;

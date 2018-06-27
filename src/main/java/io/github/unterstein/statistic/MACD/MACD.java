@@ -94,10 +94,16 @@ public class MACD {
     }
 
     public Double signal(){
-        double signal = MACDs.stream()
-                .skip(MACDs.size() - signalPeriod)
-                .mapToDouble(macd -> macd)
-                .average().getAsDouble();
+        double signal;
+        if (signals.size() == 0) {
+            signal = MACDs.stream()
+                    .skip(MACDs.size() - signalPeriod)
+                    .mapToDouble(macd -> macd)
+                    .average().getAsDouble();
+        } else {
+            Double signalKof = 2.0 / (signalPeriod + 1);
+            signal = getLastMACD() * signalKof + (getLastSignal() * (1 - signalKof));
+        }
         signals.addLast(signal);
         if (signals.size() > 100) {
             signals.pollFirst();
@@ -107,7 +113,7 @@ public class MACD {
     }
 
     public Double histogramm(){
-        return getLastMACD() - getLastSignal();
+        return getLastSignal() - getLastMACD();
     }
 
     private Double getLastSignal() {
@@ -120,18 +126,24 @@ public class MACD {
 
 
     public void calculateCurrentHistogram(){
-        MACD();
+        if (minutesFromStart > shortPeriod){
+            EMA(shortPeriod);
+        }
         if (minutesFromStart > longPeriod) {
-            signal();
-            histograms.addLast(histogramm());
-            if (histograms.size() > 100) {
-                histograms.pollFirst();
+            EMA(longPeriod);
+            MACD();
+            if (minutesFromStart > longPeriod + signalPeriod) {
+                signal();
+                histograms.addLast(histogramm());
+                if (histograms.size() > 100) {
+                    histograms.pollFirst();
+                }
             }
         }
     }
 
     public Double getLastHistogram() {
-        if (minutesFromStart > longPeriod && histograms.size() > 0) {
+        if (histograms.size() > 0) {
             return histograms.getLast();
         }
         return 0.0;
