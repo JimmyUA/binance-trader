@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.management.openmbean.TabularData;
 import java.util.LinkedList;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
@@ -59,20 +58,20 @@ public class MACD {
         double result;
         LinkedList<Double> prices = pricesAccumulator.getSamples();
         LinkedList<Double> EMAs;
-        if (period > shortPeriod){
+        if (period == shortPeriod){
             EMAs = shortEMAs;
         } else {
             EMAs = longEMAs;
         }
         if(EMAs.size() == 0) {
-            double sum = prices.stream().
-                    skip(prices.size() - period).mapToDouble(price -> price).sum();
-            result = sum / period;
+            double average = prices.stream().
+                    skip(prices.size() - period).mapToDouble(price -> price).average().getAsDouble();
+            result = average;
         } else {
             Double lastPrice = prices.getLast();
             Double lastShortEMA = EMAs.getLast();
-            int increasedShortPeriod = period + 1;
-            double EMACoefficient = 2.0 / increasedShortPeriod;
+            int increasedPeriod = period + 1;
+            double EMACoefficient = 2.0 / increasedPeriod;
             double lastPricePart = lastPrice * EMACoefficient;
             double lastEMAPart = lastShortEMA * (1.0 - EMACoefficient);
             result = lastPricePart + lastEMAPart;
@@ -85,12 +84,22 @@ public class MACD {
     }
 
     public double MACD() {
-        double MACD = EMA(shortPeriod) - EMA(longPeriod);
+        double MACD = getLastEMA(shortPeriod) - getLastEMA(longPeriod);
         MACDs.addLast(MACD);
         if (MACDs.size() > 100){
             MACDs.pollFirst();
         }
         return MACD;
+    }
+
+    private double getLastEMA(Integer period) {
+        LinkedList<Double> EMAs;
+        if (period == shortPeriod){
+            EMAs = shortEMAs;
+        } else {
+            EMAs = longEMAs;
+        }
+        return EMAs.getLast();
     }
 
     public Double signal(){
@@ -113,26 +122,26 @@ public class MACD {
     }
 
     public Double histogramm(){
-        return getLastSignal() - getLastMACD();
+        return  getLastMACD() - getLastSignal();
     }
 
-    private Double getLastSignal() {
+    protected Double getLastSignal() {
         return signals.getLast();
     }
 
-    private Double getLastMACD() {
+    protected Double getLastMACD() {
         return MACDs.getLast();
     }
 
 
     public void calculateCurrentHistogram(){
-        if (minutesFromStart > shortPeriod){
+        if (minutesFromStart >= shortPeriod){
             EMA(shortPeriod);
         }
-        if (minutesFromStart > longPeriod) {
+        if (minutesFromStart >= longPeriod) {
             EMA(longPeriod);
             MACD();
-            if (minutesFromStart > longPeriod + signalPeriod) {
+            if (minutesFromStart >= longPeriod + signalPeriod - 1) {
                 signal();
                 histograms.addLast(histogramm());
                 if (histograms.size() > 100) {

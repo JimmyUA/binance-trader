@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,12 @@ public class TestConfig {
     @Bean
     public TrendAnalyzer trendAnalizer(){return new TrendAnalyzer();}
 
+    @Bean(name="testAccumulator")
+    public PricesAccumulator pricesAccumulator(){return new PricesAccumulator();
+    }
+
     @Bean
-    public PricesAccumulator pricesAccumulator(){return new PricesAccumulator();}
+    public MovingAverage movingAverage(){
+        return new MovingAverage();
+    }
 }
