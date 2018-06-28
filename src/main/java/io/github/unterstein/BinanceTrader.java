@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static io.github.unterstein.remoteManagment.ManagementConstants.sleepSomeTime;
 import static util.Slepper.sleepSeconds;
@@ -80,7 +81,7 @@ public class BinanceTrader {
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
 
-            if (isFall()) {
+            if (isFall() && minutesFromStart > 80) {
                 logger.info("Fall burst detected");
 
                 tradeExecutor.buyProcess();

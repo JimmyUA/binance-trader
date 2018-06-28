@@ -28,7 +28,8 @@ public class MACD {
     private PricesAccumulator pricesAccumulator;
     private String none;
 
-    public MACD(){}
+    public MACD() {
+    }
 
     public MACD(Integer shortPeriod, Integer longPeriod, Integer signalPeriod) {
         this.shortPeriod = shortPeriod;
@@ -58,12 +59,12 @@ public class MACD {
         double result;
         LinkedList<Double> prices = pricesAccumulator.getSamples();
         LinkedList<Double> EMAs;
-        if (period == shortPeriod){
+        if (period == shortPeriod) {
             EMAs = shortEMAs;
         } else {
             EMAs = longEMAs;
         }
-        if(EMAs.size() == 0) {
+        if (EMAs.size() == 0) {
             double average = prices.stream().
                     skip(prices.size() - period).mapToDouble(price -> price).average().getAsDouble();
             result = average;
@@ -77,7 +78,7 @@ public class MACD {
             result = lastPricePart + lastEMAPart;
         }
         EMAs.addLast(result);
-        if (EMAs.size() > 100){
+        if (EMAs.size() > 100) {
             EMAs.pollFirst();
         }
         return result;
@@ -86,7 +87,7 @@ public class MACD {
     public double MACD() {
         double MACD = getLastEMA(shortPeriod) - getLastEMA(longPeriod);
         MACDs.addLast(MACD);
-        if (MACDs.size() > 100){
+        if (MACDs.size() > 100) {
             MACDs.pollFirst();
         }
         return MACD;
@@ -94,7 +95,7 @@ public class MACD {
 
     private double getLastEMA(Integer period) {
         LinkedList<Double> EMAs;
-        if (period == shortPeriod){
+        if (period == shortPeriod) {
             EMAs = shortEMAs;
         } else {
             EMAs = longEMAs;
@@ -102,7 +103,7 @@ public class MACD {
         return EMAs.getLast();
     }
 
-    public Double signal(){
+    public Double signal() {
         double signal;
         if (signals.size() == 0) {
             signal = MACDs.stream()
@@ -121,8 +122,8 @@ public class MACD {
         return signal;
     }
 
-    public Double histogramm(){
-        return  getLastMACD() - getLastSignal();
+    public Double histogramm() {
+        return getLastMACD() - getLastSignal();
     }
 
     protected Double getLastSignal() {
@@ -134,8 +135,8 @@ public class MACD {
     }
 
 
-    public void calculateCurrentHistogram(){
-        if (minutesFromStart >= shortPeriod){
+    public void calculateCurrentHistogram() {
+        if (minutesFromStart >= shortPeriod) {
             EMA(shortPeriod);
         }
         if (minutesFromStart >= longPeriod) {
@@ -157,4 +158,28 @@ public class MACD {
         }
         return 0.0;
     }
+
+    public boolean isAccending() {
+        Double lastHistogram = histograms.getLast();
+
+        double previousAverage = histograms.stream().skip(histograms.size() - 4)
+                .limit(3).mapToDouble(d -> d).average().getAsDouble();
+        String direction = "";
+
+        if (lastHistogram > previousAverage) {
+            direction = "ascending";
+            informMACDTrend(lastHistogram, previousAverage, direction);
+            return true;
+        } else {
+            direction = "descending";
+            informMACDTrend(lastHistogram, previousAverage, direction);
+            return false;
+        }
+    }
+
+    private void informMACDTrend(Double lastHistogram, double previousAverage, String direction) {
+        logger.info(String.format("MACD is %s, last histo: %.10f, previous 3 average: %.10f",
+                direction, lastHistogram, previousAverage));
+    }
+
 }

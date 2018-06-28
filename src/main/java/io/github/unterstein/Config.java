@@ -1,7 +1,9 @@
 package io.github.unterstein;
 
-import io.github.unterstein.decision.BuyDecisionMaker;
-import io.github.unterstein.decision.SellDecisionMaker;
+import io.github.unterstein.decision.maandrsi.BuyDecisionMaker;
+import io.github.unterstein.decision.maandrsi.SellDecisionMaker;
+import io.github.unterstein.decision.macd.BuyDecisionMakerMACD;
+import io.github.unterstein.decision.macd.SellDecisionMakerMACD;
 import io.github.unterstein.executor.TradeExecutor;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
@@ -56,6 +58,9 @@ public class Config {
     @Value("${MACD.SIGNAL_PERIOD}")
     private int signalPeriod;
 
+    @Value("${MACD.STRATEGY.MINIMUM_HISTO}")
+    private double minimumHistoValue;
+
     @Bean
     public TradingClient tradingClient(){
         return new TradingClient(baseCurrency, tradeCurrency, apiKey, apiSecret);
@@ -87,8 +92,7 @@ public class Config {
 
     @Bean
     public BuyDecisionMaker buyDecisionMaker(){
-        BuyDecisionMaker buyDecisionMaker = new BuyDecisionMaker();
-        return buyDecisionMaker;
+        return new BuyDecisionMaker();
     }
 
     @Bean
@@ -128,5 +132,18 @@ public class Config {
     @Bean
     public Strategy strategy(){
         return new MAandRSIStrategy();
+    }
+
+
+    @Bean
+    public BuyDecisionMakerMACD buyDecisionMakerMACD(){
+        BuyDecisionMakerMACD buyDecisionMakerMACD = new BuyDecisionMakerMACD();
+        buyDecisionMakerMACD.setMinimumHistogram(minimumHistoValue);
+        return buyDecisionMakerMACD;
+    }
+
+    @Bean
+    public SellDecisionMakerMACD sellDecisionMakerMACD(){
+        return new SellDecisionMakerMACD();
     }
 }

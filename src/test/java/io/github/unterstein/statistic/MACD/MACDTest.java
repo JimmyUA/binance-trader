@@ -16,6 +16,7 @@ import java.util.LinkedList;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @ActiveProfiles("test")
@@ -29,7 +30,7 @@ public class MACDTest {
             448.97, 444.57, 441.4, 430.47, 420.05, 431.14, 425.66, 430.58, 431.72, 437.87,
             428.43, 428.35, 432.5, 443.66, 455.72, 454.49, 452.08, 452.73, 461.91,
             463.58, 461.14, 452.08, 442.66, 428.91, 429.79, 431.99, 427.72, 423.2,
-            426.21, 426.98));
+            426.21, 426.98, 435.69, 434.33, 429.8));
 
     @Autowired
     @Qualifier("testAccumulator")
@@ -56,6 +57,16 @@ public class MACDTest {
         assertEquals(expectedMACD, macd.getLastMACD(), 0.001);
         assertEquals(expectedSignal, macd.getLastSignal(), 0.001);
         assertEquals(expectedHistogram, macd.getLastHistogram(), 0.001);
+    }
+
+    @Test
+    public void shouldBeAccending() {
+        for (int i = 0; i < 38; i++) {
+            minutesFromStart++;
+            pricesAccumulator.add(getPrice());
+            macd.calculateCurrentHistogram();
+        }
+        assertTrue(macd.isAccending());
     }
 
     private Double getPrice() {

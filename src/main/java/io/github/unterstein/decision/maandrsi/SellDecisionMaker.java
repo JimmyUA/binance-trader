@@ -1,4 +1,4 @@
-package io.github.unterstein.decision;
+package io.github.unterstein.decision.maandrsi;
 
 
 import io.github.unterstein.BinanceTrader;

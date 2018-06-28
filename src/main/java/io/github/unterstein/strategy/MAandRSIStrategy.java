@@ -1,9 +1,8 @@
 package io.github.unterstein.strategy;
 
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.decision.BuyDecisionMaker;
-import io.github.unterstein.decision.SellDecisionMaker;
-import io.github.unterstein.executor.TradeExecutor;
+import io.github.unterstein.decision.maandrsi.BuyDecisionMaker;
+import io.github.unterstein.decision.maandrsi.SellDecisionMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

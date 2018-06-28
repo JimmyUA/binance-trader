@@ -1,11 +1,8 @@
-package io.github.unterstein.decision;
+package io.github.unterstein.decision.maandrsi;
 
 
 import io.github.unterstein.BinanceTrader;
-import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MarketAnalyzer;
-import io.github.unterstein.statistic.RSI.RSI;
-import io.github.unterstein.statistic.TrendAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +19,21 @@ public class BuyDecisionMaker {
 
 
     public boolean isRightMomentToBuy(Double ask){
-        if (priceNotNearResistanceLine(ask) && isUptrend(ask) && isUpTrendLongPeriod() && marketAnalyzer.isRSIHighEnough()){
+        if (priceNotNearResistanceLine(ask) && isUptrend(ask)
+                && isUpTrendLongPeriod() && isRsiHighEnough()
+                && isMacdAscendingBelowZero()){
             return true;
         } else {
             return false;
         }
+    }
+
+    private boolean isMacdAscendingBelowZero() {
+        return marketAnalyzer.isMACDAscendingBelowZero();
+    }
+
+    private boolean isRsiHighEnough() {
+        return marketAnalyzer.isRSIHighEnough();
     }
 
     public boolean priceNotNearResistanceLine(Double ask) {
@@ -44,6 +51,7 @@ public class BuyDecisionMaker {
     private boolean isUptrend(Double ask) {
         return marketAnalyzer.isUptrendByAsk(ask);
     }
+
 
 
 }
