@@ -91,7 +91,7 @@ public class MarketAnalyzer {
         }
     }
 
-    public boolean isMACDAscendingBelowZero() {
-        return macd.isAccending() && macd.getLastHistogram() < 0;
+    public boolean isMACDAscending() {
+        return macd.isAccending();
     }
 }

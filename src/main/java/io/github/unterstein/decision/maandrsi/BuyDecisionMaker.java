@@ -29,7 +29,7 @@ public class BuyDecisionMaker {
     }
 
     private boolean isMacdAscendingBelowZero() {
-        return marketAnalyzer.isMACDAscendingBelowZero();
+        return marketAnalyzer.isMACDAscending();
     }
 
     private boolean isRsiHighEnough() {
