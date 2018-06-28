@@ -1,6 +1,7 @@
 package io.github.unterstein.decision.macd;
 
 import io.github.unterstein.statistic.MACD.MACD;
+import io.github.unterstein.statistic.TrendAnalyzer;
 import io.github.unterstein.strategy.MAandRSIStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,8 @@ public class BuyDecisionMakerMACD {
 
     private static Logger logger = LoggerFactory.getLogger(MAandRSIStrategy.class);
 
+    @Autowired
+    TrendAnalyzer trendAnalyzer;
 
     @Autowired
     private MACD macd;
@@ -24,7 +27,7 @@ public class BuyDecisionMakerMACD {
 
     public boolean isRightMomentToBuy() {
         Double lastHistogram = macd.getLastHistogram();
-        if (lastHistogram < minimumHistogram){
+        if (isUpTrendLongPeriod() && lastHistogram < minimumHistogram){
             logger.info(String.format("Last histogram: %.10f is lower than minimum %.10f",
                     lastHistogram, minimumHistogram));
             while(macd.getLastHistogram() < lastHistogram){
@@ -36,5 +39,9 @@ public class BuyDecisionMakerMACD {
         } else {
             return false;
         }
+    }
+
+    private boolean isUpTrendLongPeriod() {
+        return trendAnalyzer.isUpTrendLongPeriod();
     }
 }
