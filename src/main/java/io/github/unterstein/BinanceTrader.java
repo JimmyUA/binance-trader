@@ -8,11 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
-import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
-import static io.github.unterstein.remoteManagment.ManagementConstants.sleepSomeTime;
+import static io.github.unterstein.remoteManagment.ManagementConstants.*;
 import static util.Slepper.sleepSeconds;
 
 @Component
@@ -41,11 +37,6 @@ public class BinanceTrader {
         this.client = client;
 
     }
-
-    public void setClient(TradingClient client) {
-        this.client = client;
-    }
-
 
 
     public void setTradeProfit(double tradeProfit) {
@@ -95,7 +86,6 @@ public class BinanceTrader {
 
         } catch (Exception e) {
             logger.error("Unable to perform ticker", e);
-            sellToMarket(lastBid);
         }
     }
 
@@ -144,13 +134,4 @@ public class BinanceTrader {
         }
     }
 
-
-    List<AssetBalance> getBalances() {
-        return client.getBalances();
-    }
-
-    private void sellToMarket(Double lastBid) {
-        client.sellMarket(tradeAmount);
-        logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
-    }
 }

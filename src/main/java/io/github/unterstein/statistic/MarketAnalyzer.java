@@ -1,6 +1,5 @@
 package io.github.unterstein.statistic;
 
-import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.RSI.RSI;
