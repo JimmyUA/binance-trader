@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static util.Slepper.sleepSeconds;
+
 public class BuyDecisionMakerMACD {
 
     private static Logger logger = LoggerFactory.getLogger(MAandRSIStrategy.class);
@@ -25,6 +27,11 @@ public class BuyDecisionMakerMACD {
         if (lastHistogram < minimumHistogram){
             logger.info(String.format("Last histogram: %.10f is lower than minimum %.10f",
                     lastHistogram, minimumHistogram));
+            while(macd.getLastHistogram() < lastHistogram){
+                logger.info("Waiting MACD start grow");
+                sleepSeconds(60);
+            }
+            logger.info("MACD is growing");
         return true;
         } else {
             return false;

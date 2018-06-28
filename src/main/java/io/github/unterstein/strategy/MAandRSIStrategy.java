@@ -1,10 +1,7 @@
 package io.github.unterstein.strategy;
 
-import io.github.unterstein.TradingClient;
 import io.github.unterstein.decision.maandrsi.BuyDecisionMaker;
 import io.github.unterstein.decision.maandrsi.SellDecisionMaker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,14 +9,8 @@ import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicke
 import static util.Slepper.sleepSeconds;
 
 @Component
-public class MAandRSIStrategy implements Strategy{
+public class MAandRSIStrategy extends AbstractStrategy{
 
-    private static Logger logger = LoggerFactory.getLogger(MAandRSIStrategy.class);
-
-    private boolean isBought = false;
-
-    @Autowired
-    private TradingClient client;
 
     @Autowired
     private BuyDecisionMaker buyDecisionMaker;
@@ -27,22 +18,6 @@ public class MAandRSIStrategy implements Strategy{
     @Autowired
     private SellDecisionMaker sellDecisionMaker;
 
-    private int tradeAmount;
-    private Double boughtPrice;
-    private Double goalSellPrice;
-    private Double lastBid;
-    private boolean wasOverGoalPrice = false;
-    private double stopLossPrice;
-
-    @Override
-    public void setTradeAmount(int tradeAmount) {
-        this.tradeAmount = tradeAmount;
-    }
-
-    @Override
-    public boolean isBought() {
-        return isBought;
-    }
 
     @Override
     public void buyProcess() {
@@ -52,10 +27,6 @@ public class MAandRSIStrategy implements Strategy{
             logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
             isBought = true;
         }
-    }
-
-    private double getLastAsk() {
-        return client.getLastAsksAverage(tradeAmount, 3);
     }
 
     @Override
@@ -106,22 +77,4 @@ public class MAandRSIStrategy implements Strategy{
         return !sellDecisionMaker.isTrendChanged(lastBid);
     }
 
-    private void updateLastBid() {
-        lastBid = getLastBid();
-    }
-
-    private double getLastBid() {
-        return client.getLastBidsAverage(tradeAmount, 3);
-    }
-
-    private double minimumProfitablePrice() {
-        return boughtPrice + (boughtPrice * 0.0015);
-    }
-
-    private void sellToMarket(Double lastBid) {
-        client.sellMarket(tradeAmount);
-        logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
-        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
-        isBought = false;
-    }
 }

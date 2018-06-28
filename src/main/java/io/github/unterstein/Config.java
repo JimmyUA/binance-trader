@@ -12,6 +12,7 @@ import io.github.unterstein.statistic.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalyzer;
+import io.github.unterstein.strategy.MACDStrategy;
 import io.github.unterstein.strategy.MAandRSIStrategy;
 import io.github.unterstein.strategy.Strategy;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +61,9 @@ public class Config {
 
     @Value("${MACD.STRATEGY.MINIMUM_HISTO}")
     private double minimumHistoValue;
+
+    @Value("${STRATEGY}")
+    private String strategy;
 
     @Bean
     public TradingClient tradingClient(){
@@ -131,6 +135,9 @@ public class Config {
 
     @Bean
     public Strategy strategy(){
+        if (strategy.equals("MACD")) {
+            return new MACDStrategy();
+        }
         return new MAandRSIStrategy();
     }
 
