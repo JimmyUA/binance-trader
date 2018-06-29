@@ -61,7 +61,7 @@ public class MarketAnalyzer {
     public boolean isRSIHighEnough() {
         Double rsi = getRSI();
         logger.info(String.format("RSI is %.8f", rsi));
-        return rsi > 50;
+        return rsi > 50  && rsi < 70;
     }
 
     private Double getRSI() {

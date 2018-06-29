@@ -85,7 +85,7 @@ public class BinanceBotApplication {
     marketAnalyzer.setRsiPeriod(rsiPeriods);
     ManagementConstants.rsiPeriods = rsiPeriods;
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
-    logger.info(String.format("Using strategy: %s", strategy == null ? "MA default" : strategy));
+    logger.info(String.format("Using strategy: %s", strategy.equals("") ? "MA default" : strategy));
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);
     logger.info("Starting fetching prices every minute");
     ScheduledExecutorService service = Executors

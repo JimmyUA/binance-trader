@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import static io.github.unterstein.remoteManagment.ManagementConstants.*;
 import static util.Slepper.sleepSeconds;
 
@@ -132,6 +134,10 @@ public class BinanceTrader {
             logger.info("\n\nShutting down!\n\n");
             System.exit(0);
         }
+    }
+
+    List<AssetBalance> getBalances() {
+        return client.getBalances();
     }
 
 }

@@ -25,7 +25,7 @@ public class TradeExecutor {
         if (strategy.isBought()){
         strategy.sellProcess();
         } else {
-            logger.info("Nothing is bought, waiting next tick");
+            logger.info("We did not buy nothing, waiting next tick");
         }
     }
 
