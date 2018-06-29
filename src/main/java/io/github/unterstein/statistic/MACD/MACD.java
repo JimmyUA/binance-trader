@@ -24,6 +24,9 @@ public class MACD {
     private LinkedList<Double> signals;
     private LinkedList<Double> histograms;
 
+    private Double minMACD;
+    private Double maxMACD;
+
     @Autowired
     private PricesAccumulator pricesAccumulator;
     private String none;
@@ -35,11 +38,26 @@ public class MACD {
         this.shortPeriod = shortPeriod;
         this.longPeriod = longPeriod;
         this.signalPeriod = signalPeriod;
+        initLists();
+
+        minMACD = 0.0;
+        maxMACD = 0.0;
+    }
+
+    private void initLists() {
         shortEMAs = new LinkedList<>();
         longEMAs = new LinkedList<>();
         MACDs = new LinkedList<>();
         signals = new LinkedList<>();
         histograms = new LinkedList<>();
+    }
+
+    public Double getMinMACD() {
+        return minMACD;
+    }
+
+    public Double getMaxMACD() {
+        return maxMACD;
     }
 
     //Used only for tests
@@ -90,6 +108,9 @@ public class MACD {
         if (MACDs.size() > 100) {
             MACDs.pollFirst();
         }
+
+        minMACD = MACD < minMACD ? MACD : minMACD;
+        maxMACD = MACD > maxMACD ? MACD : maxMACD;
         return MACD;
     }
 
