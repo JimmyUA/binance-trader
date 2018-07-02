@@ -1,9 +1,11 @@
 package io.github.unterstein;
 
-import io.github.unterstein.decision.maandrsi.BuyDecisionMaker;
-import io.github.unterstein.decision.maandrsi.SellDecisionMaker;
+import io.github.unterstein.decision.maandrsi.BuyDecisionMakerMARSI;
+import io.github.unterstein.decision.maandrsi.SellDecisionMakerMARSI;
 import io.github.unterstein.decision.macd.BuyDecisionMakerMACD;
 import io.github.unterstein.decision.macd.SellDecisionMakerMACD;
+import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
+import io.github.unterstein.decision.onetrend.SellDecisionMakerOneTrend;
 import io.github.unterstein.executor.TradeExecutor;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
@@ -14,6 +16,7 @@ import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import io.github.unterstein.strategy.MACDStrategy;
 import io.github.unterstein.strategy.MAandRSIStrategy;
+import io.github.unterstein.strategy.OneTrendStrategy;
 import io.github.unterstein.strategy.Strategy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -95,13 +98,13 @@ public class Config {
     }
 
     @Bean
-    public BuyDecisionMaker buyDecisionMaker(){
-        return new BuyDecisionMaker();
+    public BuyDecisionMakerMARSI buyDecisionMaker(){
+        return new BuyDecisionMakerMARSI();
     }
 
     @Bean
-    public SellDecisionMaker sellDecisionMaker(){
-        SellDecisionMaker sellDecisionMaker = new SellDecisionMaker();
+    public SellDecisionMakerMARSI sellDecisionMaker(){
+        SellDecisionMakerMARSI sellDecisionMaker = new SellDecisionMakerMARSI();
         sellDecisionMaker.setPeriods(Integer.parseInt(periods));
         return sellDecisionMaker;
     }
@@ -137,6 +140,8 @@ public class Config {
     public Strategy strategy(){
         if (strategy.equals("MACD")) {
             return new MACDStrategy();
+        } else if (strategy.equals("ONE")){
+            return new OneTrendStrategy(buyDecisionMakerOneTrend());
         }
         return new MAandRSIStrategy();
     }
@@ -152,5 +157,15 @@ public class Config {
     @Bean
     public SellDecisionMakerMACD sellDecisionMakerMACD(){
         return new SellDecisionMakerMACD();
+    }
+
+    @Bean
+    public BuyDecisionMakerOneTrend buyDecisionMakerOneTrend(){
+        return new BuyDecisionMakerOneTrend();
+    }
+
+    @Bean
+    public SellDecisionMakerOneTrend sellDecisionMakerOneTrend(){
+        return new SellDecisionMakerOneTrend();
     }
 }

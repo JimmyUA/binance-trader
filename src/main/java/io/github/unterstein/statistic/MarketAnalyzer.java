@@ -93,4 +93,48 @@ public class MarketAnalyzer {
     public boolean isMACDAscending() {
         return macd.isAccending();
     }
+
+    public boolean isMACDBelowLastHistogram() {
+        Double lastHistogram = macd.getLastHistogram();
+        Double lastMACD = macd.getLastMACD();
+        String direction = "";
+        if (lastMACD < lastHistogram){
+            direction = "below";
+            logger.info(String.format("MACD %s histogram, MACD: %.10f, histogram: %.10f",
+                    direction, lastMACD, lastHistogram));
+            return true;
+        } else {
+            direction = "over";
+            logger.info(String.format("MACD %s histogram, MACD: %.10f, histogram: %.10f",
+                    direction, lastMACD, lastHistogram));
+            return false;
+        }
+
+    }
+
+    public boolean isUpTrendOneTrend() {
+        return trendAnalyzer.isUpTrendOneTrend();
+    }
+
+    public boolean isMaCDBelowZero() {
+        Double lastMACD = macd.getLastMACD();
+        String direction = "";
+        String message = "MACD %s 0, MACD: %.10f";
+        if (lastMACD < 0){
+            direction = "below";
+            logger.info(String.format(message,
+                    direction, lastMACD));
+            return true;
+        } else {
+            direction = "over";
+            logger.info(String.format(message,
+                    direction, lastMACD));
+            return false;
+        }
+
+    }
+
+    public boolean wasMACDCrossSignal() {
+        return macd.wasMACDCrossSignal();
+    }
 }

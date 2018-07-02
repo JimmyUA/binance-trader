@@ -29,7 +29,9 @@ public class MACD {
 
     @Autowired
     private PricesAccumulator pricesAccumulator;
-    private String none;
+
+    private boolean wasMACDCrossSignalUp;
+    private Integer crossCounter;
 
     public MACD() {
     }
@@ -42,6 +44,8 @@ public class MACD {
 
         minMACD = 0.0;
         maxMACD = 0.0;
+        wasMACDCrossSignalUp = false;
+        crossCounter = 0;
     }
 
     private void initLists() {
@@ -109,9 +113,25 @@ public class MACD {
             MACDs.pollFirst();
         }
 
+        checkMACDCrossedSignal();
         minMACD = MACD < minMACD ? MACD : minMACD;
         maxMACD = MACD > maxMACD ? MACD : maxMACD;
         return MACD;
+    }
+
+    private void checkMACDCrossedSignal() {
+        Double lastMACD = getLastMACD();
+        Double lastSignal = getLastSignal();
+
+        if (lastMACD > lastSignal){
+            if (!wasMACDCrossSignalUp){
+                crossCounter = 0;
+            }
+            wasMACDCrossSignalUp = true;
+            crossCounter++;
+        } else {
+            wasMACDCrossSignalUp = false;
+        }
     }
 
     private double getLastEMA(Integer period) {
@@ -147,11 +167,11 @@ public class MACD {
         return getLastMACD() - getLastSignal();
     }
 
-    protected Double getLastSignal() {
+    public Double getLastSignal() {
         return signals.getLast();
     }
 
-    protected Double getLastMACD() {
+    public Double getLastMACD() {
         return MACDs.getLast();
     }
 
@@ -185,7 +205,7 @@ public class MACD {
 
         double previousAverage = histograms.stream().skip(histograms.size() - 4)
                 .limit(3).mapToDouble(d -> d).average().getAsDouble();
-        String direction = "";
+        String direction;
 
         if (lastHistogram > previousAverage) {
             direction = "ascending";
@@ -203,4 +223,12 @@ public class MACD {
                 direction, lastHistogram, previousAverage));
     }
 
+    public boolean wasMACDCrossSignal() {
+        if (wasMACDCrossSignalUp && crossCounter <= 10){
+            logger.info(String.format("MACD crossed Signal %d minutes ago", crossCounter));
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

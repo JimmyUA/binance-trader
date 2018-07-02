@@ -1,5 +1,6 @@
 package io.github.unterstein.decision.macd;
 
+import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import io.github.unterstein.strategy.MAandRSIStrategy;
@@ -27,7 +28,7 @@ public class BuyDecisionMakerMACD {
 
     public boolean isRightMomentToBuy() {
         Double lastHistogram = macd.getLastHistogram();
-        if (isUpTrendLongPeriod() && lastHistogram < minimumHistogram){
+        if (isMACDNearBottom() && lastHistogram < minimumHistogram){
             logger.info(String.format("Last histogram: %.10f is lower than minimum %.10f",
                     lastHistogram, minimumHistogram));
             while(macd.getLastHistogram() < lastHistogram){
@@ -41,7 +42,17 @@ public class BuyDecisionMakerMACD {
         }
     }
 
-    private boolean isUpTrendLongPeriod() {
-        return trendAnalyzer.isUpTrendLongPeriod();
+    private boolean isMACDNearBottom() {
+        Double minMACD = macd.getMinMACD();
+        Double lastMACD = macd.getLastMACD();
+        double minMACDLimit = minMACD + (minMACD * 0.05);
+        if (lastMACD < minMACDLimit){
+            logger.info(String.format("Last MACD is near minimum: %.10f is lower than minimum limit %.10f",
+                    lastMACD, minMACDLimit));
+            return true;
+        } else {
+            return false;
+        }
     }
+
 }

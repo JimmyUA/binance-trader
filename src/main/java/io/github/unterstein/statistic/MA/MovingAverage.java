@@ -57,4 +57,14 @@ public class MovingAverage {
     public boolean isUpTrendByBid(Double lastBid) {
         return isUpTrendShortPeriod();
     }
+
+    public boolean isUpTrendOneTrend() {
+        if (MA(5) >= MA(15)){
+            logger.info("Up-trend detected one trend");
+            return true;
+        } else {
+            logger.info("Down-trend detected one trend");
+            return false;
+        }
+    }
 }

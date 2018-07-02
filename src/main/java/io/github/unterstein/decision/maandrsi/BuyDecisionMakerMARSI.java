@@ -2,6 +2,7 @@ package io.github.unterstein.decision.maandrsi;
 
 
 import io.github.unterstein.BinanceTrader;
+import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class BuyDecisionMaker {
+public class BuyDecisionMakerMARSI implements BuyDecisionMaker {
 
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
@@ -21,14 +22,18 @@ public class BuyDecisionMaker {
     public boolean isRightMomentToBuy(Double ask){
         if (priceNotNearResistanceLine(ask) && isUptrend(ask)
                 && isUpTrendLongPeriod() && isRsiHighEnough()
-                && isMacdAscendingBelowZero()){
+                && isMacdAscending() && isMACDBelowHistogram()){
             return true;
         } else {
             return false;
         }
     }
 
-    private boolean isMacdAscendingBelowZero() {
+    private boolean isMACDBelowHistogram() {
+        return marketAnalyzer.isMACDBelowLastHistogram();
+    }
+
+    private boolean isMacdAscending() {
         return marketAnalyzer.isMACDAscending();
     }
 
@@ -51,7 +56,5 @@ public class BuyDecisionMaker {
     private boolean isUptrend(Double ask) {
         return marketAnalyzer.isUptrendByAsk(ask);
     }
-
-
 
 }

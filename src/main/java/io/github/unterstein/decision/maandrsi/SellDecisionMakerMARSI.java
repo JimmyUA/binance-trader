@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import static java.lang.Thread.sleep;
 
 @Component
-public class SellDecisionMaker {
+public class SellDecisionMakerMARSI {
 
-    private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
+    private static Logger logger = LoggerFactory.getLogger(SellDecisionMakerMARSI.class);
 
 
     @Autowired
@@ -26,7 +26,7 @@ public class SellDecisionMaker {
 
 
     public boolean isTrendChanged(Double bid) {
-        if (isDownTrend(bid) || isRSITooLow()) {
+        if (isDownTrend(bid)) {
             return true;
         } else {
             return false;

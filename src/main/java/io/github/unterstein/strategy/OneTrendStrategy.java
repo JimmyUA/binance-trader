@@ -1,7 +1,8 @@
 package io.github.unterstein.strategy;
 
-import io.github.unterstein.decision.maandrsi.BuyDecisionMakerMARSI;
-import io.github.unterstein.decision.maandrsi.SellDecisionMakerMARSI;
+
+import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
+import io.github.unterstein.decision.onetrend.SellDecisionMakerOneTrend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,16 +10,21 @@ import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicke
 import static util.Slepper.sleepSeconds;
 
 @Component
-public class MAandRSIStrategy extends AbstractStrategy{
+public class OneTrendStrategy extends AbstractStrategy{
 
 
     @Autowired
-    private BuyDecisionMakerMARSI buyDecisionMaker;
+    private SellDecisionMakerOneTrend sellDecisionMaker;
 
     @Autowired
-    private SellDecisionMakerMARSI sellDecisionMaker;
+    public OneTrendStrategy(BuyDecisionMakerOneTrend buyDecisionMaker) {
+        this.buyDecisionMaker = buyDecisionMaker;
+    }
 
-
+    @Override
+    public void buyProcess() {
+        super.buyProcess();
+    }
 
     @Override
     public void sellProcess() {
@@ -62,11 +68,9 @@ public class MAandRSIStrategy extends AbstractStrategy{
                 return;
             }
         }
-
     }
 
     private boolean isUpTrending() {
-        return !sellDecisionMaker.isTrendChanged(lastBid);
+        return !sellDecisionMaker.isTrendChanged();
     }
-
 }
