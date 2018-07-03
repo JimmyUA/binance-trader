@@ -45,7 +45,7 @@ public class MACDStrategy extends AbstractStrategy {
         }
         if (wasOverGoalPrice && lastBid > minimumProfitablePrice()){
             logger.info("MACD trend changed and price was over goal price!");
-            sellToMarket(lastBid);
+            sellToMarket();
             return;
         }
         stopLossPrice = boughtPrice - (boughtPrice * 0.015);
@@ -57,12 +57,12 @@ public class MACDStrategy extends AbstractStrategy {
                     goalSellPrice - lastBid, lastBid, goalSellPrice));
             if (lastBid > goalSellPrice) {
                 logger.info("price is high enough");
-                sellToMarket(lastBid);
+                sellToMarket();
                 sleepSeconds(180);
                 break;
             } else if (lastBid < stopLossPrice) {
                 logger.info(String.format("Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail", lastBid, stopLossPrice));
-                sellToMarket(lastBid);
+                sellToMarket();
             }
             if (stopTicker){
                 return;

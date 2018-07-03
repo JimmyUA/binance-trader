@@ -1,9 +1,6 @@
 package io.github.unterstein.decision.onetrend;
 
-import io.github.unterstein.BinanceTrader;
-import io.github.unterstein.statistic.MACD.MACD;
-import io.github.unterstein.statistic.RSI.RSI;
-import io.github.unterstein.statistic.TrendAnalyzer;
+import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,40 +11,26 @@ public class SellDecisionMakerOneTrend {
 
 
     @Autowired
-    private RSI rsi;
-
-    @Autowired
-    private TrendAnalyzer trendAnalyzer;
+    MarketAnalyzer marketAnalyzer;
 
 
-    public boolean isTrendChanged() {
-        if (isDownTrend()) {
+
+    public boolean isTimeToTryToSell() {
+        if (marketAnalyzer.isDownTrendLongPeriod()){
             return true;
+        }
+        return false;
+    }
+
+    public boolean isCrossedStopLoss(double stopLossPrice, Double lastBid) {
+        if (lastBid < stopLossPrice){
+            logger.info(String.format(
+                    "Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail",
+                    lastBid, stopLossPrice));
+            return true;
+
         } else {
             return false;
         }
     }
-
-    private boolean isDownTrend() {
-        return trendAnalyzer.isDownTrendLongPeriod();
-    }
-
-    public boolean isTooDangerous() {
-        if (isRSITooLow() && trendAnalyzer.isDownTrendLongPeriod()){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isRSITooLow() {
-        Double rsi = getRSI();
-        logger.info(String.format("RSI is %.8f", rsi));
-        return rsi < 50;
-    }
-
-    private Double getRSI() {
-        return this.rsi.getRSI(21);
-    }
-
 }

@@ -37,7 +37,7 @@ public class MAandRSIStrategy extends AbstractStrategy{
         }
         if (wasOverGoalPrice && lastBid > minimumProfitablePrice()){
             logger.info("Trend changed and price was over goal price!");
-            sellToMarket(lastBid);
+            sellToMarket();
             return;
         }
         goalSellPrice = goalSellPrice + (0.002 * goalSellPrice);
@@ -50,12 +50,12 @@ public class MAandRSIStrategy extends AbstractStrategy{
                     goalSellPrice - lastBid, lastBid, goalSellPrice));
             if (lastBid > goalSellPrice) {
                 logger.info("price is high enough");
-                sellToMarket(lastBid);
+                sellToMarket();
                 sleepSeconds(180);
                 break;
             } else if (lastBid < stopLossPrice && sellDecisionMaker.isTooDangerous()) {
                 logger.info(String.format("Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail", lastBid, stopLossPrice));
-                sellToMarket(lastBid);
+                sellToMarket();
                 return;
             }
             if (stopTicker){

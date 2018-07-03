@@ -135,6 +135,14 @@ public class MarketAnalyzer {
     }
 
     public boolean wasMACDCrossSignal() {
-        return macd.wasMACDCrossSignal();
+        return macd.wasMACDCrossSignalUp();
+    }
+
+    public boolean isDownTrendLongPeriod() {
+        return trendAnalyzer.isDownTrendLongPeriod();
+    }
+
+    public boolean isMACDCrossesSignal() {
+        return macd.wasMACDCrossSignalDown();
     }
 }

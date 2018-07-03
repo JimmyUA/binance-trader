@@ -113,7 +113,9 @@ public class MACD {
             MACDs.pollFirst();
         }
 
-        checkMACDCrossedSignal();
+        if (signals.size() > 0) {
+            checkMACDCrossedSignal();
+        }
         minMACD = MACD < minMACD ? MACD : minMACD;
         maxMACD = MACD > maxMACD ? MACD : maxMACD;
         return MACD;
@@ -223,12 +225,17 @@ public class MACD {
                 direction, lastHistogram, previousAverage));
     }
 
-    public boolean wasMACDCrossSignal() {
+    public boolean wasMACDCrossSignalUp() {
         if (wasMACDCrossSignalUp && crossCounter <= 10){
             logger.info(String.format("MACD crossed Signal %d minutes ago", crossCounter));
+            crossCounter += 10;
             return true;
         } else {
             return false;
         }
+    }
+
+    public boolean wasMACDCrossSignalDown() {
+        return !wasMACDCrossSignalUp;
     }
 }
