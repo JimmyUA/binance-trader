@@ -1,6 +1,6 @@
 package io.github.unterstein.strategy;
 
-import io.github.unterstein.decision.macd.BuyDecisionMakerMACD;
+import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.decision.macd.SellDecisionMakerMACD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,21 +13,13 @@ public class MACDStrategy extends AbstractStrategy {
 
 
     @Autowired
-    private BuyDecisionMakerMACD buyDecisionMaker;
-
-    @Autowired
     private SellDecisionMakerMACD sellDecisionMaker;
 
-
-    @Override
-    public void buyProcess() {
-        if (buyDecisionMaker.isRightMomentToBuy()){
-            client.buyMarket(tradeAmount);
-            boughtPrice = getLastAsk();
-            logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
-            isBought = true;
-        }
+    @Autowired
+    public MACDStrategy(BuyDecisionMaker buyDecisionMaker) {
+        this.buyDecisionMaker = buyDecisionMaker;
     }
+
 
     @Override
     public void sellProcess() {

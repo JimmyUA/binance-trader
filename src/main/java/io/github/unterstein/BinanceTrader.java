@@ -61,7 +61,7 @@ public class BinanceTrader {
         try {
             checkWaitSomeTime();
             lastPrice = client.lastPrice();
-            checkIfBoughtManualy();
+//            checkIfBoughtManualy();
             updateLastBid();
             double lastAsk = getLastAsk();
             double profitablePrice = lastBid + (lastBid * tradeProfit / 100);

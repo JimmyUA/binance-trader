@@ -39,10 +39,10 @@ public class Config {
     @Value("${TRADE_CURRENCY}")
     private String tradeCurrency;
 
-    @Value("${API_KEY:33dlv4RMYPnGDVifHfouwmRPr06AxboXbaMVGFOJClFiOaEEEQyCQ1fHEz2MQJRv}")
+    @Value("${API_KEY:8L4iCDQJXAvxE9kbFaAVh01dlw2mBOUtPeyKseEXzdSeRvVG8YwF887w77qtoWV1}")
     private String apiKey;
 
-    @Value("${API_SECRET:fkIlfKwNV3YX0l3PUBoCyjffnhoa86M5vQ5ZSjhMUou8RI2oQeD1zz9YEfdGpB0y}")
+    @Value("${API_SECRET:uunJlIIW21rEcu16DWIowNc5xQqTKhxS5VquBgcT08cvMNzzDvkFw3aOAicDjCVW}")
     private String apiSecret;
 
     @Value("${RSI_PERIODS}")
@@ -139,11 +139,11 @@ public class Config {
     @Bean
     public Strategy strategy(){
         if (strategy.equals("MACD")) {
-            return new MACDStrategy();
+            return new MACDStrategy(buyDecisionMakerMACD());
         } else if (strategy.equals("ONE")){
             return new OneTrendStrategy(buyDecisionMakerOneTrend());
         }
-        return new MAandRSIStrategy();
+        return new MAandRSIStrategy(buyDecisionMaker());
     }
 
 

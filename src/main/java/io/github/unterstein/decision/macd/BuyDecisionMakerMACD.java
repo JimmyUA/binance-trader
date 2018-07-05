@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static util.Slepper.sleepSeconds;
 
-public class BuyDecisionMakerMACD {
+public class BuyDecisionMakerMACD implements BuyDecisionMaker{
 
     private static Logger logger = LoggerFactory.getLogger(MAandRSIStrategy.class);
 
@@ -26,7 +26,7 @@ public class BuyDecisionMakerMACD {
         this.minimumHistogram = minimumHistogram;
     }
 
-    public boolean isRightMomentToBuy() {
+    public boolean isRightMomentToBuy(Double lastAsk) {
         Double lastHistogram = macd.getLastHistogram();
         if (isMACDNearBottom() && lastHistogram < minimumHistogram){
             logger.info(String.format("Last histogram: %.10f is lower than minimum %.10f",

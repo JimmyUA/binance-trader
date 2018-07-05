@@ -49,10 +49,10 @@ public class BinanceBotApplication {
   @Value("${TRADE_CURRENCY}")
   private String tradeCurrency;
 
-  @Value("${API_KEY:33dlv4RMYPnGDVifHfouwmRPr06AxboXbaMVGFOJClFiOaEEEQyCQ1fHEz2MQJRv}")
+  @Value("${API_KEY:8L4iCDQJXAvxE9kbFaAVh01dlw2mBOUtPeyKseEXzdSeRvVG8YwF887w77qtoWV1}")
   private String apiKey;
 
-  @Value("${API_SECRET:fkIlfKwNV3YX0l3PUBoCyjffnhoa86M5vQ5ZSjhMUou8RI2oQeD1zz9YEfdGpB0y}")
+  @Value("${API_SECRET:uunJlIIW21rEcu16DWIowNc5xQqTKhxS5VquBgcT08cvMNzzDvkFw3aOAicDjCVW}")
   private String apiSecret;
 
   @Value("${RSI_PERIODS}")
@@ -105,7 +105,7 @@ public class BinanceBotApplication {
 //  }
 
 
-  @RequestMapping("/")
+  @RequestMapping("/balance")
   public List<AssetBalance> getBalances() {
     return trader.getBalances().stream().filter(assetBalance -> !assetBalance.getFree().startsWith("0.0000")).collect(Collectors.toList());
   }

@@ -44,7 +44,7 @@ public class SellDecisionMakerMARSI {
     }
 
     private boolean isDownTrend(Double bid) {
-        return !trendAnalyzer.isUptrendByBid(bid);
+        return !trendAnalyzer.isUpTrendLongPeriod();
     }
 
     public void setPeriods(Integer periods) {

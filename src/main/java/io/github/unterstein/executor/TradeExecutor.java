@@ -18,7 +18,13 @@ public class TradeExecutor {
     }
 
     public void buyProcess(){
-        strategy.buyProcess();
+        if (nothingBought()) {
+            strategy.buyProcess();
+        }
+    }
+
+    private boolean nothingBought() {
+        return !strategy.isBought();
     }
 
     public void sellProcess(){

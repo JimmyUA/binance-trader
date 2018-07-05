@@ -138,7 +138,7 @@ public class MACD {
 
     private double getLastEMA(Integer period) {
         LinkedList<Double> EMAs;
-        if (period == shortPeriod) {
+        if (period.equals(shortPeriod)) {
             EMAs = shortEMAs;
         } else {
             EMAs = longEMAs;

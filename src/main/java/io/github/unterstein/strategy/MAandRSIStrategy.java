@@ -1,7 +1,9 @@
 package io.github.unterstein.strategy;
 
+import io.github.unterstein.decision.BuyDecisionMaker;
 import io.github.unterstein.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.decision.maandrsi.SellDecisionMakerMARSI;
+import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +14,14 @@ import static util.Slepper.sleepSeconds;
 public class MAandRSIStrategy extends AbstractStrategy{
 
 
-    @Autowired
-    private BuyDecisionMakerMARSI buyDecisionMaker;
 
     @Autowired
     private SellDecisionMakerMARSI sellDecisionMaker;
 
-
+    @Autowired
+    public MAandRSIStrategy(BuyDecisionMaker buyDecisionMaker) {
+        this.buyDecisionMaker = buyDecisionMaker;
+    }
 
     @Override
     public void sellProcess() {
