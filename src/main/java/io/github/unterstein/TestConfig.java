@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalyzer;
@@ -26,5 +27,10 @@ public class TestConfig {
     @Bean
     public MovingAverage movingAverage(){
         return new MovingAverage();
+    }
+
+    @Bean
+    public RemoteManager remoteManager(){
+        return new RemoteManager();
     }
 }

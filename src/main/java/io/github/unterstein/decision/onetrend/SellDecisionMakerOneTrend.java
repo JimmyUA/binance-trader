@@ -16,7 +16,7 @@ public class SellDecisionMakerOneTrend {
 
 
     public boolean isTimeToTryToSell() {
-        if (marketAnalyzer.isDownTrendLongPeriod()){
+        if (marketAnalyzer.isDownTrendLongPeriodStarted() || marketAnalyzer.wasMACDCrossSignalDown()){
             return true;
         }
         return false;

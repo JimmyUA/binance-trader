@@ -236,6 +236,12 @@ public class MACD {
     }
 
     public boolean wasMACDCrossSignalDown() {
-        return !wasMACDCrossSignalUp;
+        if (!wasMACDCrossSignalUp){
+            logger.info("MACD crossed Signal down");
+            return true;
+        } else {
+            logger.info("MACD didnot cross Signal down");
+            return false;
+        }
     }
 }

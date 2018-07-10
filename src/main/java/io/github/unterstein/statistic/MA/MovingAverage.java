@@ -1,6 +1,5 @@
 package io.github.unterstein.statistic.MA;
 
-import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +11,12 @@ import java.util.LinkedList;
 @Component
 public class MovingAverage {
 
-    private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
+    private static Logger logger = LoggerFactory.getLogger(MovingAverage.class);
 
     @Autowired
     private PricesAccumulator pricesAccumulator;
+
+    private boolean wasUpTrendLongPeriod = false;
 
     public MovingAverage() {
 
@@ -35,8 +36,10 @@ public class MovingAverage {
     public boolean isUpTrendLongPeriod(){
         if (MA(15) >= MA(50)){
             logger.info("Up-trend detected long period");
+            wasUpTrendLongPeriod = true;
             return true;
         } else {
+            wasUpTrendLongPeriod = false;
             logger.info("Down-trend detected long period");
             return false;
         }
@@ -66,5 +69,19 @@ public class MovingAverage {
             logger.info("Down-trend detected one trend");
             return false;
         }
+    }
+
+    public boolean isDownTrendLongPeriodStarted() {
+        if (isDownTrendLongPeriod()){
+            if (wasUpTrendLongPeriod){
+                wasUpTrendLongPeriod = false;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isDownTrendLongPeriod() {
+        return !isUpTrendLongPeriod();
     }
 }

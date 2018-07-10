@@ -7,6 +7,7 @@ import io.github.unterstein.decision.macd.SellDecisionMakerMACD;
 import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
 import io.github.unterstein.decision.onetrend.SellDecisionMakerOneTrend;
 import io.github.unterstein.executor.TradeExecutor;
+import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.MarketAnalyzer;
@@ -168,4 +169,13 @@ public class Config {
     public SellDecisionMakerOneTrend sellDecisionMakerOneTrend(){
         return new SellDecisionMakerOneTrend();
     }
+
+
+    @Bean
+    public RemoteManager remoteManager(){
+        return new RemoteManager();
+    }
+
+
+
 }

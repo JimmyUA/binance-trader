@@ -35,4 +35,8 @@ public class TrendAnalyzer {
     public boolean isUpTrendOneTrend() {
         return movingAverage.isUpTrendOneTrend();
     }
+
+    public boolean isDownTrendLongPeriodStarted() {
+        return movingAverage.isDownTrendLongPeriodStarted();
+    }
 }
