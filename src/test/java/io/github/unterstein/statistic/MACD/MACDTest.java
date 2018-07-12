@@ -68,7 +68,7 @@ public class MACDTest {
             pricesAccumulator.add(getPrice());
             macd.calculateCurrentHistogram();
         }
-        assertTrue(macd.isAccending());
+        assertTrue(macd.isAscending());
     }
 
     private Double getPrice() {

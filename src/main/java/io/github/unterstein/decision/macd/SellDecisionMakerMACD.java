@@ -9,6 +9,6 @@ public class SellDecisionMakerMACD {
     private MACD macd;
 
     public boolean isMACDAscending() {
-        return macd.isAccending();
+        return macd.isAscending();
     }
 }

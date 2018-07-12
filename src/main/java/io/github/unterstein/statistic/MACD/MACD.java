@@ -202,7 +202,7 @@ public class MACD {
         return 0.0;
     }
 
-    public boolean isAccending() {
+    public boolean isAscending() {
         Double lastHistogram = histograms.getLast();
 
         double previousAverage = histograms.stream().skip(histograms.size() - 4)
@@ -226,8 +226,8 @@ public class MACD {
     }
 
     public boolean wasMACDCrossSignalUp() {
-        if (wasMACDCrossSignalUp && crossCounter <= 10){
-            logger.info(String.format("MACD crossed Signal %d minutes ago", crossCounter));
+        if (wasMACDCrossSignalUp){
+            logger.info(String.format("MACD crossed Signal up%d minutes ago", crossCounter));
             crossCounter += 10;
             return true;
         } else {
