@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("/home")

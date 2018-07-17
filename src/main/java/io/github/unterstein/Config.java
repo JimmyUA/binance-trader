@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import com.giffing.wicket.spring.boot.starter.app.WicketBootWebApplication;
 import io.github.unterstein.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.decision.maandrsi.SellDecisionMakerMARSI;
 import io.github.unterstein.decision.macd.BuyDecisionMakerMACD;
@@ -19,9 +20,15 @@ import io.github.unterstein.strategy.MACDStrategy;
 import io.github.unterstein.strategy.MAandRSIStrategy;
 import io.github.unterstein.strategy.OneTrendStrategy;
 import io.github.unterstein.strategy.Strategy;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.WicketTester;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+
+import javax.inject.Singleton;
 
 @Configuration
 public class Config {
@@ -78,6 +85,9 @@ public class Config {
     public TrendAnalyzer trendAnalizer(){
         return new TrendAnalyzer();
     }
+
+    @Autowired
+    private WicketBootWebApplication wicketBootWebApplication;
 
     @Bean
     public BinanceTrader binanceTrader(){
@@ -176,6 +186,9 @@ public class Config {
         return new RemoteManager();
     }
 
-
-
+    @Bean
+    @Singleton
+    public WicketTester tester(){
+        return new WicketTester((WebApplication) wicketBootWebApplication);
+    }
 }
