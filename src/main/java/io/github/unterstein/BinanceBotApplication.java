@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.*;
 import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static io.github.unterstein.remoteManagment.ManagementConstants.sleepSomeTime;
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
@@ -64,6 +65,9 @@ public class BinanceBotApplication {
   @Value("${STRATEGY}")
   private String strategy;
 
+  @Value("${ONE_TREND.STRATEGY.START_TREND}")
+  private String dayTrend;
+
   static LastPriceVSOrderBook lastPriceVSOrderBook;
 
 
@@ -82,6 +86,7 @@ public class BinanceBotApplication {
 
   @PostConstruct
   public void init() {
+    initDayTrend();
     marketAnalyzer.setRsiPeriod(rsiPeriods);
     ManagementConstants.rsiPeriods = rsiPeriods;
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
@@ -91,6 +96,18 @@ public class BinanceBotApplication {
     ScheduledExecutorService service = Executors
             .newSingleThreadScheduledExecutor();
     service.scheduleAtFixedRate(priceFetchingTask, 0, 1, TimeUnit.MINUTES);
+  }
+
+  private void initDayTrend() {
+    switch (dayTrend){
+      case "UP":
+        startDayTrend = false;
+        break;
+      case "DOWN":
+        startDayTrend = true;
+        break;
+        default:startDayTrend = true;
+    }
   }
 
   // tick every 2 seconds

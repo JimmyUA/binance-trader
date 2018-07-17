@@ -42,7 +42,7 @@ public class OneTrendStrategy extends AbstractStrategy{
             sleepSeconds(3);
             updateLastBid();
 
-            if (sellDecisionMaker.isTimeToTryToSell()){
+            if (enoughProfit() && sellDecisionMaker.isTimeToTryToSell()){
                 if (soldWithProfit()){
                     break;
                 }
@@ -51,6 +51,10 @@ public class OneTrendStrategy extends AbstractStrategy{
                 break;
             }
         }
+    }
+
+    private boolean enoughProfit() {
+        return lastBid > goalSellPrice;
     }
 
     private boolean soldWithProfit() {

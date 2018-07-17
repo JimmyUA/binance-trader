@@ -149,4 +149,8 @@ public class MarketAnalyzer {
     public boolean isDownTrendLongPeriodStarted() {
         return trendAnalyzer.isDownTrendLongPeriodStarted();
     }
+
+    public boolean isDownDayTrend() {
+        return trendAnalyzer.isDownDayTrend();
+    }
 }

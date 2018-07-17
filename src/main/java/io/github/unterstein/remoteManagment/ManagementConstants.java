@@ -6,4 +6,5 @@ public class ManagementConstants {
     public static Boolean sleepSomeTime = false;
     public static Integer minutesFromStart = 0;
     public static Integer rsiPeriods = 0;
+    public static boolean startDayTrend = false;
 }

@@ -39,4 +39,8 @@ public class TrendAnalyzer {
     public boolean isDownTrendLongPeriodStarted() {
         return movingAverage.isDownTrendLongPeriodStarted();
     }
+
+    public boolean isDownDayTrend() {
+        return movingAverage.isDownDayTrend();
+    }
 }
