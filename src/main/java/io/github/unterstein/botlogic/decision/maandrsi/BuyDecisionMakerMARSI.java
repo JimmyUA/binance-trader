@@ -1,8 +1,8 @@
-package io.github.unterstein.decision.maandrsi;
+package io.github.unterstein.botlogic.decision.maandrsi;
 
 
 import io.github.unterstein.BinanceTrader;
-import io.github.unterstein.decision.BuyDecisionMaker;
+import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

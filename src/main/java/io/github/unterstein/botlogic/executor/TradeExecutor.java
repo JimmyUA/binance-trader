@@ -1,7 +1,6 @@
-package io.github.unterstein.executor;
+package io.github.unterstein.botlogic.executor;
 
-import io.github.unterstein.BinanceTrader;
-import io.github.unterstein.strategy.Strategy;
+import io.github.unterstein.botlogic.strategy.Strategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

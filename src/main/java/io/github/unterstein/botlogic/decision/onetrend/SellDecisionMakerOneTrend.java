@@ -1,4 +1,4 @@
-package io.github.unterstein.decision.onetrend;
+package io.github.unterstein.botlogic.decision.onetrend;
 
 import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;

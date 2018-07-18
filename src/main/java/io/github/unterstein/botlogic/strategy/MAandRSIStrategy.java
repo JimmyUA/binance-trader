@@ -1,16 +1,13 @@
-package io.github.unterstein.strategy;
+package io.github.unterstein.botlogic.strategy;
 
-import io.github.unterstein.decision.BuyDecisionMaker;
-import io.github.unterstein.decision.maandrsi.BuyDecisionMakerMARSI;
-import io.github.unterstein.decision.maandrsi.SellDecisionMakerMARSI;
-import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
+import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
+import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
 
-@Component
+
 public class MAandRSIStrategy extends AbstractStrategy{
 
 

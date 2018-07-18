@@ -1,7 +1,7 @@
 package io.github.unterstein;
 
 import com.binance.api.client.domain.account.AssetBalance;
-import io.github.unterstein.infoAccumulator.LastPriceVSOrderBook;
+import io.github.unterstein.statistic.infoAccumulator.LastPriceVSOrderBook;
 import io.github.unterstein.remoteManagment.ManagementConstants;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import io.github.unterstein.statistic.PriceFetchingTask;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ import static io.github.unterstein.remoteManagment.ManagementConstants.shutDown;
 import static io.github.unterstein.remoteManagment.ManagementConstants.sleepSomeTime;
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 
+@EntityScan("io.github.unterstein.persistent.entity")
 @EnableScheduling
 @SpringBootApplication
 @RestController("/")

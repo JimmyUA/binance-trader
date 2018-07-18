@@ -1,9 +1,9 @@
-package io.github.unterstein.decision.macd;
+package io.github.unterstein.botlogic.decision.macd;
 
-import io.github.unterstein.decision.BuyDecisionMaker;
+import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.TrendAnalyzer;
-import io.github.unterstein.strategy.MAandRSIStrategy;
+import io.github.unterstein.botlogic.strategy.MAandRSIStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

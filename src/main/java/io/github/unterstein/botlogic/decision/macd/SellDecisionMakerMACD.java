@@ -1,4 +1,4 @@
-package io.github.unterstein.decision.macd;
+package io.github.unterstein.botlogic.decision.macd;
 
 import io.github.unterstein.statistic.MACD.MACD;
 import org.springframework.beans.factory.annotation.Autowired;

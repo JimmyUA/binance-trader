@@ -1,14 +1,14 @@
-package io.github.unterstein.strategy;
+package io.github.unterstein.botlogic.strategy;
 
-import io.github.unterstein.decision.BuyDecisionMaker;
-import io.github.unterstein.decision.macd.SellDecisionMakerMACD;
+import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
+import io.github.unterstein.botlogic.decision.macd.SellDecisionMakerMACD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicker;
 import static util.Slepper.sleepSeconds;
 
-@Component
+
 public class MACDStrategy extends AbstractStrategy {
 
 

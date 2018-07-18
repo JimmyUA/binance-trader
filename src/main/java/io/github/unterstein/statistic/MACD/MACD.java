@@ -11,7 +11,7 @@ import java.util.LinkedList;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 
-@Component
+
 public class MACD {
 
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);

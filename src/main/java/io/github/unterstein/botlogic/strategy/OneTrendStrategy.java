@@ -1,8 +1,8 @@
-package io.github.unterstein.strategy;
+package io.github.unterstein.botlogic.strategy;
 
 
-import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
-import io.github.unterstein.decision.onetrend.SellDecisionMakerOneTrend;
+import io.github.unterstein.botlogic.decision.onetrend.BuyDecisionMakerOneTrend;
+import io.github.unterstein.botlogic.decision.onetrend.SellDecisionMakerOneTrend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

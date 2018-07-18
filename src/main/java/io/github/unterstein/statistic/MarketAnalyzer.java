@@ -46,6 +46,7 @@ public class MarketAnalyzer {
         message += String.format("Last histogram %.11f<br>", histogram);
         message += "Is up-trend short period: " + trendAnalyzer.isUpTrendShortPeriod() + newLineForHTML;
         message += "Is up-trend long period: " + trendAnalyzer.isUpTrendLongPeriod() + newLineForHTML;
+        message += "Is day-trend up: " + !trendAnalyzer.isDownDayTrend() + newLineForHTML;
         return message;
     }
 

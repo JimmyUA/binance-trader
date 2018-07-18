@@ -2,7 +2,7 @@ package io.github.unterstein;
 
 
 import com.binance.api.client.domain.account.AssetBalance;
-import io.github.unterstein.executor.TradeExecutor;
+import io.github.unterstein.botlogic.executor.TradeExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package io.github.unterstein.strategy;
+package io.github.unterstein.botlogic.strategy;
 
 public interface Strategy {
 

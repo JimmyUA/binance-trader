@@ -1,7 +1,6 @@
-package io.github.unterstein.decision.maandrsi;
+package io.github.unterstein.botlogic.decision.maandrsi;
 
 
-import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import org.slf4j.Logger;

@@ -1,6 +1,5 @@
 package io.github.unterstein.statistic.MA;
 
-import io.github.unterstein.remoteManagment.ManagementConstants;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 
-import static io.github.unterstein.remoteManagment.ManagementConstants.*;
+import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
+import static io.github.unterstein.remoteManagment.ManagementConstants.startDayTrend;
 
 @Component
 public class MovingAverage {
@@ -94,8 +94,11 @@ public class MovingAverage {
 
     private boolean isUpDayTrend() {
         if(minutesFromStart > 50 * 15) {
-            return MA(5 * 15) >= MA(50 * 15);
+            boolean isDayTrendUP = MA(15 * 15) >= MA(50 * 15);
+            logger.info("Day trend is %s", isDayTrendUP ? "UP" : "DOWN");
+            return isDayTrendUP;
         } else {
+            logger.info("Using manually added day trend: Day trend is %s", startDayTrend ? "UP" : "DOWN");
             return startDayTrend;
         }
     }

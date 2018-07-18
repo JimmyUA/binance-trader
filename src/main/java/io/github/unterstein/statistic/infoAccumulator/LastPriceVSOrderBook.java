@@ -1,4 +1,4 @@
-package io.github.unterstein.infoAccumulator;
+package io.github.unterstein.statistic.infoAccumulator;
 
 import com.binance.api.client.domain.market.OrderBook;
 import com.binance.api.client.domain.market.OrderBookEntry;
@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.util.*;
 
 
-@Component
 public class LastPriceVSOrderBook {
 
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);

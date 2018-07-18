@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<wicket:extend>
+			<div style="    text-align: center;
+    						font-size: xx-large;">
+				<label wicket:id="label">Trades</label><br>
+			</div>
+			<label wicket:id="noTrades" style="    text-align: center;
+    											   font-size: large;">Trades</label>
+			<table class="w100 table">
+				<tr>
+					<td >id</td>
+					<td >buy price</td>
+					<td >buy time</td>
+					<td >sell price</td>
+					<td >sell time</td>
+					<td >profit</td>
+					<td >profit %</td>
+				</tr>
+				<tr wicket:id="view">
+					<td wicket:id="id"></td>
+					<td wicket:id="buy"></td>
+					<td wicket:id="buyDate"></td>
+					<td wicket:id="sell"></td>
+					<td wicket:id="sellDate"></td>
+					<td wicket:id="profit"></td>
+					<td wicket:id="profitPercent"></td>
+				</tr>
+				<tr>
+					<td ></td>
+					<td ></td>
+					<td ></td>
+					<td ></td>
+					<td ></td>
+					<td wicket:id="totalProfit"></td>
+					<td wicket:id="totalProfitPercent"></td>
+				</tr>
+			</table>
+			<form wicket:id="form">
+				<div wicket:id="pager"></div>
+			</form>
+		</wicket:extend>
+	</body>
+</html>

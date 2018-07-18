@@ -1,34 +1,26 @@
 package io.github.unterstein;
 
-import com.giffing.wicket.spring.boot.starter.app.WicketBootWebApplication;
-import io.github.unterstein.decision.maandrsi.BuyDecisionMakerMARSI;
-import io.github.unterstein.decision.maandrsi.SellDecisionMakerMARSI;
-import io.github.unterstein.decision.macd.BuyDecisionMakerMACD;
-import io.github.unterstein.decision.macd.SellDecisionMakerMACD;
-import io.github.unterstein.decision.onetrend.BuyDecisionMakerOneTrend;
-import io.github.unterstein.decision.onetrend.SellDecisionMakerOneTrend;
-import io.github.unterstein.executor.TradeExecutor;
+import io.github.unterstein.botlogic.decision.maandrsi.BuyDecisionMakerMARSI;
+import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
+import io.github.unterstein.botlogic.decision.macd.BuyDecisionMakerMACD;
+import io.github.unterstein.botlogic.decision.macd.SellDecisionMakerMACD;
+import io.github.unterstein.botlogic.decision.onetrend.BuyDecisionMakerOneTrend;
+import io.github.unterstein.botlogic.decision.onetrend.SellDecisionMakerOneTrend;
+import io.github.unterstein.botlogic.executor.TradeExecutor;
+import io.github.unterstein.botlogic.strategy.MACDStrategy;
+import io.github.unterstein.botlogic.strategy.MAandRSIStrategy;
+import io.github.unterstein.botlogic.strategy.OneTrendStrategy;
+import io.github.unterstein.botlogic.strategy.Strategy;
 import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import io.github.unterstein.statistic.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
-import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.TrendAnalyzer;
-import io.github.unterstein.strategy.MACDStrategy;
-import io.github.unterstein.strategy.MAandRSIStrategy;
-import io.github.unterstein.strategy.OneTrendStrategy;
-import io.github.unterstein.strategy.Strategy;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.tester.WicketTester;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-
-import javax.inject.Singleton;
 
 @Configuration
 public class Config {
@@ -86,9 +78,6 @@ public class Config {
         return new TrendAnalyzer();
     }
 
-    @Autowired
-    private WicketBootWebApplication wicketBootWebApplication;
-
     @Bean
     public BinanceTrader binanceTrader(){
         BinanceTrader binanceTrader = new BinanceTrader(tradingClient());
@@ -120,10 +109,6 @@ public class Config {
         return sellDecisionMaker;
     }
 
-    @Bean
-    public RSI rsi(){
-        return new RSI();
-    }
 
     @Bean
     public MACD macd(){
@@ -186,9 +171,5 @@ public class Config {
         return new RemoteManager();
     }
 
-    @Bean
-    @Singleton
-    public WicketTester tester(){
-        return new WicketTester((WebApplication) wicketBootWebApplication);
-    }
+
 }
