@@ -103,10 +103,10 @@ public class BinanceBotApplication {
   private void initDayTrend() {
     switch (dayTrend){
       case "UP":
-        startDayTrend = false;
+        startDayTrend = true;
         break;
       case "DOWN":
-        startDayTrend = true;
+        startDayTrend = false;
         break;
         default:startDayTrend = true;
     }

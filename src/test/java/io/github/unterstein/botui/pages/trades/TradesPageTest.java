@@ -8,6 +8,7 @@ import io.github.unterstein.TestConfig;
 import io.github.unterstein.botlogic.services.TradeService;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import java.util.Collections;
 
 import static org.mockito.Mockito.when;
-
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfig.class, BinanceBotApplication.class})
 @TestPropertySource(locations = "classpath:application_test.properties")
