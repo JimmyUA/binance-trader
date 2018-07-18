@@ -5,7 +5,7 @@
 
     <groupId>io.github.unterstein</groupId>
     <artifactId>binancebot</artifactId>
-    <version>1.0.4-Alex</version>
+    <version>1.1.1-Alex</version>
     <packaging>jar</packaging>
 
     <name>binancebot</name>
