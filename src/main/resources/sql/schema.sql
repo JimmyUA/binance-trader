@@ -9,3 +9,10 @@ CREATE TABLE trades (
   profit_percent   DOUBLE NOT NULL ,
   PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS stored_prices;
+CREATE TABLE stored_prices (
+  id       INTEGER NOT NULL AUTO_INCREMENT,
+  price   DOUBLE NOT NULL ,
+  PRIMARY KEY (id)
+);

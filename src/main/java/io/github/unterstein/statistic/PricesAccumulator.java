@@ -1,5 +1,7 @@
 package io.github.unterstein.statistic;
 
+import io.github.unterstein.botlogic.services.StoredPricesService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
@@ -7,29 +9,20 @@ import java.util.LinkedList;
 @Component
 public class PricesAccumulator {
 
-
-    private LinkedList<Double> samples;
-    private int samplesCapacity;
-
-    public PricesAccumulator() {
-        samples = new LinkedList<>();
-        samplesCapacity = 100 * 15;
-        for (int i = 0; i < samplesCapacity; i++) {
-            samples.add(10.0);
-        }
-    }
+    @Autowired
+    private StoredPricesService storedPricesService;
 
     public void add(Double price){
-
-        if (samples.size() < samplesCapacity){
-            samples.add(price);
-        } else{
-            samples.pollFirst();
-            samples.addLast(price);
-        }
+        storedPricesService.save(price);
     }
 
-    public LinkedList<Double> getSamples() {
-        return samples;
+    public LinkedList<Double> getSamples(Long amount) {
+        return storedPricesService.getPricesPortion(amount);
     }
+
+
+    public LinkedList<Double> get100Samples() {
+        return storedPricesService.getPricesPortion(100L);
+    }
+
 }

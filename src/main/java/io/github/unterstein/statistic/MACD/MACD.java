@@ -5,7 +5,6 @@ import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 
@@ -79,7 +78,7 @@ public class MACD {
 
     private double EMA(Integer period) {
         double result;
-        LinkedList<Double> prices = pricesAccumulator.getSamples();
+        LinkedList<Double> prices = pricesAccumulator.get100Samples();
         LinkedList<Double> EMAs;
         if (period == shortPeriod) {
             EMAs = shortEMAs;

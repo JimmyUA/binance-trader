@@ -10,9 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -61,7 +59,7 @@ public class RSITest {
                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 46.125, 47.125, 46.4375, 46.9375, 44.9375,
                 44.250, 44.625, 45.75, 47.8125, 47.5625, 47.0, 44.5625, 46.3125, 47.6875, 46.6875));
-        when(pricesAccumulator.getSamples()).thenReturn(prices);
+        when(pricesAccumulator.get100Samples()).thenReturn(prices);
     }
 
     private void stubAccumulator2() {
@@ -75,6 +73,6 @@ public class RSITest {
                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 45.15, 46.26, 46.5, 46.23, 46.08,
                 46.03, 46.83, 47.69, 47.54, 49.25, 49.23, 48.2, 47.57, 47.61, 48.08));
-        when(pricesAccumulator.getSamples()).thenReturn(prices);
+        when(pricesAccumulator.get100Samples()).thenReturn(prices);
     }
 }

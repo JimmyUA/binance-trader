@@ -2,13 +2,10 @@ package io.github.unterstein.botlogic.services;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DatabaseTearDown;
-import com.github.springtestdbunit.annotation.DatabaseTearDowns;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import io.github.unterstein.BinanceBotApplication;
 import io.github.unterstein.persistent.entity.Trade;
 import io.github.unterstein.persistent.repository.TradeRepository;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"datasource"})
-@DatabaseSetup("/sql/schema.xml")
+@DatabaseSetup("/sql/tests/one_trade.xml")
 public class TradeServiceTest {
 
     @Autowired
@@ -37,14 +34,14 @@ public class TradeServiceTest {
     @Autowired
     private TradeService tradeService;
 
-    @DatabaseSetup("/sql/schema.xml")
+    @DatabaseSetup("/sql/tests/one_trade.xml")
     @Test
     public void tradesShouldHaveOneRecord() throws Exception {
         List<Trade> trades = tradeRepository.findAll();
         assertEquals(1, trades.size());
     }
 
-    @DatabaseSetup("/sql/schema.xml")
+    @DatabaseSetup("/sql/tests/one_trade.xml")
     @Test
     public void shouldStoreTradeAfterAddingBothBuyAndSell() throws Exception {
         executeTrade();
@@ -53,7 +50,7 @@ public class TradeServiceTest {
         assertEquals(2, trades.size());
     }
 
-    @DatabaseSetup("/sql/schema.xml")
+    @DatabaseSetup("/sql/tests/one_trade.xml")
     @Test
     public void shouldCalculateProfitCorrectly() throws Exception {
         executeTrade();
@@ -68,7 +65,7 @@ public class TradeServiceTest {
         assertEquals(expectedProfit, profit, 0.0001);
     }
 
-    @DatabaseSetup("/sql/schema.xml")
+    @DatabaseSetup("/sql/tests/one_trade.xml")
     @Test
     public void shouldCalculateProfitPercentCorrectly() throws Exception {
         executeTrade();

@@ -50,7 +50,7 @@ public class MovingAverage {
 
     private double MA(int amount) {
 
-        LinkedList<Double> samples = pricesAccumulator.getSamples();
+        LinkedList<Double> samples = pricesAccumulator.get100Samples();
         double sum = samples.stream().skip(samples.size() - amount).mapToDouble(d -> d).sum();
         return sum/amount;
     }

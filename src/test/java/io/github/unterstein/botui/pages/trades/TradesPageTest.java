@@ -8,7 +8,6 @@ import io.github.unterstein.TestConfig;
 import io.github.unterstein.botlogic.services.TradeService;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +67,7 @@ public class TradesPageTest {
         tester.assertVisible("noTrades");
     }
 
-    @DatabaseSetup("/sql/schema.xml")
+    @DatabaseSetup("/sql/tests/one_trade.xml")
     @Test
     public void noTradesLabelInvisibleIfTradesFound() throws Exception {
        tester.startPage(TradesPage.class);

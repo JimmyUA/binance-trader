@@ -35,7 +35,7 @@ public class RSI {
     }
 
     private void initPrices() {
-        prises = pricesAccumulator.getSamples();
+        prises = pricesAccumulator.get100Samples();
         initGainsAndLosses();
     }
 
