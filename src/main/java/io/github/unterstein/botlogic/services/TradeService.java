@@ -17,25 +17,29 @@ public class TradeService {
     private TradeRepository tradeRepository;
 
     private Trade trade;
+    private double fee;
 
     public void addBuyOrder(Double boughtPrice){
         trade = new Trade();
         trade.setBoughtPrice(boughtPrice);
         trade.setBoughtDate(new Date());
+        fee += boughtPrice * 0.0005;
     }
 
     public void addSellOrder(Double sellPrice){
         trade.setSellPrice(sellPrice);
         trade.setSellDate(new Date());
+        fee += sellPrice * 0.0005;
         calculateProfit();
         tradeRepository.save(trade);
         trade = null;
+        fee = 0;
     }
 
     private void calculateProfit() {
         Double boughtPrice = trade.getBoughtPrice();
         Double sellPrice = trade.getSellPrice();
-        double profit = sellPrice - boughtPrice;
+        double profit = sellPrice - boughtPrice - fee;
         trade.setProfit(profit);
         double profitPercent = profit / boughtPrice * 100;
         trade.setProfitPercent(profitPercent);

@@ -61,7 +61,11 @@ public class TradeServiceTest {
         Trade trade = getStoredTrade();
 
         Double profit = trade.getProfit();
-        assertEquals(0.1, profit, 0.0001);
+        double fee = 0.3 * 0.0005;
+        double expectedProfit = 0.1 - fee;
+        System.out.println(trade.getBoughtDate());
+
+        assertEquals(expectedProfit, profit, 0.0001);
     }
 
     @DatabaseSetup("/sql/schema.xml")
@@ -72,7 +76,7 @@ public class TradeServiceTest {
         Trade trade = getStoredTrade();
 
         Double profitPercent = trade.getProfitPercent();
-        assertEquals(100, profitPercent, 0.0001);
+        assertEquals(99.85, profitPercent, 0.0001);
     }
 
     private void executeTrade() {

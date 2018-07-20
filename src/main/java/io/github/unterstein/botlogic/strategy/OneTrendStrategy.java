@@ -33,7 +33,8 @@ public class OneTrendStrategy extends AbstractStrategy{
 
     private void newSellProcess() {
         goalSellPrice = boughtPrice + (boughtPrice * 0.002);
-        stopLossPrice = boughtPrice - (boughtPrice * 0.015);
+        Double stopLossKof = stopLossDecider.getStopLossKof();
+        stopLossPrice = boughtPrice - (boughtPrice * stopLossKof);
 
         while (true){
             if (stopTicker){

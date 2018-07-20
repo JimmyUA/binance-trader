@@ -2,6 +2,7 @@ package io.github.unterstein.botlogic.strategy;
 
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
+import io.github.unterstein.botlogic.decision.StopLossDecider;
 import io.github.unterstein.botlogic.services.TradeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,9 @@ public abstract class AbstractStrategy implements Strategy {
 
     @Autowired
     protected TradeService tradeService;
+
+    @Autowired
+    protected StopLossDecider stopLossDecider;
 
     protected int tradeAmount;
     protected Double boughtPrice;
