@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -23,13 +24,13 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import java.util.Collections;
 
 import static org.mockito.Mockito.when;
-@Ignore
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfig.class, BinanceBotApplication.class})
 @TestPropertySource(locations = "classpath:application_test.properties")
 @ActiveProfiles("test")
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
+        DbUnitTestExecutionListener.class, MockitoTestExecutionListener.class })
 @DbUnitConfiguration(databaseConnection={"datasource"})
 public class TradesPageTest {
 

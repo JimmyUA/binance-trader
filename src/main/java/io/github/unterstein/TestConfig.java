@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import io.github.unterstein.botlogic.services.TradeService;
 import io.github.unterstein.persistent.repository.TradeRepository;
 import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
@@ -54,6 +55,11 @@ public class TestConfig {
     @Bean
     public TaskScheduler taskScheduler() {
         return new ConcurrentTaskScheduler();
+    }
+
+    @Bean
+    public TradeService tradeService(){
+        return new TradeService();
     }
 
 }

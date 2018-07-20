@@ -3,8 +3,6 @@ package io.github.unterstein.botui.pages.trades;
 import io.github.unterstein.botlogic.services.TradeService;
 import io.github.unterstein.botui.pages.base.BasePage;
 import io.github.unterstein.persistent.entity.Trade;
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
@@ -15,6 +13,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
+import util.DoubleHighPrecisionLabel;
 
 import java.util.Iterator;
 import java.util.List;
@@ -48,12 +47,12 @@ public class TradesPage extends BasePage{
             protected void populateItem(Item<Trade> item) {
                 Trade currentTrade = item.getModelObject();
                 item.add(new Label("id", currentTrade.getId()));
-                item.add(new Label("buy", currentTrade.getBoughtPrice()));
+                item.add(new DoubleHighPrecisionLabel("buy", new Model<>(currentTrade.getBoughtPrice()), 10));
                 item.add(new Label("buyDate", currentTrade.getBoughtDate()));
-                item.add(new Label("sell", currentTrade.getSellPrice()));
+                item.add(new DoubleHighPrecisionLabel("sell", new Model<>(currentTrade.getSellPrice()), 10));
                 item.add(new Label("sellDate", currentTrade.getSellDate()));
-                item.add(new Label("profit", currentTrade.getProfit()));
-                item.add(new Label("profitPercent", currentTrade.getProfitPercent()));
+                item.add(new DoubleHighPrecisionLabel("profit", new Model<>(currentTrade.getProfit()), 10));
+                item.add(new DoubleHighPrecisionLabel("profitPercent", new Model<>(currentTrade.getProfitPercent()), 2));
             }
 
         };

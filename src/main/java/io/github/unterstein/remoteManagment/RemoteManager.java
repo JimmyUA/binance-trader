@@ -16,4 +16,8 @@ public class RemoteManager {
     public void stopBot(){
         shutDown = true;
     }
+
+    public String getTradeCurrency(){
+       return tradingClient.getTradeCurrency();
+    }
 }
