@@ -1,9 +1,10 @@
 package io.github.unterstein.persistent.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity(name = "amplitude")
-public class Amplitude {
+public class Amplitude implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

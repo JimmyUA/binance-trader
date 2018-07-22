@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<wicket:extend>
+			<div style="    text-align: center;
+    						font-size: xx-large;">
+				<label wicket:id="label">Trades</label><br>
+			</div>
+			<table class="w100 table">
+				<tr>
+					<td >id</td>
+					<td >max</td>
+					<td >min</td>
+				</tr>
+				<tr wicket:id="view">
+					<td wicket:id="id"></td>
+					<td wicket:id="max"></td>
+					<td wicket:id="min"></td>
+				</tr>
+				<tr>
+					<td >Peaks</td>
+					<td wicket:id="maxMax"></td>
+					<td wicket:id="minMin"></td>
+				</tr>
+				<tr>
+					<td >Avarege</td>
+					<td wicket:id="averageMax"></td>
+					<td wicket:id="averageMin"></td>
+				</tr>
+			</table>
+			<form wicket:id="form">
+				<div wicket:id="pager"></div>
+			</form>
+		</wicket:extend>
+	</body>
+</html>

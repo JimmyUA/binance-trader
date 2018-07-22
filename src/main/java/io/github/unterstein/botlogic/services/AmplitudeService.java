@@ -5,6 +5,8 @@ import io.github.unterstein.persistent.repository.AmplitudeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -14,7 +16,7 @@ public class AmplitudeService {
     @Autowired
     private AmplitudeRepository amplitudeRepository;
 
-    private List<Amplitude> amplitudes;
+    private List<Amplitude> amplitudes = Collections.emptyList();
 
 
     public void save(Amplitude amplitude) {
@@ -22,22 +24,25 @@ public class AmplitudeService {
     }
 
     public Double getMaxMax(){
+        getAmplitudes();
         return getMaxsStream()
-                .max().getAsDouble();
+                .max().orElse(0.0);
     }
 
     private DoubleStream getMaxsStream() {
+        getAmplitudes();
         return amplitudes.stream()
                 .mapToDouble(Amplitude::getMax);
     }
 
-    private List<Amplitude> getAmplitudes() {
+    public List<Amplitude> getAmplitudes() {
         return amplitudeRepository.findAll();
     }
 
     public Double getMinMin(){
+        getAmplitudes();
         return getMinsStream()
-                .min().getAsDouble();
+                .min().orElse(0.0);
     }
 
     private DoubleStream getMinsStream() {
@@ -46,10 +51,12 @@ public class AmplitudeService {
     }
 
     public Double getMaxAvarege(){
-        return getMaxsStream().average().getAsDouble();
+        getAmplitudes();
+        return getMaxsStream().average().orElse(0.0);
     }
 
-    public Double getMinAvarege(){
-        return getMinsStream().average().getAsDouble();
+    public Double getMinAvarege() {
+        getAmplitudes();
+        return getMinsStream().average().orElse(0.0);
     }
 }
