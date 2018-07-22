@@ -52,6 +52,7 @@ public class OneTrendStrategy extends AbstractStrategy{
                 break;
             }
         }
+        amplitudeAnalyser.stop();
     }
 
     private boolean enoughProfit() {

@@ -16,3 +16,11 @@ CREATE TABLE stored_prices (
   price   DOUBLE NOT NULL ,
   PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS amplitude;
+CREATE TABLE amplitude (
+  id       INTEGER NOT NULL AUTO_INCREMENT,
+  max   DOUBLE NOT NULL ,
+  min   DOUBLE NOT NULL ,
+  PRIMARY KEY (id)
+);

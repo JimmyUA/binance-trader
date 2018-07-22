@@ -4,6 +4,7 @@ import io.github.unterstein.TradingClient;
 import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
 import io.github.unterstein.botlogic.decision.StopLossDecider;
 import io.github.unterstein.botlogic.services.TradeService;
+import io.github.unterstein.statistic.amplitude.AmplitudeAnalyser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public abstract class AbstractStrategy implements Strategy {
     @Autowired
     protected StopLossDecider stopLossDecider;
 
+    @Autowired
+    protected AmplitudeAnalyser amplitudeAnalyser;
+
     protected int tradeAmount;
     protected Double boughtPrice;
     protected Double goalSellPrice;
@@ -44,6 +48,7 @@ public abstract class AbstractStrategy implements Strategy {
             logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
             isBought = true;
         }
+        amplitudeAnalyser.start();
     }
 
     @Override
