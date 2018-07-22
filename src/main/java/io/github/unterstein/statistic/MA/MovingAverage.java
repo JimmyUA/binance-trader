@@ -65,7 +65,7 @@ public class MovingAverage {
     }
 
     public boolean isUpTrendOneTrend() {
-        if (MA(5) >= MA(15)){
+        if (MA(5) >= MA(50)){
             logger.info("Up-trend detected one trend");
             return true;
         } else {
