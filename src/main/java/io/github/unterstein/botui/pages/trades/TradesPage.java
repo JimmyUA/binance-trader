@@ -1,10 +1,12 @@
 package io.github.unterstein.botui.pages.trades;
 
 import io.github.unterstein.botlogic.services.TradeService;
+import io.github.unterstein.botui.pages.amplitude.AmplitudesPage;
 import io.github.unterstein.botui.pages.base.BasePage;
 import io.github.unterstein.persistent.entity.Trade;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -63,7 +65,7 @@ public class TradesPage extends BasePage{
         add(tradesView);
 
         double totalProfit = trades.stream().mapToDouble(Trade::getProfit).reduce((p1, p2) -> p1 + p2).orElse(0.0);
-        add(new Label("totalProfit", new Model<>(totalProfit)));
+        add(new DoubleHighPrecisionLabel("totalProfit", new Model<>(totalProfit), 10));
 
         double totalProfitPercent = trades.stream().mapToDouble(Trade::getProfitPercent).reduce((p1, p2) -> p1 + p2).orElse(0.0);
         add(new Label("totalProfitPercent", new Model<>(totalProfitPercent)));
@@ -79,6 +81,14 @@ public class TradesPage extends BasePage{
         PagingNavigator pager = new PagingNavigator("pager", tradesView);
         form.add(pager);
         add(form);
+
+        add(new Link<Void>("amplitudesLink") {
+
+            @Override
+            public void onClick() {
+                setResponsePage(AmplitudesPage.class);
+            }
+        });
     }
 
     protected List<Trade> initTrades() {

@@ -5,6 +5,7 @@ import io.github.unterstein.botui.pages.base.BasePage;
 import io.github.unterstein.persistent.entity.Amplitude;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -55,16 +56,16 @@ public class AmplitudesPage extends BasePage{
         add(amplitudesView);
 
         double maxMax = amplitudeService.getMaxMax();
-        add(new Label("maxMax", new Model<>(maxMax)));
+        add(new DoubleHighPrecisionLabel("maxMax", new Model<>(maxMax), 10));
 
         double minMin = amplitudeService.getMinMin();
-        add(new Label("minMin", new Model<>(minMin)));
+        add(new DoubleHighPrecisionLabel("minMin", new Model<>(minMin), 10));
 
         double averageMax = amplitudeService.getMaxAvarege();
-        add(new Label("averageMax", new Model<>(averageMax)));
+        add(new DoubleHighPrecisionLabel("averageMax", new Model<>(averageMax), 10));
 
         double averageMin = amplitudeService.getMinAvarege();
-        add(new Label("averageMin", new Model<>(averageMin)));
+        add(new DoubleHighPrecisionLabel("averageMin", new Model<>(averageMin),10));
 
 
         Form<Void> form = new Form<Void>("form");
