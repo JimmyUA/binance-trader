@@ -95,10 +95,10 @@ public class MovingAverage {
     private boolean isUpDayTrend() {
         if(minutesFromStart > 50 * 15) {
             boolean isDayTrendUP = MA(15 * 15) >= MA(50 * 15);
-            logger.info("Day trend is %s", isDayTrendUP ? "UP" : "DOWN");
+            logger.info(String.format("Day trend is %s", isDayTrendUP ? "UP" : "DOWN"));
             return isDayTrendUP;
         } else {
-            logger.info("Using manually added day trend: Day trend is %s", startDayTrend ? "UP" : "DOWN");
+            logger.info(String.format("Using manually added day trend: Day trend is %s", startDayTrend ? "UP" : "DOWN"));
             return startDayTrend;
         }
     }

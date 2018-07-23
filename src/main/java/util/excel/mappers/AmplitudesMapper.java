@@ -34,16 +34,20 @@ public class AmplitudesMapper implements DataMapper<Amplitude> {
         Row currentRow = sheet.createRow(counter++);
         currentRow.createCell(cellCounter++).setCellValue("Id");
         currentRow.createCell(cellCounter++).setCellValue("Max");
-        currentRow.createCell(cellCounter).setCellValue("Min");
+        currentRow.createCell(cellCounter++).setCellValue("Min");
+        currentRow.createCell(cellCounter++).setCellValue("Max Percent");
+        currentRow.createCell(cellCounter).setCellValue("Min Percent");
     }
 
     private void initFooter(List<Amplitude> data, Sheet sheet) {
         Row currentRow = sheet.createRow(counter++);
         currentRow.createCell(cellCounter).setCellValue(data.stream().mapToDouble(Amplitude::getMin).min().orElse(0.0));
         currentRow.createCell(--cellCounter).setCellValue(data.stream().mapToDouble(Amplitude::getMax).max().orElse(0.0));
+        cellCounter--;
         currentRow.createCell(--cellCounter).setCellValue("Tops");
         currentRow = sheet.createRow(counter++);
         currentRow.createCell(cellCounter++).setCellValue("Average");
+        cellCounter++;
         currentRow.createCell(cellCounter++).setCellValue(data.stream().mapToDouble(Amplitude::getMin).average().orElse(0.0));
         currentRow.createCell(cellCounter).setCellValue(data.stream().mapToDouble(Amplitude::getMax).average().orElse(0.0));
     }
@@ -53,7 +57,9 @@ public class AmplitudesMapper implements DataMapper<Amplitude> {
         cellCounter = 0;
         currentRow.createCell(cellCounter++).setCellValue(amplitude.getId());
         currentRow.createCell(cellCounter++).setCellValue(amplitude.getMax());
-        currentRow.createCell(cellCounter).setCellValue(amplitude.getMin());
+        currentRow.createCell(cellCounter++).setCellValue(amplitude.getMin());
+        currentRow.createCell(cellCounter++).setCellValue(amplitude.getMaxPercent());
+        currentRow.createCell(cellCounter).setCellValue(amplitude.getMinPercent());
     }
 
     @Override

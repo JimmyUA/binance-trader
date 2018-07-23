@@ -48,7 +48,7 @@ public abstract class AbstractStrategy implements Strategy {
             logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
             isBought = true;
         }
-        amplitudeAnalyser.start();
+        amplitudeAnalyser.start(boughtPrice);
     }
 
     @Override

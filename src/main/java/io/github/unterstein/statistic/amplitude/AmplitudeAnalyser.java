@@ -19,20 +19,26 @@ public class AmplitudeAnalyser {
     private LinesAnalyser linesAnalyser;
 
     private static boolean isStarted = false;
+    private Double startPrice;
     public static long counter;
 
 
-    public void start(){
+    public void start(Double startPrice){
         isStarted = true;
+        this.startPrice = startPrice;
     }
 
     public void stop(){
         isStarted = false;
-        Double max = linesAnalyser.getResistenceLineForPeriod(counter);
-        Double min = linesAnalyser.getSupportLineForPeriod(counter);
+        Double max = linesAnalyser.getResistenceLineForPeriod(counter) - startPrice;
+        Double min = linesAnalyser.getSupportLineForPeriod(counter) - startPrice;
+        Double maxPercent = (max/startPrice) * 100;
+        Double minPercent = (min/startPrice) * 100;
         Amplitude amplitude = new Amplitude();
         amplitude.setMax(max);
         amplitude.setMin(min);
+        amplitude.setMaxPercent(maxPercent);
+        amplitude.setMinPercent(minPercent);
         amplitudeService.save(amplitude);
         counter = 0;
     }

@@ -32,7 +32,7 @@ public class AmplitudeService {
     private DoubleStream getMaxsStream() {
         getAmplitudes();
         return amplitudes.stream()
-                .mapToDouble(Amplitude::getMax);
+                .mapToDouble(Amplitude::getMaxPercent);
     }
 
     public List<Amplitude> getAmplitudes() {
@@ -48,7 +48,7 @@ public class AmplitudeService {
 
     private DoubleStream getMinsStream() {
         return amplitudes.stream()
-                .mapToDouble(Amplitude::getMin);
+                .mapToDouble(Amplitude::getMinPercent);
     }
 
     public Double getMaxAverage(){

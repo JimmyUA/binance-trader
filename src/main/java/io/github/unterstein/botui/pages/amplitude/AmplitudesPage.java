@@ -45,6 +45,8 @@ public class AmplitudesPage extends BasePage{
                 item.add(new Label("id", currentAmplitude.getId()));
                 item.add(new DoubleHighPrecisionLabel("max", new Model<>(currentAmplitude.getMax()), 10));
                 item.add(new DoubleHighPrecisionLabel("min", new Model<>(currentAmplitude.getMin()), 10));
+                item.add(new DoubleHighPrecisionLabel("maxPercent", new Model<>(currentAmplitude.getMaxPercent()), 2));
+                item.add(new DoubleHighPrecisionLabel("minPercent", new Model<>(currentAmplitude.getMinPercent()), 2));
             }
 
         };

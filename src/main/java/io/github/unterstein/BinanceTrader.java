@@ -53,6 +53,10 @@ public class BinanceTrader {
         this.tradeAmount = tradeAmount;
     }
 
+    public int getTradeAmount() {
+        return tradeAmount;
+    }
+
     public void setSpreadDifference(double spredDifference) {
         this.spreadDifference = spredDifference;
     }

@@ -1,16 +1,22 @@
 package io.github.unterstein.botui.pages.home;
 
 import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
+import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.botui.pages.base.BasePage;
 import io.github.unterstein.remoteManagment.RemoteManager;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("/home")
@@ -25,6 +31,11 @@ public class HomePage extends BasePage {
     @SpringBean
     private RemoteManager remoteManager;
 
+    @SpringBean
+    private BinanceTrader binanceTrader;
+
+    private NumberTextField<Integer> tradeAmountTF;
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -36,6 +47,30 @@ public class HomePage extends BasePage {
         form.add(stopBotButton);
         add(form);
 
+        Label tradeAmountLabel = new Label("tradeAmountLabel", "Trade Amount");
+        form.add(tradeAmountLabel);
+
+
+        tradeAmountTF = new NumberTextField<>("tradeAmountTF", Model.of(binanceTrader.getTradeAmount()));
+        tradeAmountTF.setOutputMarkupId(true);
+        form.add(tradeAmountTF);
+
+        AjaxButton saveButton = getSaveButton();
+
+        form.add(saveButton);
+
+    }
+
+
+    private AjaxButton getSaveButton() {
+        return new AjaxButton("saveButton", Model.of("Save")) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                Integer newTradeAmount = tradeAmountTF.getModelObject();
+                binanceTrader.setTradeAmount(newTradeAmount);
+                target.add(tradeAmountTF);
+            }
+        };
     }
 
     private Button getStopBotButton() {

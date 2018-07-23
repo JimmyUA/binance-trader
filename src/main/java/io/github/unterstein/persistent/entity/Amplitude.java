@@ -16,6 +16,12 @@ public class Amplitude implements Serializable {
     @Column(name = "min")
     private Double min;
 
+    @Column(name = "max_percent")
+    private Double maxPercent;
+
+    @Column(name = "min_percent")
+    private Double minPercent;
+
     public Long getId() {
         return id;
     }
@@ -38,5 +44,21 @@ public class Amplitude implements Serializable {
 
     public void setMin(Double min) {
         this.min = min;
+    }
+
+    public Double getMaxPercent() {
+        return maxPercent;
+    }
+
+    public void setMaxPercent(Double maxPercent) {
+        this.maxPercent = maxPercent;
+    }
+
+    public Double getMinPercent() {
+        return minPercent;
+    }
+
+    public void setMinPercent(Double minPercent) {
+        this.minPercent = minPercent;
     }
 }

@@ -43,7 +43,7 @@ public class OneTrendStrategy extends AbstractStrategy{
             sleepSeconds(3);
             updateLastBid();
 
-            if (enoughProfit() && sellDecisionMaker.isTimeToTryToSell()){
+            if (sellDecisionMaker.isTimeToTryToSell() && enoughProfit()){
                 if (soldWithProfit()){
                     break;
                 }

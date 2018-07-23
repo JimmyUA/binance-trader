@@ -22,5 +22,7 @@ CREATE TABLE amplitude (
   id       INTEGER NOT NULL AUTO_INCREMENT,
   max   DOUBLE NOT NULL ,
   min   DOUBLE NOT NULL ,
+  max_percent   DOUBLE NOT NULL ,
+  min_percent   DOUBLE NOT NULL ,
   PRIMARY KEY (id)
 );

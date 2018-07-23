@@ -2,8 +2,11 @@ package io.github.unterstein.botui.pages.base;
 
 
 import io.github.unterstein.botui.pages.trades.TradesPage;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.request.resource.CssResourceReference;
 
 public class BasePage extends WebPage {
 
@@ -21,7 +24,5 @@ public class BasePage extends WebPage {
 			}
 		});
 	}
-
-
 
 }
