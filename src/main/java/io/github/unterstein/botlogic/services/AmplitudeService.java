@@ -36,7 +36,8 @@ public class AmplitudeService {
     }
 
     public List<Amplitude> getAmplitudes() {
-        return amplitudeRepository.findAll();
+        amplitudes = amplitudeRepository.findAll();
+        return amplitudes;
     }
 
     public Double getMinMin(){
@@ -50,12 +51,12 @@ public class AmplitudeService {
                 .mapToDouble(Amplitude::getMin);
     }
 
-    public Double getMaxAvarege(){
+    public Double getMaxAverage(){
         getAmplitudes();
         return getMaxsStream().average().orElse(0.0);
     }
 
-    public Double getMinAvarege() {
+    public Double getMinAverage() {
         getAmplitudes();
         return getMinsStream().average().orElse(0.0);
     }

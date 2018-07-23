@@ -5,7 +5,6 @@ import io.github.unterstein.botui.pages.base.BasePage;
 import io.github.unterstein.persistent.entity.Amplitude;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -61,10 +60,10 @@ public class AmplitudesPage extends BasePage{
         double minMin = amplitudeService.getMinMin();
         add(new DoubleHighPrecisionLabel("minMin", new Model<>(minMin), 10));
 
-        double averageMax = amplitudeService.getMaxAvarege();
+        double averageMax = amplitudeService.getMaxAverage();
         add(new DoubleHighPrecisionLabel("averageMax", new Model<>(averageMax), 10));
 
-        double averageMin = amplitudeService.getMinAvarege();
+        double averageMin = amplitudeService.getMinAverage();
         add(new DoubleHighPrecisionLabel("averageMin", new Model<>(averageMin),10));
 
 

@@ -8,6 +8,7 @@ import io.github.unterstein.TestConfig;
 import io.github.unterstein.botui.pages.trades.TradesPage;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfig.class, BinanceBotApplication.class})
 @TestPropertySource(locations = "classpath:application_test.properties")
