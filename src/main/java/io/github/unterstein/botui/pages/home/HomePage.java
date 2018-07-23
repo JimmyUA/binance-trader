@@ -3,6 +3,7 @@ package io.github.unterstein.botui.pages.home;
 import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.botui.pages.base.BasePage;
+import io.github.unterstein.botui.pages.home.panels.SellPanel;
 import io.github.unterstein.remoteManagment.RemoteManager;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -57,7 +58,9 @@ public class HomePage extends BasePage {
 
         AjaxButton saveButton = getSaveButton();
 
+        SellPanel sellPanel = new SellPanel("sellPanel");
         form.add(saveButton);
+        add(sellPanel);
 
     }
 

@@ -25,4 +25,10 @@ public class BasePage extends WebPage {
 		});
 	}
 
+	@Override
+	public void renderHead(IHeaderResponse response) {
+		super.renderHead(response);
+		response.render(CssHeaderItem.forReference(new CssResourceReference(BasePage.class, "/css/style.css")));
+	}
+
 }
