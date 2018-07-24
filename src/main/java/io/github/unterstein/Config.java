@@ -15,7 +15,7 @@ import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.MarketAnalyzer;
-import io.github.unterstein.statistic.PriceFetchingTask;
+import io.github.unterstein.statistic.tasks.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import org.springframework.beans.factory.annotation.Value;

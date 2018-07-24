@@ -6,22 +6,28 @@
 	<body>
 		<wicket:extend>
 			<div class="body">
-				<label wicket:id="tradeCurrency">Trade currency info is not available</label>
-				<form wicket:id="form">
-					<div>
-						<input type="button" wicket:id="stopBotButton">
-					</div>
-					<div>
-						<label wicket:id="tradeAmountLabel"></label>
-					</div>
-					<div>
-						<input type="number" wicket:id="tradeAmountTF">
-					</div>
-					<div>
-						<input type="button" wicket:id="saveButton">
-					</div>
-				</form>
+				<div class="center">
+					<label wicket:id="tradeCurrency">Trade currency info is not available</label>
+				</div>
+				<div class="two-columns">
+					<form wicket:id="form">
+						<div class="center">
+							<label wicket:id="tradeAmountLabel"></label>
+						</div>
+						<div>
+							<input type="number" wicket:id="tradeAmountTF">
+						</div>
+						<div class="center m-top2">
+							<input type="button" wicket:id="saveButton">
+						</div>
+						<div class="center m-top20">
+							<input type="button" wicket:id="stopBotButton">
+						</div>
+					</form>
+					<div wicket:id="statisticPanel"></div>
+				</div>
 				<div wicket:id="sellPanel"></div>
+				<div wicket:id="buyPanel"></div>
 			</div>
 		</wicket:extend>
 	</body>

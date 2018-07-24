@@ -1,3 +1,20 @@
 .body{
     padding: 2%;
 }
+
+.two-columns{
+    display: flex;
+    justify-content: space-around;
+  }
+
+.center{
+    text-align: center;
+}
+
+.m-top20{
+    margin-top: 20%;
+}
+
+.m-top2{
+    margin-top: 2%;
+}

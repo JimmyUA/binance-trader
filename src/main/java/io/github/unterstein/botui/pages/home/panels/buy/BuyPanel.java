@@ -1,4 +1,4 @@
-package io.github.unterstein.botui.pages.home.panels;
+package io.github.unterstein.botui.pages.home.panels.buy;
 
 
 import io.github.unterstein.BinanceTrader;
@@ -11,9 +11,8 @@ import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import util.DoubleHighPrecisionLabel;
 
-public class SellPanel extends Panel{
+public class BuyPanel extends Panel{
 
     @SpringBean
     private TradingClient tradingClient;
@@ -24,7 +23,7 @@ public class SellPanel extends Panel{
     private NumberTextField<Integer> amountTF;
 
 
-    public SellPanel(String id) {
+    public BuyPanel(String id) {
         super(id);
     }
 
@@ -33,26 +32,23 @@ public class SellPanel extends Panel{
         super.onInitialize();
 
         Form<Void> form = new Form<>("form");
-        Label label = new Label("label", String.format("Sell %s coins", tradingClient.getTradeCurrency()));
-        Label currentPriceLabel = new Label("currentPriceLabel", "Current Price :");
-        Double lastAsksAverage = tradingClient.getLastAsksAverage(binanceTrader.getTradeAmount(), 3);
-        DoubleHighPrecisionLabel currentPriceValue = new DoubleHighPrecisionLabel("currentPriceValue", Model.of(lastAsksAverage), 10);
+        Label label = new Label("label", String.format("Buy %s coins", tradingClient.getTradeCurrency()));
         amountTF = new NumberTextField<>("amountTF", Model.of(binanceTrader.getTradeAmount()));
-        AjaxButton sellButton = getSellButton();
+        AjaxButton buyButton = getBuyButton();
 
         add(form);
-        form.add(label, currentPriceLabel, currentPriceValue, amountTF, sellButton);
+        form.add(label,amountTF, buyButton);
     }
 
-    private AjaxButton getSellButton() {
-        return new AjaxButton("sellButton", Model.of("SELL")) {
+    private AjaxButton getBuyButton() {
+        return new AjaxButton("buyButton", Model.of("BUY")) {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
-                Integer amountToSell = amountTF.getModelObject();
+                Integer amountToBuy = amountTF.getModelObject();
 
-                tradingClient.sellMarket(amountToSell);
+                tradingClient.sellMarket(amountToBuy);
 
-                target.add(SellPanel.this.getPage());
+                target.add(BuyPanel.this.getPage());
             }
         };
     }

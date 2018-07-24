@@ -169,11 +169,19 @@ public class MACD {
     }
 
     public Double getLastSignal() {
+        if (minutesFromStart >= longPeriod) {
         return signals.getLast();
+        } else {
+            return 0.0;
+        }
     }
 
     public Double getLastMACD() {
-        return MACDs.getLast();
+        if (minutesFromStart >= longPeriod) {
+            return MACDs.getLast();
+        } else {
+            return 0.0;
+        }
     }
 
 

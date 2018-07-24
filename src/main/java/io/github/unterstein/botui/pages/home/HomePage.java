@@ -3,21 +3,22 @@ package io.github.unterstein.botui.pages.home;
 import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.botui.pages.base.BasePage;
-import io.github.unterstein.botui.pages.home.panels.SellPanel;
+import io.github.unterstein.botui.pages.home.panels.buy.BuyPanel;
+import io.github.unterstein.botui.pages.home.panels.sell.SellPanel;
+import io.github.unterstein.botui.pages.home.panels.statistic.StatisticPanel;
 import io.github.unterstein.remoteManagment.RemoteManager;
+import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.extensions.ajax.AjaxDownloadBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.util.time.Duration;
 import org.wicketstuff.annotation.mount.MountPath;
 
 @MountPath("/home")
@@ -36,6 +37,7 @@ public class HomePage extends BasePage {
     private BinanceTrader binanceTrader;
 
     private NumberTextField<Integer> tradeAmountTF;
+    private StatisticPanel statisticPanel;
 
     @Override
     protected void onInitialize() {
@@ -59,8 +61,11 @@ public class HomePage extends BasePage {
         AjaxButton saveButton = getSaveButton();
 
         SellPanel sellPanel = new SellPanel("sellPanel");
+        BuyPanel buyPanel = new BuyPanel("buyPanel");
+        statisticPanel = new StatisticPanel("statisticPanel");
+        statisticPanel.setOutputMarkupId(true);
         form.add(saveButton);
-        add(sellPanel);
+        add(sellPanel, buyPanel, statisticPanel);
 
     }
 

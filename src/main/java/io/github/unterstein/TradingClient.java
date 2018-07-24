@@ -65,7 +65,16 @@ public class TradingClient {
     return Double.valueOf(balance.getFree()) + Double.valueOf(balance.getLocked());
   }
 
+  public double assetFreeBalanceToDouble(AssetBalance balance) {
+    return Double.valueOf(balance.getFree());
+  }
+
   public double getAllTradingBalance() {
+    AssetBalance tradingBalance = getTradingBalance();
+    return assetBalanceToDouble(tradingBalance);
+  }
+
+  public double getFreeTradingBalance() {
     AssetBalance tradingBalance = getTradingBalance();
     return assetBalanceToDouble(tradingBalance);
   }
