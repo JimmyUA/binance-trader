@@ -48,10 +48,10 @@ public class MovingAverage {
         }
     }
 
-    private double MA(int amount) {
+    protected double MA(int amount) {
 
-        LinkedList<Double> samples = pricesAccumulator.get100Samples();
-        double sum = samples.stream().skip(samples.size() - amount).mapToDouble(d -> d).sum();
+        LinkedList<Double> samples = pricesAccumulator.getSamples((long) amount);
+        double sum = samples.stream().mapToDouble(d -> d).sum();
         return sum/amount;
     }
 
