@@ -127,8 +127,8 @@ public class MACD {
         if (lastMACD > lastSignal){
             if (!wasMACDCrossSignalUp){
                 crossCounter = 0;
+                wasMACDCrossSignalUp = true;
             }
-            wasMACDCrossSignalUp = true;
             crossCounter++;
         } else {
             wasMACDCrossSignalUp = false;
@@ -151,7 +151,7 @@ public class MACD {
             signal = MACDs.stream()
                     .skip(MACDs.size() - signalPeriod)
                     .mapToDouble(macd -> macd)
-                    .average().getAsDouble();
+                    .average().orElse(0.0);
         } else {
             Double signalKof = 2.0 / (signalPeriod + 1);
             signal = getLastMACD() * signalKof + (getLastSignal() * (1 - signalKof));
@@ -205,7 +205,7 @@ public class MACD {
         Double lastHistogram = histograms.getLast();
 
         double previousAverage = histograms.stream().skip(histograms.size() - 4)
-                .limit(3).mapToDouble(d -> d).average().getAsDouble();
+                .limit(3).mapToDouble(d -> d).average().orElse(0.0);
         String direction;
 
         if (lastHistogram > previousAverage) {
