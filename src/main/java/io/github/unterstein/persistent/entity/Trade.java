@@ -30,6 +30,12 @@ public class Trade implements Serializable{
     @Column(name = "profit_percent")
     private Double profitPercent;
 
+    @Column(name = "buy_day_trend")
+    private String buyDayTrend;
+
+    @Column(name = "sell_day_trend")
+    private String sellDayTrend;
+
 
     public Long getId() {
         return id;
@@ -85,5 +91,21 @@ public class Trade implements Serializable{
 
     public void setSellDate(Date sellDate) {
         this.sellDate = sellDate;
+    }
+
+    public String getBuyDayTrend() {
+        return buyDayTrend;
+    }
+
+    public void setBuyDayTrend(String buyDayTrend) {
+        this.buyDayTrend = buyDayTrend;
+    }
+
+    public String getSellDayTrend() {
+        return sellDayTrend;
+    }
+
+    public void setSellDayTrend(String sellDayTrend) {
+        this.sellDayTrend = sellDayTrend;
     }
 }

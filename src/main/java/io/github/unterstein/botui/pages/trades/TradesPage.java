@@ -51,10 +51,13 @@ public class TradesPage extends BasePage{
                 item.add(new Label("id", currentTrade.getId()));
                 item.add(new DoubleHighPrecisionLabel("buy", new Model<>(currentTrade.getBoughtPrice()), 10));
                 item.add(new Label("buyDate", currentTrade.getBoughtDate()));
+                item.add(new Label("buyDayTrend", currentTrade.getBuyDayTrend()));
                 item.add(new DoubleHighPrecisionLabel("sell", new Model<>(currentTrade.getSellPrice()), 10));
                 item.add(new Label("sellDate", currentTrade.getSellDate()));
+                item.add(new Label("sellDayTrend", currentTrade.getSellDayTrend()));
                 item.add(new DoubleHighPrecisionLabel("profit", new Model<>(currentTrade.getProfit()), 10));
                 item.add(new DoubleHighPrecisionLabel("profitPercent", new Model<>(currentTrade.getProfitPercent()), 2));
+
             }
 
         };

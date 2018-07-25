@@ -5,7 +5,7 @@
 
     <groupId>io.github.unterstein</groupId>
     <artifactId>binancebot</artifactId>
-    <version>1.1.4-Alex</version>
+    <version>1.2.1-Alex</version>
     <packaging>jar</packaging>
 
     <name>binancebot</name>
@@ -140,6 +140,11 @@
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
             <version>1.3.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esri.geometry</groupId>
+            <artifactId>esri-geometry-api</artifactId>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 

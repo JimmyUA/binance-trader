@@ -1,3 +1,3 @@
 <dataset>
-    <trades id="1" bought_price="0.000000001" bought_date="2015-03-24 10:54:20" sell_price="0.00000002" sell_date="2015-03-24 12:54:20" profit="0.00000001" profit_percent="100"/>
+    <trades id="1" bought_price="0.000000001" bought_date="2015-03-24 10:54:20" sell_price="0.00000002" sell_date="2015-03-24 12:54:20" profit="0.00000001" profit_percent="100" buy_day_trend="UP" sell_day_trend="DOWN"/>
 </dataset>
