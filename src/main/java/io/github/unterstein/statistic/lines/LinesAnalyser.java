@@ -14,7 +14,7 @@ public class LinesAnalyser {
     @Autowired
     private StoredPricesService storedPricesService;
 
-    public Double getResistenceLineForPeriod(Long period){
+    public Double getResistanceLineForPeriod(Long period){
         LinkedList<Double> pricesPortion = storedPricesService.getPricesPortion(period);
         Stream<Double> stream;
         stream = pricesPortion.stream();

@@ -30,7 +30,7 @@ public class LinesAnalyserTest {
     @Test
     public void shouldFindMaxPrice() throws Exception {
         Double expectedMaxPrice = 0.000000002;
-        assertEquals(expectedMaxPrice, linesAnalyser.getResistenceLineForPeriod(50L), 0.00000000001);
+        assertEquals(expectedMaxPrice, linesAnalyser.getResistanceLineForPeriod(50L), 0.00000000001);
     }
 
     @Test

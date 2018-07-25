@@ -1,13 +1,10 @@
 package io.github.unterstein.statistic.amplitude;
 
 import io.github.unterstein.botlogic.services.AmplitudeService;
-import io.github.unterstein.botlogic.services.StoredPricesService;
 import io.github.unterstein.persistent.entity.Amplitude;
 import io.github.unterstein.statistic.lines.LinesAnalyser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.LinkedList;
 
 @Component
 public class AmplitudeAnalyser {
@@ -30,7 +27,7 @@ public class AmplitudeAnalyser {
 
     public void stop(){
         isStarted = false;
-        Double max = linesAnalyser.getResistenceLineForPeriod(counter) - startPrice;
+        Double max = linesAnalyser.getResistanceLineForPeriod(counter) - startPrice;
         Double min = linesAnalyser.getSupportLineForPeriod(counter) - startPrice;
         Double maxPercent = (max/startPrice) * 100;
         Double minPercent = (min/startPrice) * 100;

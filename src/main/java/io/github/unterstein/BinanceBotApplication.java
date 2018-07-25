@@ -34,7 +34,7 @@ import static io.github.unterstein.remoteManagment.ManagementConstants.stopTicke
 @EnableScheduling
 @SpringBootApplication
 @RestController("/")
-@ComponentScan(basePackages = {"util", "io.github.unterstein"})
+@ComponentScan(basePackages = {"util", "io.github.unterstein", "geometry"})
 public class BinanceBotApplication {
 
   private static Logger logger = LoggerFactory.getLogger(BinanceBotApplication.class);
