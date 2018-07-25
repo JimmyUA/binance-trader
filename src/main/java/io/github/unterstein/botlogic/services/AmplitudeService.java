@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -23,10 +24,24 @@ public class AmplitudeService {
         amplitudeRepository.save(amplitude);
     }
 
+    public List<Amplitude> getAmplitudes() {
+        amplitudes = amplitudeRepository.findAll();
+        return amplitudes;
+    }
+
     public Double getMaxMax(){
         getAmplitudes();
-        return getMaxsStream()
-                .max().orElse(0.0);
+        return getMaxsStatistics().getMax();
+    }
+
+    public Double getMaxAverage(){
+        getAmplitudes();
+        getMaxsStatistics();
+        return getMaxsStatistics().getAverage();
+    }
+
+    private DoubleSummaryStatistics getMaxsStatistics() {
+        return getMaxsStream().summaryStatistics();
     }
 
     private DoubleStream getMaxsStream() {
@@ -35,15 +50,14 @@ public class AmplitudeService {
                 .mapToDouble(Amplitude::getMaxPercent);
     }
 
-    public List<Amplitude> getAmplitudes() {
-        amplitudes = amplitudeRepository.findAll();
-        return amplitudes;
-    }
-
     public Double getMinMin(){
         getAmplitudes();
-        return getMinsStream()
-                .min().orElse(0.0);
+        return getMinsStatistics().getMin();
+    }
+
+    public Double getMinAverage() {
+        getAmplitudes();
+        return getMinsStatistics().getAverage();
     }
 
     private DoubleStream getMinsStream() {
@@ -51,13 +65,8 @@ public class AmplitudeService {
                 .mapToDouble(Amplitude::getMinPercent);
     }
 
-    public Double getMaxAverage(){
-        getAmplitudes();
-        return getMaxsStream().average().orElse(0.0);
+    private DoubleSummaryStatistics getMinsStatistics() {
+        return getMinsStream().summaryStatistics();
     }
 
-    public Double getMinAverage() {
-        getAmplitudes();
-        return getMinsStream().average().orElse(0.0);
-    }
 }
