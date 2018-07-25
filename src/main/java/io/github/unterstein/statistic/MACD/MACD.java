@@ -29,8 +29,8 @@ public class MACD {
     @Autowired
     private PricesAccumulator pricesAccumulator;
 
-    private boolean wasMACDCrossSignalUp;
-    private Integer crossCounter;
+    protected boolean wasMACDCrossSignalUp;
+    protected int crossCounter;
 
     public MACD() {
     }
@@ -80,15 +80,14 @@ public class MACD {
         double result;
         LinkedList<Double> prices = pricesAccumulator.get100Samples();
         LinkedList<Double> EMAs;
-        if (period == shortPeriod) {
+        if (period.equals(shortPeriod)) {
             EMAs = shortEMAs;
         } else {
             EMAs = longEMAs;
         }
         if (EMAs.size() == 0) {
-            double average = prices.stream().
-                    skip(prices.size() - period).mapToDouble(price -> price).average().getAsDouble();
-            result = average;
+            result = prices.stream().
+                    skip(prices.size() - period).mapToDouble(price -> price).average().orElse(0.0);
         } else {
             Double lastPrice = prices.getLast();
             Double lastShortEMA = EMAs.getLast();
@@ -120,7 +119,7 @@ public class MACD {
         return MACD;
     }
 
-    private void checkMACDCrossedSignal() {
+    protected void checkMACDCrossedSignal() {
         Double lastMACD = getLastMACD();
         Double lastSignal = getLastSignal();
 

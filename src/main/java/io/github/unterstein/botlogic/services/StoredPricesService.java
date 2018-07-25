@@ -24,8 +24,8 @@ public class StoredPricesService {
        return storedPricesRepository.getPortion(total - amount);
     }
 
-    public LinkedList<StoredPrice> getStoredPricesPortion(Long amount) {
-        long total = storedPricesRepository.count();
-        return storedPricesRepository.getFullPricePortion(total - amount);
-    }
+//    public LinkedList<StoredPrice> getStoredPricesPortion(Long amount) {
+//        long total = storedPricesRepository.count();
+//        return storedPricesRepository.getFullPricePortion(total - amount);
+//    }
 }

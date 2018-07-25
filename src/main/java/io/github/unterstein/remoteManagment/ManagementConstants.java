@@ -7,4 +7,6 @@ public class ManagementConstants {
     public static Integer minutesFromStart = 0;
     public static Integer rsiPeriods = 0;
     public static boolean startDayTrend = false;
+    public static boolean isTradesOnDownDayTrendForbidden = true;
+
 }

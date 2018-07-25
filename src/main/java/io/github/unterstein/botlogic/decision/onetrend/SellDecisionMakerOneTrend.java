@@ -16,10 +16,7 @@ public class SellDecisionMakerOneTrend {
 
 
     public boolean isTimeToTryToSell() {
-        if (marketAnalyzer.isDownTrendLongPeriodStarted() || marketAnalyzer.wasMACDCrossSignalDown()){
-            return true;
-        }
-        return false;
+        return marketAnalyzer.isDownTrendLongPeriodStarted() || marketAnalyzer.wasMACDCrossSignalDown();
     }
 
     public boolean isCrossedStopLoss(double stopLossPrice, Double lastBid) {
@@ -33,4 +30,6 @@ public class SellDecisionMakerOneTrend {
             return false;
         }
     }
+
+
 }

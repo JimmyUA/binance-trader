@@ -7,19 +7,18 @@ import io.github.unterstein.botui.pages.home.panels.buy.BuyPanel;
 import io.github.unterstein.botui.pages.home.panels.sell.SellPanel;
 import io.github.unterstein.botui.pages.home.panels.statistic.StatisticPanel;
 import io.github.unterstein.remoteManagment.RemoteManager;
-import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.AjaxDownloadBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.time.Duration;
 import org.wicketstuff.annotation.mount.MountPath;
+
+import static io.github.unterstein.remoteManagment.ManagementConstants.isTradesOnDownDayTrendForbidden;
 
 @MountPath("/home")
 @WicketHomePage
@@ -59,14 +58,28 @@ public class HomePage extends BasePage {
         form.add(tradeAmountTF);
 
         AjaxButton saveButton = getSaveButton();
+        form.add(saveButton);
 
+        Label tradesOnDownTrendLabel = new Label("tradesOnDownTrendLabel", "Trades on down day trend forbidden: ");
+        AjaxCheckBox tradesOnDownTrend = new AjaxCheckBox("tradesOnDownTrend", Model.of(isTradesOnDownDayTrendForbidden)) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
+                isTradesOnDownDayTrendForbidden = getModelObject();
+                ajaxRequestTarget.add(this);
+            }
+        };
+
+        form.add(tradesOnDownTrend, tradesOnDownTrendLabel);
+        initPanels();
+
+    }
+
+    private void initPanels() {
         SellPanel sellPanel = new SellPanel("sellPanel");
         BuyPanel buyPanel = new BuyPanel("buyPanel");
         statisticPanel = new StatisticPanel("statisticPanel");
         statisticPanel.setOutputMarkupId(true);
-        form.add(saveButton);
         add(sellPanel, buyPanel, statisticPanel);
-
     }
 
 

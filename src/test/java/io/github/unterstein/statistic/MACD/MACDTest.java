@@ -1,6 +1,10 @@
 package io.github.unterstein.statistic.MACD;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import io.github.unterstein.BinanceBotApplication;
+import io.github.unterstein.Config;
 import io.github.unterstein.TestConfig;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.junit.Before;
@@ -10,22 +14,35 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.booleanThat;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.when;
 
 
-@ActiveProfiles("test")
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestConfig.class)
-@ContextConfiguration(classes = {TestConfig.class, BinanceBotApplication.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {Config.class, BinanceBotApplication.class})
+@TestPropertySource(locations = "classpath:application_test.properties")
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+        DbUnitTestExecutionListener.class, MockitoTestExecutionListener.class})
+@DbUnitConfiguration(databaseConnection={"datasource"})
+@DatabaseSetup("/sql/tests/one_trade.xml")
 public class MACDTest {
 
     private LinkedList<Double> prices = new LinkedList<>(Arrays.asList(
@@ -36,8 +53,11 @@ public class MACDTest {
             426.21, 426.98, 435.69, 434.33, 429.8));
 
     @Autowired
-    @Qualifier("testAccumulator")
     private PricesAccumulator pricesAccumulator;
+
+    @MockBean
+    private MACD mockMacd;
+
     private MACD macd;
 
     @Before
@@ -46,6 +66,7 @@ public class MACDTest {
         macd.setPricesAccumulator(pricesAccumulator);
 
     }
+
 
     @Ignore
     @Test
@@ -78,5 +99,33 @@ public class MACDTest {
         return prices.pollFirst();
     }
 
+
+    @Test
+    public void shouldTurnCounterToZero() throws Exception {
+        int expectedCounterValue = 1;
+
+        when(mockMacd.getLastMACD()).thenReturn(1.0);
+        when(mockMacd.getLastSignal()).thenReturn(0.2);
+        doCallRealMethod().when(mockMacd).checkMACDCrossedSignal();
+        mockMacd.wasMACDCrossSignalUp = false;
+        mockMacd.crossCounter = 150;
+
+        mockMacd.checkMACDCrossedSignal();
+
+        assertEquals(expectedCounterValue, mockMacd.crossCounter);
+    }
+    @Test
+    public void shouldTurnCrossedToFalse() throws Exception {
+        boolean expectedCrossedValue = false;
+
+        when(mockMacd.getLastMACD()).thenReturn(1.0);
+        when(mockMacd.getLastSignal()).thenReturn(1.2);
+        doCallRealMethod().when(mockMacd).checkMACDCrossedSignal();
+        mockMacd.wasMACDCrossSignalUp = true;
+
+        mockMacd.checkMACDCrossedSignal();
+
+        assertFalse(mockMacd.wasMACDCrossSignalUp);
+    }
 
 }

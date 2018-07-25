@@ -14,14 +14,14 @@ public class LinesCreator {
     @Autowired
     private StoredPricesService storedPricesService;
 
-    public Line createHallUpLine(Long period){
-        LinkedList<StoredPrice> prices = storedPricesService.getStoredPricesPortion(period);
-        StoredPrice firstMax = pollMax(prices);
-        StoredPrice secondMax = pollMax(prices);
-
-        return new Line(firstMax.getPrice(), firstMax.getId(),
-                        secondMax.getPrice(), secondMax.getId());
-    }
+//    public Line createHallUpLine(Long period){
+//        LinkedList<StoredPrice> prices = storedPricesService.getStoredPricesPortion(period);
+//        StoredPrice firstMax = pollMax(prices);
+//        StoredPrice secondMax = pollMax(prices);
+//
+//        return new Line(firstMax.getPrice(), firstMax.getId(),
+//                        secondMax.getPrice(), secondMax.getId());
+//    }
 
     private StoredPrice pollMax(LinkedList<StoredPrice> prices){
         double max = prices.stream().mapToDouble(StoredPrice::getPrice).max().orElse(0.0);

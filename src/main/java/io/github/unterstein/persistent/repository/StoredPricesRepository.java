@@ -12,6 +12,6 @@ public interface StoredPricesRepository extends JpaRepository<StoredPrice, Long>
     @Query("SELECT price FROM stored_prices WHERE id > :start")
     LinkedList<Double> getPortion(@Param("start") Long start);
 
-    @Query("SELECT storedPrice FROM StoredPrice storedPrice WHERE storedPrice.id > :start")
-    LinkedList<StoredPrice> getFullPricePortion(@Param("start") Long start);
+//    @Query("SELECT storedPrice FROM StoredPrice storedPrice WHERE storedPrice.id > :start")
+//    LinkedList<StoredPrice> getFullPricePortion(@Param("start") Long start);
 }

@@ -2,14 +2,15 @@ package io.github.unterstein.botlogic.decision.onetrend;
 
 import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
 import io.github.unterstein.statistic.MarketAnalyzer;
-import io.github.unterstein.botlogic.strategy.MAandRSIStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.*;
+
 public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
 
-    private static Logger logger = LoggerFactory.getLogger(MAandRSIStrategy.class);
+    private static Logger logger = LoggerFactory.getLogger(BuyDecisionMakerOneTrend.class);
 
     @Autowired
     private MarketAnalyzer marketAnalyzer;
@@ -17,13 +18,13 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
 
     @Override
     public boolean isRightMomentToBuy(Double ask) {
-       if (priceNotNearResistanceLine(ask) && isMACDBelowZero() &&
-               wasMACDCrossSignal() && isUpTrend() &&
-               isRsiHighEnough() && isMacdAscending()){
-           return true;
-       } else {
-           return false;
-       }
+        if (marketAnalyzer.isDownDayTrend() && isTradesOnDownDayTrendForbidden){
+            logger.info("Trades are not allowed on down day trend!!!");
+            return false;
+        }
+        return priceNotNearResistanceLine(ask) && isMACDBelowZero() &&
+                wasMACDCrossSignal() && isUpTrend() &&
+                isRsiHighEnough() && isMacdAscending();
     }
 
     private boolean wasMACDCrossSignal() {
