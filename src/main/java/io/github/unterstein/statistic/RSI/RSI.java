@@ -1,6 +1,8 @@
 package io.github.unterstein.statistic.RSI;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.BinanceTrader;
+import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,24 +10,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class RSI {
     private static Logger logger = LoggerFactory.getLogger(BinanceTrader.class);
 
     @Autowired
-    private PricesAccumulator pricesAccumulator;
+    private TradingClient client;
+
     private List<Double> gains;
     private List<Double> losses;
-    private List<Double> prises;
+    private LinkedList<Double> prises;
     private Double currentGain;
     private Double currentLoss;
     private int periods;
 
-    public void setPricesAccumulator(PricesAccumulator pricesAccumulator) {
-        this.pricesAccumulator = pricesAccumulator;
-    }
 
     public Double getRSI(int periods){
         this.periods = periods;
@@ -35,7 +37,8 @@ public class RSI {
     }
 
     private void initPrices() {
-        prises = pricesAccumulator.get100Samples();
+        prises = client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE).stream()
+                .limit(periods * 2).collect(Collectors.toCollection(LinkedList::new));
         initGainsAndLosses();
     }
 
@@ -43,8 +46,8 @@ public class RSI {
         gains = new ArrayList<>();
         losses = new ArrayList<>();
         for (int i = 0; i < periods; i++) {
-            Double last = prises.get(prises.size() - (i + 1));
-            Double previous = prises.get(prises.size() - (i + 2));
+            Double last = prises.pollFirst();
+            Double previous = prises.getFirst();
             double difference = last - previous;
             if (difference >= 0.0){
                 gains.add(difference);
@@ -71,8 +74,6 @@ public class RSI {
         double fullGain = onlyPreviousGain + currentGain;
         double onlyPreviousLoss = previousAverageLoss() * periods - 1;
         double fullLoss = onlyPreviousLoss + currentLoss;
-        double averageGain = fullGain / periods;
-        double averageLoss = fullLoss / periods;
         return previousAverageGain() / previousAverageLoss();
     }
 

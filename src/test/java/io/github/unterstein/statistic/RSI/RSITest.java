@@ -27,7 +27,6 @@ public class RSITest {
     @Before
     public void setUp() throws Exception {
         rsi = new RSI();
-        rsi.setPricesAccumulator(pricesAccumulator);
     }
 
     @Ignore

@@ -67,7 +67,7 @@ public class TradesPageTest {
         tester.assertVisible("noTrades");
     }
 
-    @DatabaseSetup("/sql/tests/one_trade.xml")
+
     @Test
     public void noTradesLabelInvisibleIfTradesFound() throws Exception {
        tester.startPage(TradesPage.class);
