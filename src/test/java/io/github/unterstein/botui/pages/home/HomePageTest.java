@@ -46,4 +46,5 @@ public class HomePageTest {
         formTester.submit("stopBotButton");
         assertEquals(true, ManagementConstants.shutDown);
     }
+
 }

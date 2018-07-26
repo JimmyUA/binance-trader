@@ -26,6 +26,9 @@ public class StatisticPanel extends Panel{
 
         add(new Label("title", "STATISTIC"));
 
+        add(new Label("balance", "Current Trade Balance: "));
+        add(new DoubleHighPrecisionLabel("balanceValue", Model.of(statisticDTO.getTradingBalance()), 2));
+
         add(new Label("currentPrice", "Current Price: "));
         add(new DoubleHighPrecisionLabel("currentPriceValue", Model.of(statisticDTO.getLastPrice()), 10));
 

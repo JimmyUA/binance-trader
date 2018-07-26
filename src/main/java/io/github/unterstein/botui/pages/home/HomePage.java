@@ -91,6 +91,7 @@ public class HomePage extends BasePage {
                 binanceTrader.setTradeAmount(newTradeAmount);
                 target.add(tradeAmountTF);
             }
+
         };
     }
 
@@ -101,6 +102,7 @@ public class HomePage extends BasePage {
                 remoteManager.stopBot();
                 super.onSubmit(target);
             }
+
         };
     }
 

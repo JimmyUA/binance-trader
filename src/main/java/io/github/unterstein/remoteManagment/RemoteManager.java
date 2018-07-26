@@ -20,4 +20,5 @@ public class RemoteManager {
     public String getTradeCurrency(){
        return tradingClient.getTradeCurrency();
     }
+
 }
