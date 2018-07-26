@@ -1,5 +1,7 @@
 package io.github.unterstein.statistic.MA;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
+import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 import static io.github.unterstein.remoteManagment.ManagementConstants.startDayTrend;
@@ -20,6 +24,8 @@ public class MovingAverage {
     private PricesAccumulator pricesAccumulator;
 
     private boolean wasUpTrendLongPeriod = false;
+    @Autowired
+    private TradingClient client;
 
     public MovingAverage() {
 
@@ -50,9 +56,21 @@ public class MovingAverage {
 
     protected double MA(int amount) {
 
-        LinkedList<Double> samples = pricesAccumulator.getSamples((long) amount);
+        LinkedList<Double> samples = getSamplesFromExchange(amount);
         double sum = samples.stream().mapToDouble(d -> d).sum();
         return sum/amount;
+    }
+
+    private LinkedList<Double> getSamples(long amount) {
+        return pricesAccumulator.getSamples(amount);
+    }
+
+    private LinkedList<Double> getSamplesFromExchange(long amount) {
+
+        List<Double> originalList = client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE)
+                .stream().limit(amount).collect(Collectors.toList());
+
+        return new LinkedList<>(originalList);
     }
 
     public boolean isUpTrendByAsk(Double lastAsk) {
