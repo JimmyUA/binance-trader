@@ -6,6 +6,7 @@ import io.github.unterstein.statistic.RSI.RSI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.rsiPeriods;
@@ -27,8 +28,13 @@ public class MarketAnalyzer {
     @Autowired
     private TrendAnalyzer trendAnalyzer;
 
+    @Qualifier("short")
     @Autowired
     private MACD macd;
+
+    @Autowired
+    @Qualifier("long")
+    private MACD longMACD;
 
     private int rsiPeriod;
     private Double highestPrice;
@@ -153,5 +159,9 @@ public class MarketAnalyzer {
 
     public boolean isDownDayTrend() {
         return trendAnalyzer.isDownDayTrend();
+    }
+
+    public boolean wasLongMACDCrossSignalDown() {
+        return longMACD.wasMACDCrossSignalDown();
     }
 }

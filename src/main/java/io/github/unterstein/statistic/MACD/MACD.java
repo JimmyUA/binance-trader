@@ -26,6 +26,8 @@ public class MACD {
     private Double minMACD;
     private Double maxMACD;
 
+    private String name;
+
     @Autowired
     private PricesAccumulator pricesAccumulator;
 
@@ -33,6 +35,10 @@ public class MACD {
     protected int crossCounter;
 
     public MACD() {
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public MACD(Integer shortPeriod, Integer longPeriod, Integer signalPeriod) {
@@ -227,13 +233,13 @@ public class MACD {
     }
 
     private void informMACDTrend(Double lastHistogram, double previousAverage, String direction) {
-        logger.info(String.format("MACD is %s, last histo: %.10f, previous 3 average: %.10f",
-                direction, lastHistogram, previousAverage));
+        logger.info(String.format("%s MACD is %s, last histo: %.10f, previous 3 average: %.10f",
+                name, direction, lastHistogram, previousAverage));
     }
 
     public boolean wasMACDCrossSignalUp() {
         if (wasMACDCrossSignalUp){
-            logger.info(String.format("MACD crossed Signal up%d minutes ago", crossCounter));
+            logger.info(String.format("%s MACD crossed Signal up%d minutes ago", name, crossCounter));
             crossCounter += 10;
             return true;
         } else {
@@ -243,10 +249,10 @@ public class MACD {
 
     public boolean wasMACDCrossSignalDown() {
         if (!wasMACDCrossSignalUp){
-            logger.info("MACD crossed Signal down");
+            logger.info(String.format("%s MACD crossed Signal down", name));
             return true;
         } else {
-            logger.info("MACD didnot cross Signal down");
+            logger.info(String.format("%s MACD did not cross Signal down", name));
             return false;
         }
     }

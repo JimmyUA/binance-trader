@@ -18,6 +18,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.isLongMACDIncluded;
 import static io.github.unterstein.remoteManagment.ManagementConstants.isTradesOnDownDayTrendForbidden;
 
 @MountPath("/home")
@@ -37,12 +38,14 @@ public class HomePage extends BasePage {
 
     private NumberTextField<Integer> tradeAmountTF;
     private StatisticPanel statisticPanel;
+    private Form form;
+
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
 
-        Form form = new Form("form");
+        form = new Form("form");
         Label tradeCurrencyLabel = new Label("tradeCurrency", "Trade Currency: " + remoteManager.getTradeCurrency());
         add(tradeCurrencyLabel);
         Button stopBotButton = getStopBotButton();
@@ -60,6 +63,26 @@ public class HomePage extends BasePage {
         AjaxButton saveButton = getSaveButton();
         form.add(saveButton);
 
+        addDayDownTrendChoice();
+        addLongMACDChoice();
+        initPanels();
+
+    }
+
+    private void addLongMACDChoice() {
+        Label longMACDChoiceLabel = new Label("longMACDChoiceLabel", "Long MACD included: ");
+        AjaxCheckBox longMACDChoice = new AjaxCheckBox("longMACDChoice", Model.of(isLongMACDIncluded)) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
+                isLongMACDIncluded = getModelObject();
+                ajaxRequestTarget.add(this);
+            }
+        };
+
+        form.add(longMACDChoice, longMACDChoiceLabel);
+    }
+
+    private void addDayDownTrendChoice() {
         Label tradesOnDownTrendLabel = new Label("tradesOnDownTrendLabel", "Trades on down day trend forbidden: ");
         AjaxCheckBox tradesOnDownTrend = new AjaxCheckBox("tradesOnDownTrend", Model.of(isTradesOnDownDayTrendForbidden)) {
             @Override
@@ -70,8 +93,6 @@ public class HomePage extends BasePage {
         };
 
         form.add(tradesOnDownTrend, tradesOnDownTrendLabel);
-        initPanels();
-
     }
 
     private void initPanels() {

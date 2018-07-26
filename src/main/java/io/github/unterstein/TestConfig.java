@@ -4,6 +4,7 @@ import io.github.unterstein.botlogic.services.TradeService;
 import io.github.unterstein.persistent.repository.TradeRepository;
 import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
+import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -61,5 +62,6 @@ public class TestConfig {
     public TradeService tradeService(){
         return new TradeService();
     }
+
 
 }

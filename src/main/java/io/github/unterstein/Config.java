@@ -2,12 +2,9 @@ package io.github.unterstein;
 
 import io.github.unterstein.botlogic.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
-import io.github.unterstein.botlogic.decision.macd.BuyDecisionMakerMACD;
-import io.github.unterstein.botlogic.decision.macd.SellDecisionMakerMACD;
 import io.github.unterstein.botlogic.decision.onetrend.BuyDecisionMakerOneTrend;
 import io.github.unterstein.botlogic.decision.onetrend.SellDecisionMakerOneTrend;
 import io.github.unterstein.botlogic.executor.TradeExecutor;
-import io.github.unterstein.botlogic.strategy.MACDStrategy;
 import io.github.unterstein.botlogic.strategy.MAandRSIStrategy;
 import io.github.unterstein.botlogic.strategy.OneTrendStrategy;
 import io.github.unterstein.botlogic.strategy.Strategy;
@@ -15,9 +12,9 @@ import io.github.unterstein.remoteManagment.RemoteManager;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.MarketAnalyzer;
-import io.github.unterstein.statistic.tasks.PriceFetchingTask;
 import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.TrendAnalyzer;
+import io.github.unterstein.statistic.tasks.PriceFetchingTask;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,18 +65,27 @@ public class Config {
     @Value("${STRATEGY}")
     private String strategy;
 
+    @Value("${MACD.LONG.SHORT_PERIOD}")
+    private int shortPeriodLong;
+
+    @Value("${MACD.LONG.LONG_PERIOD}")
+    private int longPeriodLong;
+
+    @Value("${MACD.LONG.SIGNAL_PERIOD}")
+    private int signalPeriodLong;
+
     @Bean
-    public TradingClient tradingClient(){
+    public TradingClient tradingClient() {
         return new TradingClient(baseCurrency, tradeCurrency, apiKey, apiSecret);
     }
 
     @Bean
-    public TrendAnalyzer trendAnalizer(){
+    public TrendAnalyzer trendAnalizer() {
         return new TrendAnalyzer();
     }
 
     @Bean
-    public BinanceTrader binanceTrader(){
+    public BinanceTrader binanceTrader() {
         BinanceTrader binanceTrader = new BinanceTrader(tradingClient());
         binanceTrader.setTradeAmount(tradeAmount);
         binanceTrader.setTradeProfit(tradeProfit);
@@ -88,55 +94,62 @@ public class Config {
     }
 
     @Bean
-    public MovingAverage movingAverage(){
+    public MovingAverage movingAverage() {
         return new MovingAverage();
     }
 
     @Bean
-    public PricesAccumulator pricesAccumulator(){
+    public PricesAccumulator pricesAccumulator() {
         return new PricesAccumulator();
     }
 
     @Bean
-    public BuyDecisionMakerMARSI buyDecisionMaker(){
+    public BuyDecisionMakerMARSI buyDecisionMaker() {
         return new BuyDecisionMakerMARSI();
     }
 
     @Bean
-    public SellDecisionMakerMARSI sellDecisionMaker(){
+    public SellDecisionMakerMARSI sellDecisionMaker() {
         SellDecisionMakerMARSI sellDecisionMaker = new SellDecisionMakerMARSI();
         sellDecisionMaker.setPeriods(Integer.parseInt(periods));
         return sellDecisionMaker;
     }
 
 
-    @Bean
-    public MACD macd(){
-        return new MACD(shortPeriod, longPeriod, signalPeriod);
+    @Bean(name = "short")
+    public MACD macd() {
+        MACD shortMacd = new MACD(shortPeriod, longPeriod, signalPeriod);
+        shortMacd.setName("Short");
+        return shortMacd;
+    }
+
+    @Bean(name = "long")
+    public MACD longMacd() {
+        MACD longMacd = new MACD(shortPeriodLong, longPeriodLong, signalPeriodLong);
+        longMacd.setName("Long");
+        return longMacd;
     }
 
     @Bean
-    public PriceFetchingTask priceFetchingTask(){
+    public PriceFetchingTask priceFetchingTask() {
         return new PriceFetchingTask();
     }
 
     @Bean
-    public MarketAnalyzer marketAnalyzer(){
+    public MarketAnalyzer marketAnalyzer() {
         return new MarketAnalyzer();
     }
 
     @Bean
-    public TradeExecutor tradeExecutor(){
+    public TradeExecutor tradeExecutor() {
         TradeExecutor tradeExecutor = new TradeExecutor(strategy());
         tradeExecutor.setTradeAmount(tradeAmount);
         return tradeExecutor;
     }
 
     @Bean
-    public Strategy strategy(){
-        if (strategy.equals("MACD")) {
-            return new MACDStrategy(buyDecisionMakerMACD());
-        } else if (strategy.equals("ONE")){
+    public Strategy strategy() {
+        if (strategy.equals("ONE")) {
             return new OneTrendStrategy(buyDecisionMakerOneTrend());
         }
         return new MAandRSIStrategy(buyDecisionMaker());
@@ -144,30 +157,18 @@ public class Config {
 
 
     @Bean
-    public BuyDecisionMakerMACD buyDecisionMakerMACD(){
-        BuyDecisionMakerMACD buyDecisionMakerMACD = new BuyDecisionMakerMACD();
-        buyDecisionMakerMACD.setMinimumHistogram(minimumHistoValue);
-        return buyDecisionMakerMACD;
-    }
-
-    @Bean
-    public SellDecisionMakerMACD sellDecisionMakerMACD(){
-        return new SellDecisionMakerMACD();
-    }
-
-    @Bean
-    public BuyDecisionMakerOneTrend buyDecisionMakerOneTrend(){
+    public BuyDecisionMakerOneTrend buyDecisionMakerOneTrend() {
         return new BuyDecisionMakerOneTrend();
     }
 
     @Bean
-    public SellDecisionMakerOneTrend sellDecisionMakerOneTrend(){
+    public SellDecisionMakerOneTrend sellDecisionMakerOneTrend() {
         return new SellDecisionMakerOneTrend();
     }
 
 
     @Bean
-    public RemoteManager remoteManager(){
+    public RemoteManager remoteManager() {
         return new RemoteManager();
     }
 

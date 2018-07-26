@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static io.github.unterstein.remoteManagment.ManagementConstants.*;
+import static io.github.unterstein.remoteManagment.ManagementConstants.isLongMACDIncluded;
+import static io.github.unterstein.remoteManagment.ManagementConstants.isTradesOnDownDayTrendForbidden;
 
 public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
 
@@ -18,8 +19,11 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
 
     @Override
     public boolean isRightMomentToBuy(Double ask) {
-        if (marketAnalyzer.isDownDayTrend() && isTradesOnDownDayTrendForbidden){
+        if (isTradesOnDownDayTrendForbidden && marketAnalyzer.isDownDayTrend() ){
             logger.info("Trades are not allowed on down day trend!!!");
+            return false;
+        } else if(isLongMACDIncluded && marketAnalyzer.wasLongMACDCrossSignalDown()){
+            logger.info("Long MACD is below Signal, trades are not allowed");
             return false;
         }
         return priceNotNearResistanceLine(ask) && isMACDBelowZero() &&

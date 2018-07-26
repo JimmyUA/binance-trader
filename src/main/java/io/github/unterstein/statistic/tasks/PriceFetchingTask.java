@@ -10,6 +10,7 @@ import io.github.unterstein.statistic.TrendAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -26,7 +27,12 @@ public class PriceFetchingTask implements Runnable{
     private PricesAccumulator pricesAccumulator;
 
     @Autowired
+    @Qualifier("short")
     private MACD macd;
+
+    @Autowired
+    @Qualifier("long")
+    private MACD longMacd;
 
     @Autowired
     private RSI rsi;
@@ -52,6 +58,7 @@ public class PriceFetchingTask implements Runnable{
             pricesAccumulator.add(lastPrice);
             minutesFromStart++;
             macd.calculateCurrentHistogram();
+            longMacd.calculateCurrentHistogram();
             updateStatisticDTO();
         } catch (Exception e){
             logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
