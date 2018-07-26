@@ -12,12 +12,19 @@ import com.binance.api.client.domain.account.Order;
 import com.binance.api.client.domain.account.request.CancelOrderRequest;
 import com.binance.api.client.domain.account.request.OrderRequest;
 import com.binance.api.client.domain.account.request.OrderStatusRequest;
+import com.binance.api.client.domain.market.Candlestick;
+import com.binance.api.client.domain.market.CandlestickInterval;
 import com.binance.api.client.domain.market.OrderBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class TradingClient {
@@ -194,6 +201,26 @@ public class TradingClient {
     return Double.parseDouble(highestPrice);
   }
 
+  public List<Candlestick> getCandleStickBars(CandlestickInterval interval){
+    return client.getCandlestickBars(symbol, interval);
+  }
 
+  public List<Double> getPricesFromExchange(CandlestickInterval interval){
+    List<Candlestick> candleStickBars = getCandleStickBars(interval);
+    Stream<Double> originalStream = candleStickBars.stream()
+            .map(Candlestick::getClose).mapToDouble(Double::valueOf)
+            .boxed();
+    return reverse(originalStream).collect(Collectors.toList());
+  }
+
+  public static <T> Stream<T> reverse(Stream<T> stream) {
+    return stream
+            .collect(Collector.of(
+                    () -> new ArrayDeque<T>(),
+                    ArrayDeque::addFirst,
+                    (q1, q2) -> { q2.addAll(q1); return q2; })
+            )
+            .stream();
+  }
 
 }
