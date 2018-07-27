@@ -54,6 +54,10 @@ public class TradingClient {
     symbol = tradeCurrency + baseCurrency;
   }
 
+  public void setSymbol(String symbol) {
+    this.symbol = symbol;
+  }
+
   // The bid price represents the maximum price that a buyer is willing to pay for a security.
   // The ask price represents the minimum price that a seller is willing to receive.
   public OrderBook getOrderBook() {

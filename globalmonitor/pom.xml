@@ -7,6 +7,24 @@
     <groupId>com.sergey.prykhodko</groupId>
     <artifactId>global-monitor</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-    
+    <dependencies>
+        <dependency>
+            <groupId>io.github.unterstein</groupId>
+            <artifactId>binancebot</artifactId>
+            <version>1.4.1-Alex</version>
+        </dependency>
+    </dependencies>
 </project>
