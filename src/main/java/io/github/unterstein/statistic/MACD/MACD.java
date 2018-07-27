@@ -1,6 +1,7 @@
 package io.github.unterstein.statistic.MACD;
 
 import io.github.unterstein.BinanceTrader;
+import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,9 @@ public class MACD {
 
     @Autowired
     private PricesAccumulator pricesAccumulator;
+
+    @Autowired
+    private TradingClient client;
 
     protected boolean wasMACDCrossSignalUp;
     protected int crossCounter;
@@ -72,6 +76,11 @@ public class MACD {
     //Used only for tests
     protected void setPricesAccumulator(PricesAccumulator pricesAccumulator) {
         this.pricesAccumulator = pricesAccumulator;
+    }
+
+    //Used only for tests
+    protected void setClient(TradingClient client) {
+        this.client = client;
     }
 
     protected double shortEMA() {
@@ -182,11 +191,8 @@ public class MACD {
     }
 
     public Double getLastMACD() {
-        if (minutesFromStart >= longPeriod) {
-            return MACDs.getLast();
-        } else {
-            return 0.0;
-        }
+        calculateCurrentHistogram();
+        return MACDs.getLast();
     }
 
 

@@ -205,13 +205,22 @@ public class TradingClient {
     return client.getCandlestickBars(symbol, interval);
   }
 
-  public List<Double> getPricesFromExchange(CandlestickInterval interval){
-    List<Candlestick> candleStickBars = getCandleStickBars(interval);
-    Stream<Double> originalStream = candleStickBars.stream()
-            .map(Candlestick::getClose).mapToDouble(Double::valueOf)
-            .boxed();
+  public List<Double> getPricesFromExchangeReversed(CandlestickInterval interval){
+    Stream<Double> originalStream = getPricesStream(interval);
     return reverse(originalStream).collect(Collectors.toList());
   }
+
+  public List<Double> getPricesFromExchange(CandlestickInterval interval){
+    return getPricesStream(interval).collect(Collectors.toList());
+  }
+
+  private Stream<Double> getPricesStream(CandlestickInterval interval) {
+    List<Candlestick> candleStickBars = getCandleStickBars(interval);
+    return candleStickBars.stream()
+            .map(Candlestick::getClose).mapToDouble(Double::valueOf)
+            .boxed();
+  }
+
 
   public static <T> Stream<T> reverse(Stream<T> stream) {
     return stream

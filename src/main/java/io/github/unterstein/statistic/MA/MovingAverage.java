@@ -33,7 +33,7 @@ public class MovingAverage {
 
 
     public boolean isUpTrendShortPeriod(){
-        if (MA(5) >= MA(15)){
+        if (MA(5, CandlestickInterval.ONE_MINUTE) >= MA(15, CandlestickInterval.ONE_MINUTE)){
             logger.info("Up-trend detected short period");
             return true;
         } else {
@@ -43,7 +43,7 @@ public class MovingAverage {
     }
 
     public boolean isUpTrendLongPeriod(){
-        if (MA(15) >= MA(50)){
+        if (MA(15, CandlestickInterval.ONE_MINUTE) >= MA(50, CandlestickInterval.ONE_MINUTE)){
             logger.info("Up-trend detected long period");
             wasUpTrendLongPeriod = true;
             return true;
@@ -54,9 +54,9 @@ public class MovingAverage {
         }
     }
 
-    protected double MA(int amount) {
+    protected double MA(int amount, CandlestickInterval interval) {
 
-        LinkedList<Double> samples = getSamplesFromExchange(amount);
+        LinkedList<Double> samples = getSamplesFromExchange(amount, interval);
         double sum = samples.stream().mapToDouble(d -> d).sum();
         return sum/amount;
     }
@@ -65,16 +65,16 @@ public class MovingAverage {
         return pricesAccumulator.getSamples(amount);
     }
 
-    private LinkedList<Double> getSamplesFromExchange(long amount) {
+    private LinkedList<Double> getSamplesFromExchange(long amount, CandlestickInterval interval) {
 
-        List<Double> originalList = client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE)
+        List<Double> originalList = client.getPricesFromExchangeReversed(interval)
                 .stream().limit(amount).collect(Collectors.toList());
 
         return new LinkedList<>(originalList);
     }
 
     public boolean isUpTrendByAsk(Double lastAsk) {
-        return isUpTrendShortPeriod() && lastAsk >= MA(5);
+        return isUpTrendShortPeriod() && lastAsk >= MA(5, CandlestickInterval.ONE_MINUTE);
 
     }
 
@@ -83,7 +83,7 @@ public class MovingAverage {
     }
 
     public boolean isUpTrendOneTrend() {
-        if (MA(5) >= MA(50)){
+        if (MA(5, CandlestickInterval.ONE_MINUTE) >= MA(50, CandlestickInterval.ONE_MINUTE)){
             logger.info("Up-trend detected one trend");
             return true;
         } else {
@@ -111,13 +111,9 @@ public class MovingAverage {
     }
 
     private boolean isUpDayTrend() {
-        if(minutesFromStart > 50 * 15) {
-            boolean isDayTrendUP = MA(15 * 15) >= MA(50 * 15);
+            boolean isDayTrendUP = MA(15, CandlestickInterval.FIFTEEN_MINUTES) >= MA(50, CandlestickInterval.FIFTEEN_MINUTES);
             logger.info(String.format("Day trend is %s", isDayTrendUP ? "UP" : "DOWN"));
             return isDayTrendUP;
-        } else {
-            logger.info(String.format("Using manually added day trend: Day trend is %s", startDayTrend ? "UP" : "DOWN"));
-            return startDayTrend;
-        }
+
     }
 }

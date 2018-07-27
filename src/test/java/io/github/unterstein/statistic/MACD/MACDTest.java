@@ -1,11 +1,13 @@
 package io.github.unterstein.statistic.MACD;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import io.github.unterstein.BinanceBotApplication;
 import io.github.unterstein.Config;
 import io.github.unterstein.TestConfig;
+import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.PricesAccumulator;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -56,7 +58,11 @@ public class MACDTest {
     private PricesAccumulator pricesAccumulator;
 
     @MockBean
+    @Qualifier("short")
     private MACD mockMacd;
+
+    @MockBean
+    private TradingClient client;
 
     private MACD macd;
 
@@ -64,6 +70,8 @@ public class MACDTest {
     public void setUp() throws Exception {
         macd = new MACD(12, 26, 9);
         macd.setPricesAccumulator(pricesAccumulator);
+        when(client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE)).thenReturn(prices);
+        macd.setClient(client);
 
     }
 
@@ -74,11 +82,8 @@ public class MACDTest {
         Double expectedMACD = -2.07056;
         Double expectedSignal = 3.037526;
         Double expectedHistogram = -5.108084;
-        for (int i = 0; i < 34; i++) {
-            minutesFromStart++;
-            pricesAccumulator.add(getPrice());
-            macd.calculateCurrentHistogram();
-        }
+
+
         assertEquals(expectedMACD, macd.getLastMACD(), 0.001);
         assertEquals(expectedSignal, macd.getLastSignal(), 0.001);
         assertEquals(expectedHistogram, macd.getLastHistogram(), 0.001);

@@ -3,7 +3,6 @@ package io.github.unterstein.statistic.RSI;
 import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class RSI {
     }
 
     private void initPrices() {
-        prises = client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE).stream()
+        prises = client.getPricesFromExchangeReversed(CandlestickInterval.ONE_MINUTE).stream()
                 .limit(periods * 2).collect(Collectors.toCollection(LinkedList::new));
         initGainsAndLosses();
     }
