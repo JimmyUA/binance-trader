@@ -2,7 +2,6 @@ package io.github.unterstein.statistic.MA;
 
 import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
-import static io.github.unterstein.remoteManagment.ManagementConstants.startDayTrend;
-
 @Component
 public class MovingAverage {
 
     private static Logger logger = LoggerFactory.getLogger(MovingAverage.class);
-
-    @Autowired
-    private PricesAccumulator pricesAccumulator;
 
     private boolean wasUpTrendLongPeriod = false;
     @Autowired
@@ -31,6 +24,9 @@ public class MovingAverage {
 
     }
 
+    public void setClient(TradingClient client) {
+        this.client = client;
+    }
 
     public boolean isUpTrendShortPeriod(){
         if (MA(5, CandlestickInterval.ONE_MINUTE) >= MA(15, CandlestickInterval.ONE_MINUTE)){
@@ -61,9 +57,6 @@ public class MovingAverage {
         return sum/amount;
     }
 
-    private LinkedList<Double> getSamples(long amount) {
-        return pricesAccumulator.getSamples(amount);
-    }
 
     private LinkedList<Double> getSamplesFromExchange(long amount, CandlestickInterval interval) {
 

@@ -81,7 +81,7 @@ public class BinanceTrader {
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
 
-            if (isFall() && minutesFromStart > 80) {
+            if (isFall()) {
                 logger.info("Fall burst detected");
 
                 tradeExecutor.buyProcess();

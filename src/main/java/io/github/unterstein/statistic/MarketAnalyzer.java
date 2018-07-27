@@ -47,7 +47,7 @@ public class MarketAnalyzer {
     public String getMarketConditions(){
         String message = "";
         Double rsiValue = rsi.getRSI(rsiPeriods);
-        Double histogram = macd.getLastHistogram();
+        Double histogram = macd.histogramm();
         message += String.format("RSI %d = %.8f<br>", rsiPeriods, rsiValue);
         message += String.format("Last histogram %.11f<br>", histogram);
         message += "Is up-trend short period: " + trendAnalyzer.isUpTrendShortPeriod() + newLineForHTML;
@@ -102,8 +102,8 @@ public class MarketAnalyzer {
     }
 
     public boolean isMACDBelowLastHistogram() {
-        Double lastHistogram = macd.getLastHistogram();
-        Double lastMACD = macd.getLastMACD();
+        Double lastHistogram = macd.histogramm();
+        Double lastMACD = macd.MACD();
         String direction = "";
         if (lastMACD < lastHistogram){
             direction = "below";
@@ -124,7 +124,7 @@ public class MarketAnalyzer {
     }
 
     public boolean isMaCDBelowZero() {
-        Double lastMACD = macd.getLastMACD();
+        Double lastMACD = macd.MACD();
         String direction = "";
         String message = "MACD %s 0, MACD: %.10f";
         if (lastMACD < 0){

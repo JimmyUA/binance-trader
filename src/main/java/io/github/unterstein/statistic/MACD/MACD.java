@@ -1,5 +1,6 @@
 package io.github.unterstein.statistic.MACD;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.PricesAccumulator;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 
@@ -18,25 +21,21 @@ public class MACD {
     private Integer shortPeriod;
     private Integer longPeriod;
     private Integer signalPeriod;
-    private LinkedList<Double> shortEMAs;
-    private LinkedList<Double> longEMAs;
     private LinkedList<Double> MACDs;
     private LinkedList<Double> signals;
     private LinkedList<Double> histograms;
+    private LinkedList<Double> shortEMAs;
+    private LinkedList<Double> longEMAs;
 
-    private Double minMACD;
-    private Double maxMACD;
 
     private String name;
-
-    @Autowired
-    private PricesAccumulator pricesAccumulator;
 
     @Autowired
     private TradingClient client;
 
     protected boolean wasMACDCrossSignalUp;
     protected int crossCounter;
+    private LinkedList<Double> prices;
 
     public MACD() {
     }
@@ -51,8 +50,6 @@ public class MACD {
         this.signalPeriod = signalPeriod;
         initLists();
 
-        minMACD = 0.0;
-        maxMACD = 0.0;
         wasMACDCrossSignalUp = false;
         crossCounter = 0;
     }
@@ -65,81 +62,108 @@ public class MACD {
         histograms = new LinkedList<>();
     }
 
-    public Double getMinMACD() {
-        return minMACD;
-    }
-
-    public Double getMaxMACD() {
-        return maxMACD;
-    }
-
-    //Used only for tests
-    protected void setPricesAccumulator(PricesAccumulator pricesAccumulator) {
-        this.pricesAccumulator = pricesAccumulator;
-    }
 
     //Used only for tests
     protected void setClient(TradingClient client) {
         this.client = client;
     }
 
-    protected double shortEMA() {
-        return EMA(shortPeriod);
-    }
 
-    protected double longEMA() {
-        return EMA(longPeriod);
-    }
-
-    private double EMA(Integer period) {
-        double result;
-        LinkedList<Double> prices = pricesAccumulator.get100Samples();
+    protected double EMA(Integer period) {
         LinkedList<Double> EMAs;
         if (period.equals(shortPeriod)) {
             EMAs = shortEMAs;
         } else {
             EMAs = longEMAs;
         }
-        if (EMAs.size() == 0) {
-            result = prices.stream().
-                    skip(prices.size() - period).mapToDouble(price -> price).average().orElse(0.0);
-        } else {
-            Double lastPrice = prices.getLast();
-            Double lastShortEMA = EMAs.getLast();
-            int increasedPeriod = period + 1;
-            double EMACoefficient = 2.0 / increasedPeriod;
-            double lastPricePart = lastPrice * EMACoefficient;
-            double lastEMAPart = lastShortEMA * (1.0 - EMACoefficient);
-            result = lastPricePart + lastEMAPart;
+
+        EMAs.add(firstEMA(period));
+
+        Iterable<? extends Double> remainedPrices = prices.stream().skip(period).collect(Collectors.toList());
+
+
+        for (Double currentPrice : remainedPrices
+                ) {
+            double currentEMA = notFirstEMA(period, EMAs.getLast(), currentPrice);
+            EMAs.add(currentEMA);
         }
-        EMAs.addLast(result);
-        if (EMAs.size() > 100) {
-            EMAs.pollFirst();
-        }
-        return result;
+
+        return EMAs.getLast();
+    }
+
+    protected double firstEMA(int period) {
+        initPrices();
+        return prices.stream().
+                limit(period).mapToDouble(price -> price).average().orElse(0.0);
+    }
+
+    protected double notFirstEMA(int period, Double previousEMA, Double currentPrice) {
+
+        int increasedPeriod = period + 1;
+        double EMACoefficient = 2.0 / increasedPeriod;
+        double lastPricePart = currentPrice * EMACoefficient;
+        double lastEMAPart = previousEMA * (1.0 - EMACoefficient);
+        return lastPricePart + lastEMAPart;
+
+    }
+
+    protected void initPrices() {
+        prices = getSamplesFromExchange();
+    }
+
+    private LinkedList<Double> getSamplesFromExchange() {
+        return new LinkedList<>(client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE));
     }
 
     public double MACD() {
-        double MACD = getLastEMA(shortPeriod) - getLastEMA(longPeriod);
-        MACDs.addLast(MACD);
-        if (MACDs.size() > 100) {
-            MACDs.pollFirst();
+        initLists();
+        return EMA(shortPeriod) - EMA(longPeriod);
+    }
+
+    protected double firstSignal() {
+        int MACDamountBeforeFirstSignal = signalPeriod;
+        List<Double> workingShortEMAs = shortEMAs.stream().skip(longPeriod - shortPeriod)
+                .collect(Collectors.toList());
+        List<Double> workingLongEMAs = longEMAs;
+
+        MACDs = new LinkedList<>();
+
+        for (int i = 0; i < workingLongEMAs.size(); i++) {
+            MACDs.add(workingShortEMAs.get(i) - workingLongEMAs.get(i));
         }
 
-        if (signals.size() > 0) {
-            checkMACDCrossedSignal();
+        return MACDs.stream().limit(MACDamountBeforeFirstSignal).mapToDouble(Double::valueOf).average().orElse(0.0);
+    }
+
+    protected double notFirstSignal(Double previousSignal, Double currentMACD) {
+
+        Double signalKof = 2.0 / (signalPeriod + 1);
+        return currentMACD * signalKof + (previousSignal * (1 - signalKof));
+    }
+
+    public Double signal() {
+        MACD();
+        signals.add(firstSignal());
+
+
+        Iterable<? extends Double> remainedMACDs = MACDs.stream().skip(signalPeriod).collect(Collectors.toList());
+
+
+        for (Double currentMACD : remainedMACDs
+                ) {
+            double currentSignal = notFirstSignal(signals.getLast(), currentMACD);
+            signals.add(currentSignal);
         }
-        minMACD = MACD < minMACD ? MACD : minMACD;
-        maxMACD = MACD > maxMACD ? MACD : maxMACD;
-        return MACD;
+
+        return signals.getLast();
     }
 
     protected void checkMACDCrossedSignal() {
-        Double lastMACD = getLastMACD();
-        Double lastSignal = getLastSignal();
+        Double lastMACD = MACD();
+        Double lastSignal = signal();
 
-        if (lastMACD > lastSignal){
-            if (!wasMACDCrossSignalUp){
+        if (lastMACD > lastSignal) {
+            if (!wasMACDCrossSignalUp) {
                 crossCounter = 0;
                 wasMACDCrossSignalUp = true;
             }
@@ -149,76 +173,14 @@ public class MACD {
         }
     }
 
-    private double getLastEMA(Integer period) {
-        LinkedList<Double> EMAs;
-        if (period.equals(shortPeriod)) {
-            EMAs = shortEMAs;
-        } else {
-            EMAs = longEMAs;
-        }
-        return EMAs.getLast();
-    }
-
-    public Double signal() {
-        double signal;
-        if (signals.size() == 0) {
-            signal = MACDs.stream()
-                    .skip(MACDs.size() - signalPeriod)
-                    .mapToDouble(macd -> macd)
-                    .average().orElse(0.0);
-        } else {
-            Double signalKof = 2.0 / (signalPeriod + 1);
-            signal = getLastMACD() * signalKof + (getLastSignal() * (1 - signalKof));
-        }
-        signals.addLast(signal);
-        if (signals.size() > 100) {
-            signals.pollFirst();
-        }
-
-        return signal;
-    }
 
     public Double histogramm() {
-        return getLastMACD() - getLastSignal();
+        double macd = MACD();
+        Double signal = signal();
+        checkMACDCrossedSignal();
+        return macd - signal;
     }
 
-    public Double getLastSignal() {
-        if (minutesFromStart >= longPeriod) {
-        return signals.getLast();
-        } else {
-            return 0.0;
-        }
-    }
-
-    public Double getLastMACD() {
-        calculateCurrentHistogram();
-        return MACDs.getLast();
-    }
-
-
-    public void calculateCurrentHistogram() {
-        if (minutesFromStart >= shortPeriod) {
-            EMA(shortPeriod);
-        }
-        if (minutesFromStart >= longPeriod) {
-            EMA(longPeriod);
-            MACD();
-            if (minutesFromStart >= longPeriod + signalPeriod - 1) {
-                signal();
-                histograms.addLast(histogramm());
-                if (histograms.size() > 100) {
-                    histograms.pollFirst();
-                }
-            }
-        }
-    }
-
-    public Double getLastHistogram() {
-        if (histograms.size() > 0) {
-            return histograms.getLast();
-        }
-        return 0.0;
-    }
 
     public boolean isAscending() {
         Double lastHistogram = histograms.getLast();
@@ -244,7 +206,7 @@ public class MACD {
     }
 
     public boolean wasMACDCrossSignalUp() {
-        if (wasMACDCrossSignalUp){
+        if (wasMACDCrossSignalUp) {
             logger.info(String.format("%s MACD crossed Signal up%d minutes ago", name, crossCounter));
             crossCounter += 10;
             return true;
@@ -254,7 +216,8 @@ public class MACD {
     }
 
     public boolean wasMACDCrossSignalDown() {
-        if (!wasMACDCrossSignalUp){
+        histogramm();
+        if (!wasMACDCrossSignalUp) {
             logger.info(String.format("%s MACD crossed Signal down", name));
             return true;
         } else {
@@ -262,4 +225,6 @@ public class MACD {
             return false;
         }
     }
+
+
 }

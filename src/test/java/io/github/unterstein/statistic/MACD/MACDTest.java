@@ -6,24 +6,18 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import io.github.unterstein.BinanceBotApplication;
 import io.github.unterstein.Config;
-import io.github.unterstein.TestConfig;
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.statistic.PricesAccumulator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.Arrays;
@@ -33,7 +27,6 @@ import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFr
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
@@ -41,9 +34,9 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Config.class, BinanceBotApplication.class})
 @TestPropertySource(locations = "classpath:application_test.properties")
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
         DbUnitTestExecutionListener.class, MockitoTestExecutionListener.class})
-@DbUnitConfiguration(databaseConnection={"datasource"})
+@DbUnitConfiguration(databaseConnection = {"datasource"})
 @DatabaseSetup("/sql/tests/one_trade.xml")
 public class MACDTest {
 
@@ -54,9 +47,6 @@ public class MACDTest {
             463.58, 461.14, 452.08, 442.66, 428.91, 429.79, 431.99, 427.72, 423.2,
             426.21, 426.98, 435.69, 434.33, 429.8));
 
-    @Autowired
-    private PricesAccumulator pricesAccumulator;
-
     @MockBean
     @Qualifier("short")
     private MACD mockMacd;
@@ -66,27 +56,70 @@ public class MACDTest {
 
     private MACD macd;
 
+    private int shortPeriod = 12;
+    private int longPeriod = 26;
+    private int signalPeriod = 9;
+
+
     @Before
     public void setUp() throws Exception {
-        macd = new MACD(12, 26, 9);
-        macd.setPricesAccumulator(pricesAccumulator);
+        macd = new MACD(shortPeriod, longPeriod, signalPeriod);
+        macd.setClient(client);
         when(client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE)).thenReturn(prices);
         macd.setClient(client);
+        macd.initPrices();
 
     }
 
-
-    @Ignore
     @Test
-    public void shouldCalculateCorrect() throws Exception {
-        Double expectedMACD = -2.07056;
-        Double expectedSignal = 3.037526;
-        Double expectedHistogram = -5.108084;
+    public void shouldCalculateFirstEMACorrectly() throws Exception {
+        Double expectedFirstShortEMA = 440.8975;
+        double firstShortEMA = macd.firstEMA(shortPeriod);
+
+        assertEquals(expectedFirstShortEMA, firstShortEMA, 0.001);
+    }
 
 
-        assertEquals(expectedMACD, macd.getLastMACD(), 0.001);
-        assertEquals(expectedSignal, macd.getLastSignal(), 0.001);
-        assertEquals(expectedHistogram, macd.getLastHistogram(), 0.001);
+    @Test
+    public void shouldCalculateShortEMACorrectly() throws Exception {
+        Double expectedShortEMA = 433.8582;
+        double shortEMA = macd.EMA(shortPeriod);
+
+        assertEquals(expectedShortEMA, shortEMA, 0.001);
+    }
+
+    @Test
+    public void shouldCalculateMACDCorrectly() throws Exception {
+        Double expectedMACD = -2.40263;
+        double MACD = macd.MACD();
+
+        assertEquals(expectedMACD, MACD, 0.001);
+    }
+
+    @Test
+    public void shouldCalculateFirstSignalCorrectly() throws Exception {
+        Double expectedFirstSignal = 3.03752;
+        macd.MACD();
+        double firstSignal = macd.firstSignal();
+
+        assertEquals(expectedFirstSignal, firstSignal, 0.001);
+    }
+
+    @Test
+    public void shouldCalculateSignalCorrectly() throws Exception {
+        Double expectedSignal = -0.15201;
+        macd.MACD();
+        double signal = macd.signal();
+
+        assertEquals(expectedSignal, signal, 0.001);
+    }
+
+    @Test
+    public void shouldCalculateHistogramCorrectly() throws Exception {
+        Double expectedHistogram = -2.25061;
+        double histogram = macd.histogramm();
+
+        assertEquals(expectedHistogram, histogram, 0.001);
     }
 
     @Ignore
@@ -94,8 +127,7 @@ public class MACDTest {
     public void shouldBeAccending() {
         for (int i = 0; i < 38; i++) {
             minutesFromStart++;
-            pricesAccumulator.add(getPrice());
-            macd.calculateCurrentHistogram();
+            macd.histogramm();
         }
         assertTrue(macd.isAscending());
     }
@@ -109,8 +141,8 @@ public class MACDTest {
     public void shouldTurnCounterToZero() throws Exception {
         int expectedCounterValue = 1;
 
-        when(mockMacd.getLastMACD()).thenReturn(1.0);
-        when(mockMacd.getLastSignal()).thenReturn(0.2);
+        when(mockMacd.MACD()).thenReturn(1.0);
+        when(mockMacd.signal()).thenReturn(0.2);
         doCallRealMethod().when(mockMacd).checkMACDCrossedSignal();
         mockMacd.wasMACDCrossSignalUp = false;
         mockMacd.crossCounter = 150;
@@ -119,12 +151,13 @@ public class MACDTest {
 
         assertEquals(expectedCounterValue, mockMacd.crossCounter);
     }
+
     @Test
     public void shouldTurnCrossedToFalse() throws Exception {
         boolean expectedCrossedValue = false;
 
-        when(mockMacd.getLastMACD()).thenReturn(1.0);
-        when(mockMacd.getLastSignal()).thenReturn(1.2);
+        when(mockMacd.MACD()).thenReturn(1.0);
+        when(mockMacd.signal()).thenReturn(1.2);
         doCallRealMethod().when(mockMacd).checkMACDCrossedSignal();
         mockMacd.wasMACDCrossSignalUp = true;
 

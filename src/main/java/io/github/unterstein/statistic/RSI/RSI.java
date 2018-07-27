@@ -23,10 +23,11 @@ public class RSI {
     private List<Double> gains;
     private List<Double> losses;
     private LinkedList<Double> prises;
-    private Double currentGain;
-    private Double currentLoss;
     private int periods;
 
+    public void setClient(TradingClient client) {
+        this.client = client;
+    }
 
     public Double getRSI(int periods){
         this.periods = periods;
@@ -48,6 +49,8 @@ public class RSI {
             Double last = prises.pollFirst();
             Double previous = prises.getFirst();
             double difference = last - previous;
+            Double currentGain;
+            Double currentLoss;
             if (difference >= 0.0){
                 gains.add(difference);
                 if (i == 0){
@@ -69,17 +72,13 @@ public class RSI {
 
 
     private Double RS() {
-        double onlyPreviousGain = previousAverageGain() * periods - 1;
-        double fullGain = onlyPreviousGain + currentGain;
-        double onlyPreviousLoss = previousAverageLoss() * periods - 1;
-        double fullLoss = onlyPreviousLoss + currentLoss;
+
         return previousAverageGain() / previousAverageLoss();
     }
 
 
     private Double previousAverageLoss() {
-        double averageLoss = totalLoss() / periods;
-        return averageLoss;
+        return totalLoss() / periods;
     }
 
     private Double totalGain() {
@@ -87,8 +86,7 @@ public class RSI {
     }
 
     private Double previousAverageGain() {
-        double averageGain = totalGain() / periods;
-        return averageGain;
+        return totalGain() / periods;
     }
 
     private Double totalLoss() {

@@ -31,10 +31,6 @@ public class PriceFetchingTask implements Runnable{
     private MACD macd;
 
     @Autowired
-    @Qualifier("long")
-    private MACD longMacd;
-
-    @Autowired
     private RSI rsi;
 
     @Autowired
@@ -55,10 +51,6 @@ public class PriceFetchingTask implements Runnable{
     public void run() {
         try {
             lastPrice = tradingClient.lastPrice();
-            pricesAccumulator.add(lastPrice);
-            minutesFromStart++;
-            macd.calculateCurrentHistogram();
-            longMacd.calculateCurrentHistogram();
             updateStatisticDTO();
         } catch (Exception e){
             logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
@@ -74,8 +66,8 @@ public class PriceFetchingTask implements Runnable{
                 .setShortTrend(trendAnalyzer.isUpTrendShortPeriod() ? "UP" : "Down")
                 .setLongTrend(trendAnalyzer.isUpTrendLongPeriod() ? "UP" : "Down")
                 .setRSI(rsi.getRSI(21))
-                .setMACD(macd.getLastMACD())
-                .setSignal(macd.getLastSignal())
+                .setMACD(macd.MACD())
+                .setSignal(macd.signal())
                 .setTradingBalance(tradingClient.getFreeTradingBalance());
     }
 }
