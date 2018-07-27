@@ -46,7 +46,7 @@ public class TradingClient {
         return tradeCurrency;
     }
 
-    TradingClient(String baseCurrency, String tradeCurrency, String key, String secret) {
+    public TradingClient(String baseCurrency, String tradeCurrency, String key, String secret) {
     this.baseCurrency = baseCurrency;
     this.tradeCurrency = tradeCurrency;
     BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(key, secret);

@@ -22,4 +22,8 @@ public class CoinsContainer {
     public List<Coin> getStartedCoins() {
         return coins.stream().filter(Coin::isStarted).collect(Collectors.toList());
     }
+
+    public List<Coin> getStoppedCoins() {
+        return coins.stream().filter(coin -> !coin.isStarted()).collect(Collectors.toList());
+    }
 }

@@ -3,6 +3,7 @@ package global_monitor;
 import global_monitor.coins.Coin;
 import global_monitor.coins.CoinsContainer;
 import global_monitor.starter.TraderStarter;
+import global_monitor.starter.TraderStopper;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,31 @@ public class GlobalMonitor {
     @Autowired
     private TraderStarter starter;
 
+    @Autowired
+    private TraderStopper stopper;
+
     public void reviewCoins() {
         List<Coin> startedCoins = container.getStartedCoins();
         reviewStartedCoins(startedCoins);
+        List<Coin> stopedCoins = container.getStoppedCoins();
+        reviewStoppedCoins(stopedCoins);
+
     }
 
-    private void reviewStartedCoins(List<Coin> startedCoins) {
-        startedCoins.forEach(this::checkDayTrendAndStartIfNeeded);
+    private void reviewStartedCoins(List<Coin> coins) {
+        coins.forEach(this::checkDayTrendAndStopIfNeeded);
+    }
+
+    private void checkDayTrendAndStopIfNeeded(Coin coin) {
+        client.setSymbol(coin.getSymbol() + baseCurrency);
+        if(!trendAnalyzer.isUpDayTrend()){
+            stopper.stopTrader(coin);
+            coin.stop();
+        }
+    }
+
+    private void reviewStoppedCoins(List<Coin> coins) {
+        coins.forEach(this::checkDayTrendAndStartIfNeeded);
     }
 
     private void checkDayTrendAndStartIfNeeded(Coin coin) {

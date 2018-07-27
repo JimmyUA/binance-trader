@@ -3,10 +3,12 @@ package global_monitor.coins;
 public class Coin {
 
     private String symbol;
+    private String port;
     private boolean isStarted;
 
-    public Coin(String symbol) {
+    public Coin(String symbol, String port) {
         this.symbol = symbol;
+        this.port = port;
         isStarted = false;
     }
 
@@ -25,4 +27,7 @@ public class Coin {
         isStarted = false;
     }
 
+    public String getPort() {
+        return port;
+    }
 }

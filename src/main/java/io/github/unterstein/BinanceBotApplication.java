@@ -87,6 +87,11 @@ public class BinanceBotApplication {
   @Autowired
   private MarketAnalyzer marketAnalyzer;
 
+  private static String profile = "TRX";
+
+  public static void setProfile(String profileValue){
+    profile = profileValue;
+  }
 
   @PostConstruct
   public void init() {
@@ -169,7 +174,11 @@ public class BinanceBotApplication {
   }
 
   public static void main(String[] args) {
-    SpringApplication.run(BinanceBotApplication.class);
+    SpringApplication app = new SpringApplication(BinanceBotApplication.class);
+    if (!profile.equals("")){
+    app.setAdditionalProfiles(profile);}
+    // overrides "application.properties" with  "application-dev.properties"
+    app.run(args);
   }
 
 
