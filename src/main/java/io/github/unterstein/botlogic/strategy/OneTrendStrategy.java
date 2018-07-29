@@ -33,8 +33,7 @@ public class OneTrendStrategy extends AbstractStrategy{
 
     private void newSellProcess() {
         goalSellPrice = boughtPrice + (boughtPrice * 0.002);
-        Double stopLossKof = stopLossDecider.getStopLossKof();
-        stopLossPrice = boughtPrice - (boughtPrice * stopLossKof);
+        initStopLoss();
 
         while (true){
             if (stopTicker){
@@ -50,9 +49,17 @@ public class OneTrendStrategy extends AbstractStrategy{
             } else if (sellDecisionMaker.isCrossedStopLoss(stopLossPrice, lastBid)){
                 sellToMarket();
                 break;
+            } else if(sellDecisionMaker.isNeedToSellByMACD()){
+                sellToMarket();
+                break;
             }
         }
         amplitudeAnalyser.stop();
+    }
+
+    private void initStopLoss() {
+        Double stopLossKof = stopLossDecider.getStopLossKof();
+        stopLossPrice = boughtPrice - (boughtPrice * stopLossKof);
     }
 
     private boolean enoughProfit() {

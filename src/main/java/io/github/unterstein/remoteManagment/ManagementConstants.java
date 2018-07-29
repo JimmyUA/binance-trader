@@ -9,4 +9,6 @@ public class ManagementConstants {
     public static boolean startDayTrend = false;
     public static boolean isTradesOnDownDayTrendForbidden = true;
     public static boolean isLongMACDIncluded = true;
+    public static boolean isMACDStopLossAllowed = true;
+    public static boolean isStartedTrading = false;
 }

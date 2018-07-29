@@ -19,6 +19,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.isLongMACDIncluded;
+import static io.github.unterstein.remoteManagment.ManagementConstants.isMACDStopLossAllowed;
 import static io.github.unterstein.remoteManagment.ManagementConstants.isTradesOnDownDayTrendForbidden;
 
 @MountPath("/home")
@@ -65,8 +66,22 @@ public class HomePage extends BasePage {
 
         addDayDownTrendChoice();
         addLongMACDChoice();
+        addMACDStopLossChoice();
         initPanels();
 
+    }
+
+    private void addMACDStopLossChoice() {
+        Label MACDStopLossLabel = new Label("MACDStopLossLabel", "Is MACD Stop Loss allowed: ");
+        AjaxCheckBox MACDStopLoss = new AjaxCheckBox("MACDStopLoss", Model.of(isMACDStopLossAllowed)) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
+                isMACDStopLossAllowed = getModelObject();
+                ajaxRequestTarget.add(this);
+            }
+        };
+
+        form.add(MACDStopLossLabel, MACDStopLoss);
     }
 
     private void addLongMACDChoice() {

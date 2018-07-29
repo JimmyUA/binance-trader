@@ -11,11 +11,6 @@
 
     <name>binancebot</name>
     <description>Yet another stupid trading bot</description>
-    <modules>
-        <module>
-            globalmonitor
-        </module>
-    </modules>
     <parent>
         <groupId>com.giffing.wicket.spring.boot.starter</groupId>
         <artifactId>wicket-spring-boot-starter-parent</artifactId>

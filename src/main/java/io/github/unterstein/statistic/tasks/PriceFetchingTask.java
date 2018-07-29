@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.isStartedTrading;
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 
 @Component
@@ -22,9 +23,6 @@ public class PriceFetchingTask implements Runnable{
 
     private static Logger logger = LoggerFactory.getLogger(PriceFetchingTask.class);
 
-
-    @Autowired
-    private PricesAccumulator pricesAccumulator;
 
     @Autowired
     @Qualifier("short")
@@ -49,11 +47,13 @@ public class PriceFetchingTask implements Runnable{
 
     @Override
     public void run() {
-        try {
-            lastPrice = tradingClient.lastPrice();
-            updateStatisticDTO();
-        } catch (Exception e){
-            logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+        if(isStartedTrading) {
+            try {
+                lastPrice = tradingClient.lastPrice();
+                updateStatisticDTO();
+            } catch (Exception e) {
+                logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
+            }
         }
     }
 

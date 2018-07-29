@@ -87,12 +87,6 @@ public class BinanceBotApplication {
   @Autowired
   private MarketAnalyzer marketAnalyzer;
 
-  private static String profile = "TRX";
-
-  public static void setProfile(String profileValue){
-    profile = profileValue;
-  }
-
   @PostConstruct
   public void init() {
     initDayTrend();
@@ -122,7 +116,9 @@ public class BinanceBotApplication {
   // tick every 2 seconds
   @Scheduled(fixedRate = 2000)
   public void schedule() {
-    trader.tick();
+    if (isStartedTrading) {
+      trader.tick();
+    }
   }
 
 //    @Scheduled(fixedRate = 1000)
@@ -140,6 +136,18 @@ public class BinanceBotApplication {
   public String stop() {
     shutDown = true;
     return "Stopped!";
+  }
+
+  @RequestMapping("/stopTrading")
+  public String stopTrading() {
+    isStartedTrading = false;
+    return "Trading is stopped!";
+  }
+
+  @RequestMapping("/startTrading")
+  public String startTrading() {
+    isStartedTrading = true;
+    return "Trading is started!";
   }
 
   @RequestMapping("/sellAll")
@@ -175,9 +183,6 @@ public class BinanceBotApplication {
 
   public static void main(String[] args) {
     SpringApplication app = new SpringApplication(BinanceBotApplication.class);
-    if (!profile.equals("")){
-    app.setAdditionalProfiles(profile);}
-    // overrides "application.properties" with  "application-dev.properties"
     app.run(args);
   }
 

@@ -36,8 +36,8 @@ public class GlobalMonitor {
     public void reviewCoins() {
         List<Coin> startedCoins = container.getStartedCoins();
         reviewStartedCoins(startedCoins);
-        List<Coin> stopedCoins = container.getStoppedCoins();
-        reviewStoppedCoins(stopedCoins);
+        List<Coin> stoppedCoins = container.getStoppedCoins();
+        reviewStoppedCoins(stoppedCoins);
 
     }
 
@@ -60,7 +60,7 @@ public class GlobalMonitor {
     private void checkDayTrendAndStartIfNeeded(Coin coin) {
         client.setSymbol(coin.getSymbol() + baseCurrency);
         if(trendAnalyzer.isUpDayTrend()){
-            starter.startTrader(coin.getSymbol());
+            starter.startTrader(coin);
             coin.start();
         }
     }

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -40,12 +41,11 @@ public class RSITest {
     public void setUp() throws Exception {
         rsi = new RSI();
 
-        when(client.getPricesFromExchangeReversed(CandlestickInterval.ONE_MINUTE))
-                .thenReturn(DoubleStream.of(46.6875, 47.6875, 46.3125, 44.5625,
-                47.0, 47.5625, 47.8125, 45.75, 44.625, 44.250, 44.9375, 46.9375,
-                        46.4375, 47.125, 46.125)
-                        .boxed().collect(Collectors.toList()));
 
+doReturn(DoubleStream.of(46.6875, 47.6875, 46.3125, 44.5625,
+        47.0, 47.5625, 47.8125, 45.75, 44.625, 44.250, 44.9375, 46.9375,
+        46.4375, 47.125, 46.125)
+        .boxed().collect(Collectors.toList())).when(client).getPricesFromExchangeReversed(CandlestickInterval.ONE_MINUTE);
         rsi.setClient(client);
     }
 
