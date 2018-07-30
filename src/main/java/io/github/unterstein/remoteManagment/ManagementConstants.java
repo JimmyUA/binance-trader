@@ -8,7 +8,8 @@ public class ManagementConstants {
     public static Integer rsiPeriods = 0;
     public static boolean startDayTrend = false;
     public static boolean isTradesOnDownDayTrendForbidden = true;
-    public static boolean isLongMACDIncluded = true;
+    public static boolean isLongMACDIncluded = false;
     public static boolean isMACDStopLossAllowed = true;
-    public static boolean isStartedTrading = false;
+    public static boolean isStartedTrading = true;
+    public static boolean isResistanceLineIncluded = true;
 }

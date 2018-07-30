@@ -1,5 +1,6 @@
 package global_monitor;
 
+
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MA.MovingAverage;
 import io.github.unterstein.statistic.TrendAnalyzer;
@@ -24,7 +25,7 @@ public class Config {
     }
 
     @Bean
-    public TrendAnalyzer trendAnalizer() {
+    public TrendAnalyzer trendAnalyzer() {
         return new TrendAnalyzer();
     }
 

@@ -9,7 +9,7 @@ public class Coin {
     public Coin(String symbol, String port) {
         this.symbol = symbol;
         this.port = port;
-        isStarted = false;
+        isStarted = true;
     }
 
     public String getSymbol() {

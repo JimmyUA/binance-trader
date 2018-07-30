@@ -67,7 +67,7 @@ public class OneTrendStrategy extends AbstractStrategy{
     }
 
     private boolean soldWithProfit() {
-        if (lastBid > goalSellPrice){
+        if (enoughProfit()){
             logger.info(String.format("Last bid: %.8f is over goal price: %.8f, percentage: %.2f",
                     lastBid, goalSellPrice, ((lastBid - goalSellPrice)/goalSellPrice) * 100));
             sellToMarket();

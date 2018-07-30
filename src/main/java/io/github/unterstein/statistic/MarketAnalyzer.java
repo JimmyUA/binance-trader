@@ -3,6 +3,7 @@ package io.github.unterstein.statistic;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.RSI.RSI;
+import io.github.unterstein.statistic.lines.LinesAnalyser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class MarketAnalyzer {
     @Autowired
     private TrendAnalyzer trendAnalyzer;
 
+    @Autowired
+    private LinesAnalyser linesAnalyser;
+
     @Qualifier("short")
     @Autowired
     private MACD macd;
@@ -44,7 +48,7 @@ public class MarketAnalyzer {
         this.rsiPeriod = rsiPeriod;
     }
 
-    public String getMarketConditions(){
+    public String getMarketConditions() {
         String message = "";
         Double rsiValue = rsi.getRSI(rsiPeriods);
         Double histogram = macd.histogramm();
@@ -68,7 +72,7 @@ public class MarketAnalyzer {
     public boolean isRSIHighEnough() {
         Double rsi = getRSI();
         logger.info(String.format("RSI is %.8f", rsi));
-        return rsi > 50  && rsi < 70;
+        return rsi > 50 && rsi < 70;
     }
 
     private Double getRSI() {
@@ -81,8 +85,8 @@ public class MarketAnalyzer {
             highestPrice = tradingClient.getHighestPrice();
         }
         Double limit = highestPrice - (highestPrice * 0.01);
-        logger.info(String.format("Current price is below highest price 24 hour price: %.8f percent", (highestPrice - ask)/highestPrice * 100));
-        if (ask > limit && isHighestPriceNotCrossed(ask)){
+        logger.info(String.format("Current price is below highest price 24 hour price: %.8f percent", (highestPrice - ask) / highestPrice * 100));
+        if (ask > limit && isHighestPriceNotCrossed(ask)) {
             return false;
         }
         return true;
@@ -105,7 +109,7 @@ public class MarketAnalyzer {
         Double lastHistogram = macd.histogramm();
         Double lastMACD = macd.MACD();
         String direction = "";
-        if (lastMACD < lastHistogram){
+        if (lastMACD < lastHistogram) {
             direction = "below";
             logger.info(String.format("MACD %s histogram, MACD: %.10f, histogram: %.10f",
                     direction, lastMACD, lastHistogram));
@@ -127,7 +131,7 @@ public class MarketAnalyzer {
         Double lastMACD = macd.MACD();
         String direction = "";
         String message = "MACD %s 0, MACD: %.10f";
-        if (lastMACD < 0){
+        if (lastMACD < 0) {
             direction = "below";
             logger.info(String.format(message,
                     direction, lastMACD));
@@ -163,5 +167,15 @@ public class MarketAnalyzer {
 
     public boolean wasLongMACDCrossSignalDown() {
         return longMACD.wasMACDCrossSignalDown();
+    }
+
+    public boolean priceNearResistanceLine(Double ask, int periodInMinutes) {
+        Double resistanceLine = linesAnalyser.getResistanceLineForPeriod((long) periodInMinutes);
+        Double askInterval = ask - (ask * 0.008);
+        if (askInterval >= resistanceLine) {
+            logger.info("Current ask near resistance line, it's dangerous to buy");
+            return true;
+        }
+        return false;
     }
 }

@@ -1,8 +1,6 @@
 package global_monitor.starter;
 
 import global_monitor.coins.Coin;
-import io.github.unterstein.BinanceBotApplication;
-import org.springframework.boot.SpringApplication;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

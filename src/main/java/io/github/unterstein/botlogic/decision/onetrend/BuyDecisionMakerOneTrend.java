@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.isLongMACDIncluded;
+import static io.github.unterstein.remoteManagment.ManagementConstants.isResistanceLineIncluded;
 import static io.github.unterstein.remoteManagment.ManagementConstants.isTradesOnDownDayTrendForbidden;
 
 public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
@@ -19,16 +20,30 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
 
     @Override
     public boolean isRightMomentToBuy(Double ask) {
-        if (isTradesOnDownDayTrendForbidden && marketAnalyzer.isDownDayTrend() ){
+        if (dayTrendLimit()){
             logger.info("Trades are not allowed on down day trend!!!");
             return false;
-        } else if(isLongMACDIncluded && marketAnalyzer.wasLongMACDCrossSignalDown()){
+        } else if(longMACDLimit()){
             logger.info("Long MACD is below Signal, trades are not allowed");
+            return false;
+        } else if(resistanceLineLimit(ask)){
             return false;
         }
         return priceNotNearResistanceLine(ask) && isMACDBelowZero() &&
                 wasMACDCrossSignal() && isUpTrend() &&
                 isRsiHighEnough() && isMacdAscending();
+    }
+
+    private boolean resistanceLineLimit(Double ask) {
+        return isResistanceLineIncluded && marketAnalyzer.priceNearResistanceLine(ask, 3 * 60);
+    }
+
+    private boolean longMACDLimit() {
+        return isLongMACDIncluded && marketAnalyzer.wasLongMACDCrossSignalDown();
+    }
+
+    private boolean dayTrendLimit() {
+        return isTradesOnDownDayTrendForbidden && marketAnalyzer.isDownDayTrend();
     }
 
     private boolean wasMACDCrossSignal() {

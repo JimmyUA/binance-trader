@@ -4,10 +4,12 @@ import com.giffing.wicket.spring.boot.context.scan.WicketHomePage;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.botui.pages.base.BasePage;
 import io.github.unterstein.botui.pages.home.panels.buy.BuyPanel;
+import io.github.unterstein.botui.pages.home.panels.choice.ChoicesPanel;
 import io.github.unterstein.botui.pages.home.panels.sell.SellPanel;
 import io.github.unterstein.botui.pages.home.panels.statistic.StatisticPanel;
 import io.github.unterstein.remoteManagment.RemoteManager;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.basic.Label;
@@ -15,6 +17,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.NumberTextField;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
@@ -38,6 +41,8 @@ public class HomePage extends BasePage {
     private NumberTextField<Integer> tradeAmountTF;
     private StatisticPanel statisticPanel;
     private Form form;
+    private Label isStartedLabel;
+
 
 
     @Override
@@ -48,7 +53,8 @@ public class HomePage extends BasePage {
         Label tradeCurrencyLabel = new Label("tradeCurrency", "Trade Currency: " + remoteManager.getTradeCurrency());
         add(tradeCurrencyLabel);
         Button stopBotButton = getStopBotButton();
-        form.add(stopBotButton);
+        Button tradingSwitcherButton = getTradingSwitcherButton();
+        form.add(stopBotButton, tradingSwitcherButton);
         add(form);
 
         Label tradeAmountLabel = new Label("tradeAmountLabel", "Trade Amount");
@@ -57,8 +63,9 @@ public class HomePage extends BasePage {
         Label versionLabel = new Label("versionLabel", "V 1.5.1");
         add(versionLabel);
 
-        Label isStartedLabel = new Label("isStartedLabel",
-                String.format("Bot is %s", isStartedTrading ? "started": "stopped"));
+        isStartedLabel = new Label("isStartedLabel",
+                String.format("Trading is %s", isStartedTrading ? "started": "stopped"));
+        isStartedLabel.setOutputMarkupId(true);
         add(isStartedLabel);
 
 
@@ -69,58 +76,21 @@ public class HomePage extends BasePage {
         AjaxButton saveButton = getSaveButton();
         form.add(saveButton);
 
-        addDayDownTrendChoice();
-        addLongMACDChoice();
-        addMACDStopLossChoice();
+
+
         initPanels();
 
     }
 
-    private void addMACDStopLossChoice() {
-        Label MACDStopLossLabel = new Label("MACDStopLossLabel", "Is MACD Stop Loss allowed: ");
-        AjaxCheckBox MACDStopLoss = new AjaxCheckBox("MACDStopLoss", Model.of(isMACDStopLossAllowed)) {
-            @Override
-            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
-                isMACDStopLossAllowed = getModelObject();
-                ajaxRequestTarget.add(this);
-            }
-        };
 
-        form.add(MACDStopLossLabel, MACDStopLoss);
-    }
-
-    private void addLongMACDChoice() {
-        Label longMACDChoiceLabel = new Label("longMACDChoiceLabel", "Long MACD included: ");
-        AjaxCheckBox longMACDChoice = new AjaxCheckBox("longMACDChoice", Model.of(isLongMACDIncluded)) {
-            @Override
-            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
-                isLongMACDIncluded = getModelObject();
-                ajaxRequestTarget.add(this);
-            }
-        };
-
-        form.add(longMACDChoice, longMACDChoiceLabel);
-    }
-
-    private void addDayDownTrendChoice() {
-        Label tradesOnDownTrendLabel = new Label("tradesOnDownTrendLabel", "Trades on down day trend forbidden: ");
-        AjaxCheckBox tradesOnDownTrend = new AjaxCheckBox("tradesOnDownTrend", Model.of(isTradesOnDownDayTrendForbidden)) {
-            @Override
-            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
-                isTradesOnDownDayTrendForbidden = getModelObject();
-                ajaxRequestTarget.add(this);
-            }
-        };
-
-        form.add(tradesOnDownTrend, tradesOnDownTrendLabel);
-    }
 
     private void initPanels() {
         SellPanel sellPanel = new SellPanel("sellPanel");
         BuyPanel buyPanel = new BuyPanel("buyPanel");
         statisticPanel = new StatisticPanel("statisticPanel");
         statisticPanel.setOutputMarkupId(true);
-        add(sellPanel, buyPanel, statisticPanel);
+        ChoicesPanel choicesPanel = new ChoicesPanel("choicesPanel");
+        add(sellPanel, buyPanel, statisticPanel, choicesPanel);
     }
 
 
@@ -145,6 +115,27 @@ public class HomePage extends BasePage {
             }
 
         };
+    }
+
+    private Button getTradingSwitcherButton() {
+        AjaxButton button = new AjaxButton("tradingSwitcherButton", Model.of(isStartedTrading ? "STOP TRADING" : "START TRADING")) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                isStartedTrading = !isStartedTrading;
+                target.add(isStartedLabel);
+            }
+
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setPreventDefault(true);
+                attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.STOP_IMMEDIATE);
+            }
+
+        };
+
+        button.setOutputMarkupId(true);
+        return button;
     }
 
 }
