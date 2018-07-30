@@ -18,9 +18,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import static io.github.unterstein.remoteManagment.ManagementConstants.isLongMACDIncluded;
-import static io.github.unterstein.remoteManagment.ManagementConstants.isMACDStopLossAllowed;
-import static io.github.unterstein.remoteManagment.ManagementConstants.isTradesOnDownDayTrendForbidden;
+import static io.github.unterstein.remoteManagment.ManagementConstants.*;
 
 @MountPath("/home")
 @WicketHomePage
@@ -55,6 +53,13 @@ public class HomePage extends BasePage {
 
         Label tradeAmountLabel = new Label("tradeAmountLabel", "Trade Amount");
         form.add(tradeAmountLabel);
+
+        Label versionLabel = new Label("versionLabel", "V 1.5.1");
+        add(versionLabel);
+
+        Label isStartedLabel = new Label("isStartedLabel",
+                String.format("Bot is %s", isStartedTrading ? "started": "stopped"));
+        add(isStartedLabel);
 
 
         tradeAmountTF = new NumberTextField<>("tradeAmountTF", Model.of(binanceTrader.getTradeAmount()));
