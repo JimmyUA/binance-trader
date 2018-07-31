@@ -12,4 +12,5 @@ public class ManagementConstants {
     public static boolean isMACDStopLossAllowed = true;
     public static boolean isStartedTrading = true;
     public static boolean isResistanceLineIncluded = true;
+    public static boolean isNegativeMACDRequired = false;
 }

@@ -31,6 +31,7 @@ public class ChoicesPanel extends Panel{
         add(new ChoicePanel("longMACD", "Long MACD included: ", isLongMACDIncluded));
         add(new ChoicePanel("MACDStopLoss", "Is MACD Stop Loss allowed: ", isMACDStopLossAllowed));
         add(new ChoicePanel("resistanceLine", "Is Resistance line included: ", isResistanceLineIncluded));
+        add(new ChoicePanel("negativeMACD", "Is negative MACD required: ", isNegativeMACDRequired));
 
     }
 

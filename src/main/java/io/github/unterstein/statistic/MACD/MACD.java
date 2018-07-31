@@ -220,18 +220,23 @@ public class MACD {
     }
 
     public boolean wasMACDCrossSignalUp() {
-        if (wasMACDCrossSignalUp) {
-            logger.info(String.format("%s MACD crossed Signal up%d minutes ago", name, crossCounter));
+        if (isMSCDCrossSignalUp()) {
+            logger.info("MACD is more than signal");
             crossCounter += 10;
             return true;
         } else {
+            logger.info("MACD is less than signal");
             return false;
         }
     }
 
+    private boolean isMSCDCrossSignalUp() {
+        return MACDs.getLast() > signals.getLast();
+    }
+
     public boolean wasMACDCrossSignalDown() {
         histogramm();
-        if (!wasMACDCrossSignalUp) {
+        if (!isMSCDCrossSignalUp()) {
             logger.info(String.format("%s MACD crossed Signal down", name));
             return true;
         } else {
