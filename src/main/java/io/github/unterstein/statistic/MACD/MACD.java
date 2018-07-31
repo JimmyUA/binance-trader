@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -183,10 +184,23 @@ public class MACD {
 
 
     public boolean isAscending() {
-        Double lastHistogram = histograms.getLast();
+        Double lastHistogram = MACDs.getLast() - signals.getLast();
 
-        double previousAverage = histograms.stream().skip(histograms.size() - 4)
-                .limit(3).mapToDouble(d -> d).average().orElse(0.0);
+        List<Double> previousMACDs = MACDs.stream().skip(MACDs.size() - 4)
+                .limit(3).mapToDouble(d -> d).boxed().collect(Collectors.toList());
+
+        List<Double> previousSignals = signals.stream().skip(signals.size() - 4)
+                .limit(3).mapToDouble(d -> d).boxed().collect(Collectors.toList());
+
+        List<Double> previousHistograms = new ArrayList<>(3);
+
+        for (int i = 0; i < previousMACDs.size() - 1; i++) {
+            double currentHistogram = previousMACDs.get(i) - previousSignals.get(i);
+            previousHistograms.add(currentHistogram);
+        }
+
+        double previousAverage = previousHistograms.stream().mapToDouble(Double::new).average().orElse(0.0);
+
         String direction;
 
         if (lastHistogram > previousAverage) {

@@ -188,7 +188,7 @@ public class TradingClient {
             .filter(bid -> Double.parseDouble(bid.getQty()) > coinsAmount)
             .limit(bidsAmount)
             .mapToDouble(bid -> Double.parseDouble(bid.getPrice()))
-            .average().getAsDouble();
+            .average().orElse(0.0);
   }
 
   public Double getLastAsksAverage(Integer coinsAmount, Integer asksAmount){
@@ -197,7 +197,7 @@ public class TradingClient {
             .filter(ask -> Double.parseDouble(ask.getQty()) > coinsAmount)
             .limit(asksAmount)
             .mapToDouble(ask -> Double.parseDouble(ask.getPrice()))
-            .average().getAsDouble();
+            .average().orElse(0.0);
   }
 
   public Double getHighestPrice() {

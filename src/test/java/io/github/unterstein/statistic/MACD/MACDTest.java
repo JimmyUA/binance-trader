@@ -122,13 +122,9 @@ public class MACDTest {
         assertEquals(expectedHistogram, histogram, 0.001);
     }
 
-    @Ignore
     @Test
-    public void shouldBeAccending() {
-        for (int i = 0; i < 38; i++) {
-            minutesFromStart++;
-            macd.histogramm();
-        }
+    public void shouldBeAscending() {
+        macd.signal();
         assertTrue(macd.isAscending());
     }
 
