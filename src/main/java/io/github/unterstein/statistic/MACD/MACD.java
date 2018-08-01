@@ -231,6 +231,9 @@ public class MACD {
     }
 
     private boolean isMSCDCrossSignalUp() {
+        if(MACDs.isEmpty() || signals.isEmpty()){
+            signal();
+        }
         return MACDs.getLast() > signals.getLast();
     }
 

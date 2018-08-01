@@ -13,7 +13,7 @@ public class SellDecisionMakerOneTrend {
 
     @Autowired
     MarketAnalyzer marketAnalyzer;
-
+    private boolean wasMACDOverZero = false;
 
 
     public boolean isTimeToTryToSell() {
@@ -21,7 +21,7 @@ public class SellDecisionMakerOneTrend {
     }
 
     private boolean isMACDAboveZero() {
-        return marketAnalyzer.isMaCDBelowZero();
+        return !marketAnalyzer.isMaCDBelowZero();
     }
 
     public boolean isCrossedStopLoss(double stopLossPrice, Double lastBid) {
@@ -42,8 +42,13 @@ public class SellDecisionMakerOneTrend {
 
 
     public boolean isNeedToSellByMACD() {
-        if (ManagementConstants.isMACDStopLossAllowed && marketAnalyzer.isMaCDBelowZero()){
-            logger.info("MACD fall below zero, no sence to wait profit here!");
+        boolean isMACDBelowZero = marketAnalyzer.isMaCDBelowZero();
+        if(!isMACDBelowZero){
+            wasMACDOverZero = true;
+        }
+        if (ManagementConstants.isMACDStopLossAllowed && isMACDBelowZero && wasMACDOverZero){
+            logger.info("MACD fall below zero, no sense to wait profit here!");
+            wasMACDOverZero = false;
             return true;
         }
         return false;
