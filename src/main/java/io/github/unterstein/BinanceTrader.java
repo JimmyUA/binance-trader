@@ -83,8 +83,9 @@ public class BinanceTrader {
 
             if (isFall()) {
                 logger.info("Fall burst detected");
-
-                tradeExecutor.buyProcess();
+                if (isStartedTrading) {
+                    tradeExecutor.buyProcess();
+                }
                 tradeExecutor.sellProcess();
 
             }

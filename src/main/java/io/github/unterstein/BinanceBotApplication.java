@@ -116,9 +116,7 @@ public class BinanceBotApplication {
   // tick every 2 seconds
   @Scheduled(fixedRate = 2000)
   public void schedule() {
-    if (isStartedTrading) {
       trader.tick();
-    }
   }
 
 //    @Scheduled(fixedRate = 1000)
