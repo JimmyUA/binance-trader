@@ -2,7 +2,6 @@ package io.github.unterstein.statistic;
 
 import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.statistic.EMA.ExponentialMovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.lines.LinesAnalyser;
@@ -42,6 +41,10 @@ public class MarketAnalyzer {
     @Autowired
     @Qualifier("long")
     private MACD longMACD;
+
+    @Autowired
+    @Qualifier("momo")
+    private MACD momoMACD;
 
     private int rsiPeriod;
     private Double highestPrice;
@@ -195,7 +198,7 @@ public class MarketAnalyzer {
     }
 
     public boolean momoMACDHistogramCrossedZeroUp() {
-
+        momoMACD.wasHistoCrossZeroUp();
         return false;
     }
 }

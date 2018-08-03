@@ -21,6 +21,6 @@ public class BuyDecisionMakerOneTrendTest {
 
     @Test
     public void wasMACDCrossSignalUpShouldReturnTrue() throws Exception {
-
+        
     }
 }

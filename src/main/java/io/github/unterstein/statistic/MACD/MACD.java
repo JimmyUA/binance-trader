@@ -35,6 +35,7 @@ public class MACD {
     private TradingClient client;
 
     protected boolean wasMACDCrossSignalUp;
+    private boolean wasHistorossZeroUp;
     protected int crossCounter;
     private LinkedList<Double> prices;
 
@@ -178,7 +179,7 @@ public class MACD {
     public synchronized Double histogramm() {
         double macd = MACD();
         Double signal = signal();
-        checkMACDCrossedSignal();
+        checkCrosses();
         return macd - signal;
     }
 
@@ -247,4 +248,31 @@ public class MACD {
     }
 
 
+    public boolean wasHistoCrossZeroUp() {
+
+        if (wasHistorossZeroUp) {
+            logger.info(String.format("%s Histo crossed Zero up", name));
+            return true;
+        } else {
+            logger.info(String.format("%s Histo didnot cross Zero down", name));
+            return false;
+        }
+    }
+
+    protected void checkHistoCrossedZero() {
+        Double histo = histogramm();
+
+        if (histo > 0.0) {
+            if (!wasHistorossZeroUp) {
+                wasMACDCrossSignalUp = true;
+            }
+        } else {
+            wasMACDCrossSignalUp = false;
+        }
+    }
+
+    public void checkCrosses(){
+        checkMACDCrossedSignal();
+        checkHistoCrossedZero();
+    }
 }

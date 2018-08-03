@@ -130,6 +130,13 @@ public class Config {
         return longMacd;
     }
 
+    @Bean(name = "momo")
+    public MACD momoMACD() {
+        MACD momMACD = new MACD(12, 26, 9);
+        momMACD.setName("MoMo");
+        return momMACD;
+    }
+
     @Bean
     public PriceFetchingTask priceFetchingTask() {
         return new PriceFetchingTask();
