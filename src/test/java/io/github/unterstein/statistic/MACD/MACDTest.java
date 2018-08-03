@@ -1,14 +1,10 @@
 package io.github.unterstein.statistic.MACD;
 
 import com.binance.api.client.domain.market.CandlestickInterval;
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import io.github.unterstein.BinanceBotApplication;
 import io.github.unterstein.Config;
 import io.github.unterstein.TradingClient;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,15 +14,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
-import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 
@@ -34,10 +28,8 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {Config.class, BinanceBotApplication.class})
 @TestPropertySource(locations = "classpath:application_test.properties")
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class, MockitoTestExecutionListener.class})
-@DbUnitConfiguration(databaseConnection = {"datasource"})
-@DatabaseSetup("/sql/tests/one_trade.xml")
+@TestExecutionListeners({MockitoTestExecutionListener.class})
+
 public class MACDTest {
 
     private LinkedList<Double> prices = new LinkedList<>(Arrays.asList(
@@ -150,7 +142,6 @@ public class MACDTest {
 
     @Test
     public void shouldTurnCrossedToFalse() throws Exception {
-        boolean expectedCrossedValue = false;
 
         when(mockMacd.MACD()).thenReturn(1.0);
         when(mockMacd.signal()).thenReturn(1.2);
@@ -162,4 +153,48 @@ public class MACDTest {
         assertFalse(mockMacd.wasMACDCrossSignalUp);
     }
 
+    @Test
+    public void shouldTurnCrossedToTrue() throws Exception {
+
+        when(mockMacd.MACD()).thenReturn(1.2);
+        when(mockMacd.signal()).thenReturn(1.0);
+        doCallRealMethod().when(mockMacd).checkMACDCrossedSignal();
+        mockMacd.wasMACDCrossSignalUp = false;
+
+        mockMacd.checkMACDCrossedSignal();
+
+        assertTrue(mockMacd.wasMACDCrossSignalUp);
+    }
+
+    @Test
+    public void multithreadCalculationsOfSignalShouldBeSafe() throws Exception {
+
+        macd = new MACD(27, 63, 11);
+        prices = DoubleStream.generate(() -> 0.00001).limit(500).boxed().collect(Collectors.toCollection(LinkedList::new));
+        when(client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE)).thenReturn(prices);
+        macd.setClient(client);
+
+        Thread fetchTaskThread = new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+                try {
+                    macd.MACD();
+                    macd.signal();
+                } catch (Exception e) {
+                    throw new RuntimeException("Did not pass!");
+                }
+            }
+        });
+        Thread fetchTaskThreadSecond = new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+                    macd.signal();
+                    macd.MACD();
+                System.out.println("g");
+            }
+        });
+
+
+            fetchTaskThread.start();
+            fetchTaskThreadSecond.start();
+
+    }
 }

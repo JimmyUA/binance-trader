@@ -13,7 +13,8 @@ public class SellDecisionMakerOneTrend {
 
     @Autowired
     MarketAnalyzer marketAnalyzer;
-    private boolean wasMACDOverZero = false;
+
+    protected boolean wasMACDOverZero = false;
 
 
     public boolean isTimeToTryToSell() {
@@ -52,5 +53,9 @@ public class SellDecisionMakerOneTrend {
             return true;
         }
         return false;
+    }
+
+    protected void setMarketAnalyzer(MarketAnalyzer marketAnalyzer) {
+        this.marketAnalyzer = marketAnalyzer;
     }
 }

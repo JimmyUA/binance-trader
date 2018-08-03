@@ -92,13 +92,13 @@ public class MACD {
         return EMAs.getLast();
     }
 
-    protected double firstEMA(int period) {
+    protected synchronized double firstEMA(int period) {
         initPrices();
         return prices.stream().
                 limit(period).mapToDouble(price -> price).average().orElse(0.0);
     }
 
-    protected double notFirstEMA(int period, Double previousEMA, Double currentPrice) {
+    protected synchronized double notFirstEMA(int period, Double previousEMA, Double currentPrice) {
 
         int increasedPeriod = period + 1;
         double EMACoefficient = 2.0 / increasedPeriod;
@@ -116,12 +116,12 @@ public class MACD {
         return new LinkedList<>(client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE));
     }
 
-    public double MACD() {
+    public synchronized double MACD() {
         initLists();
         return EMA(shortPeriod) - EMA(longPeriod);
     }
 
-    protected double firstSignal() {
+    protected synchronized double firstSignal() {
         int MACDamountBeforeFirstSignal = signalPeriod;
         List<Double> workingShortEMAs = shortEMAs.stream().skip(longPeriod - shortPeriod)
                 .collect(Collectors.toList());
@@ -142,7 +142,7 @@ public class MACD {
         return currentMACD * signalKof + (previousSignal * (1 - signalKof));
     }
 
-    public Double signal() {
+    public synchronized Double signal() {
         MACD();
         signals.add(firstSignal());
 
@@ -175,7 +175,7 @@ public class MACD {
     }
 
 
-    public Double histogramm() {
+    public synchronized Double histogramm() {
         double macd = MACD();
         Double signal = signal();
         checkMACDCrossedSignal();
@@ -231,15 +231,13 @@ public class MACD {
     }
 
     private boolean isMSCDCrossSignalUp() {
-        if(MACDs.isEmpty() || signals.isEmpty()){
-            signal();
-        }
-        return MACDs.getLast() > signals.getLast();
+
+        return wasMACDCrossSignalUp;
     }
 
     public boolean wasMACDCrossSignalDown() {
         histogramm();
-        if (!isMSCDCrossSignalUp()) {
+        if (!wasMACDCrossSignalUp) {
             logger.info(String.format("%s MACD crossed Signal down", name));
             return true;
         } else {

@@ -129,7 +129,7 @@ public class MarketAnalyzer {
 
     public boolean isMaCDBelowZero() {
         Double lastMACD = macd.MACD();
-        String direction = "";
+        String direction;
         String message = "MACD %s 0, MACD: %.10f";
         if (lastMACD < 0) {
             direction = "below";
