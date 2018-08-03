@@ -1,6 +1,8 @@
 package io.github.unterstein.statistic;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.TradingClient;
+import io.github.unterstein.statistic.EMA.ExponentialMovingAverage;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.lines.LinesAnalyser;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.rsiPeriods;
+import static io.github.unterstein.statistic.EMA.ExponentialMovingAverage.*;
 
 @Component
 public class MarketAnalyzer {
@@ -171,7 +174,7 @@ public class MarketAnalyzer {
 
     public boolean priceNearResistanceLine(Double ask, int periodInMinutes) {
         Double resistanceLine = linesAnalyser.getResistanceLineForPeriod((long) periodInMinutes);
-        Double askInterval = ask - (ask * 0.008);
+        Double askInterval = resistanceLine - (resistanceLine * 0.008);
         if (ask >= askInterval) {
             logger.info("Current ask near resistance line, it's dangerous to buy");
             return true;
@@ -180,8 +183,19 @@ public class MarketAnalyzer {
     }
 
     public boolean isMoMoTrendUp() {
-        Double ema20 = macd.EMA(20);
-        Double ema100 = macd.EMA(100);
+        Double ema20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
+        Double ema100 = EMA(100, CandlestickInterval.FIVE_MINUTES);
+        if (ema20 > ema100){
+            logger.info(String.format("MoMo up trend detected, EMA20: %.10f, EMA100: %.10f", ema20, ema100));
+            return true;
+        } else {
+            logger.info(String.format("MoMo down trend detected, EMA20: %.10f, EMA100: %.10f", ema20, ema100));
+            return false;
+        }
+    }
+
+    public boolean momoMACDHistogramCrossedZeroUp() {
+
         return false;
     }
 }

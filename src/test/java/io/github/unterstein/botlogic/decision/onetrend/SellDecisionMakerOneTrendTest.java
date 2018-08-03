@@ -24,7 +24,6 @@ import static org.mockito.Mockito.doReturn;
 @ContextConfiguration(classes = {Config.class, BinanceBotApplication.class})
 @TestPropertySource(locations = "classpath:application_test.properties")
 @TestExecutionListeners({MockitoTestExecutionListener.class})
-@DatabaseSetup("/sql/tests/one_trade.xml")
 public class SellDecisionMakerOneTrendTest {
 
 

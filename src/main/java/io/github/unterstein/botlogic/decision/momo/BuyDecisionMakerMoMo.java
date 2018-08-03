@@ -31,10 +31,14 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker{
             return false;
         } else if(isNegativeMACDRequired && isMACDOverZero()){
             return false;
-        } else if(isMoMoTrendUp()){
+        } else if(isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()){
 
         }
         return false;
+    }
+
+    private boolean momoMACDHistogramCrossedZeroUp() {
+        return marketAnalyzer.momoMACDHistogramCrossedZeroUp();
     }
 
     private boolean isMoMoTrendUp() {

@@ -70,7 +70,7 @@ public class MACD {
     }
 
 
-    public double EMA(Integer period) {
+    protected double EMA(Integer period) {
         LinkedList<Double> EMAs;
         if (period.equals(shortPeriod)) {
             EMAs = shortEMAs;

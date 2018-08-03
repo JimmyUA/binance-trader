@@ -51,6 +51,7 @@ public class PriceFetchingTask implements Runnable{
             try {
                 lastPrice = tradingClient.lastPrice();
                 updateStatisticDTO();
+                macd.histogramm();
             } catch (Exception e) {
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             }
