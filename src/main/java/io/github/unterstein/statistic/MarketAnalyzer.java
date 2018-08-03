@@ -172,11 +172,16 @@ public class MarketAnalyzer {
     public boolean priceNearResistanceLine(Double ask, int periodInMinutes) {
         Double resistanceLine = linesAnalyser.getResistanceLineForPeriod((long) periodInMinutes);
         Double askInterval = ask - (ask * 0.008);
-        if (askInterval >= resistanceLine) {
+        if (ask >= askInterval) {
             logger.info("Current ask near resistance line, it's dangerous to buy");
             return true;
         }
         return false;
     }
 
+    public boolean isMoMoTrendUp() {
+        Double ema20 = macd.EMA(20);
+        Double ema100 = macd.EMA(100);
+        return false;
+    }
 }
