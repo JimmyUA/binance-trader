@@ -38,6 +38,7 @@ public class MACD {
     private boolean wasHistorossZeroUp;
     protected int crossCounter;
     private LinkedList<Double> prices;
+    private Double lastHisto;
 
     public MACD() {
     }
@@ -179,8 +180,9 @@ public class MACD {
     public synchronized Double histogramm() {
         double macd = MACD();
         Double signal = signal();
+        lastHisto = macd - signal;
         checkCrosses();
-        return macd - signal;
+        return lastHisto;
     }
 
 
@@ -260,9 +262,8 @@ public class MACD {
     }
 
     protected void checkHistoCrossedZero() {
-        Double histo = histogramm();
 
-        if (histo > 0.0) {
+        if (lastHisto > 0.0) {
             if (!wasHistorossZeroUp) {
                 wasMACDCrossSignalUp = true;
             }
