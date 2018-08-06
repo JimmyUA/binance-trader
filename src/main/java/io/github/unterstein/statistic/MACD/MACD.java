@@ -3,7 +3,6 @@ package io.github.unterstein.statistic.MACD;
 import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.statistic.PricesAccumulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
 
 
 public class MACD {
@@ -35,7 +32,7 @@ public class MACD {
     private TradingClient client;
 
     protected boolean wasMACDCrossSignalUp;
-    private boolean wasHistorossZeroUp;
+    private boolean wasHistoCrossZeroUp;
     protected int crossCounter;
     private LinkedList<Double> prices;
     private Double lastHisto;
@@ -186,7 +183,7 @@ public class MACD {
     }
 
 
-    public boolean isAscending() {
+    public synchronized boolean isAscending() {
         Double lastHistogram = MACDs.getLast() - signals.getLast();
 
         List<Double> previousMACDs = MACDs.stream().skip(MACDs.size() - 4)
@@ -224,8 +221,7 @@ public class MACD {
 
     public boolean wasMACDCrossSignalUp() {
         if (isMSCDCrossSignalUp()) {
-            logger.info("MACD is more than signal");
-            crossCounter += 10;
+            logger.info(String.format("MACD crossed signal up %d minutes ago, purchase is allowed", crossCounter));
             return true;
         } else {
             logger.info("MACD is less than signal");
@@ -252,7 +248,7 @@ public class MACD {
 
     public boolean wasHistoCrossZeroUp() {
 
-        if (wasHistorossZeroUp) {
+        if (wasHistoCrossZeroUp) {
             logger.info(String.format("%s Histo crossed Zero up", name));
             return true;
         } else {
@@ -264,7 +260,7 @@ public class MACD {
     protected void checkHistoCrossedZero() {
 
         if (lastHisto > 0.0) {
-            if (!wasHistorossZeroUp) {
+            if (!wasHistoCrossZeroUp) {
                 wasMACDCrossSignalUp = true;
             }
         } else {
@@ -272,7 +268,7 @@ public class MACD {
         }
     }
 
-    public void checkCrosses(){
+    public void checkCrosses() {
         checkMACDCrossedSignal();
         checkHistoCrossedZero();
     }

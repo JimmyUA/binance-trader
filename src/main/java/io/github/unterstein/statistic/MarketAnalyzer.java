@@ -151,7 +151,7 @@ public class MarketAnalyzer {
 
     }
 
-    public boolean wasMACDCrossSignal() {
+    public boolean wasMACDCrossSignalUp() {
         return macd.wasMACDCrossSignalUp();
     }
 
@@ -198,7 +198,10 @@ public class MarketAnalyzer {
     }
 
     public boolean momoMACDHistogramCrossedZeroUp() {
-        momoMACD.wasHistoCrossZeroUp();
-        return false;
+        return momoMACD.wasHistoCrossZeroUp();
+    }
+
+    public boolean isTrend50VS225Up() {
+       return trendAnalyzer.isTrend50VS225Up();
     }
 }

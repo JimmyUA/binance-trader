@@ -54,7 +54,7 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker{
     }
 
     private boolean wasMACDCrossSignal() {
-        return marketAnalyzer.wasMACDCrossSignal();
+        return marketAnalyzer.wasMACDCrossSignalUp();
     }
 
     private boolean isMACDOverZero() {

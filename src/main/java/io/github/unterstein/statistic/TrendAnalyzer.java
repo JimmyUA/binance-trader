@@ -47,4 +47,8 @@ public class TrendAnalyzer {
     public boolean isUpDayTrend() {
         return !isDownDayTrend();
     }
+
+    public boolean isTrend50VS225Up() {
+        return movingAverage.isTrend50VS225Up();
+    }
 }

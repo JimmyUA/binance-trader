@@ -109,4 +109,10 @@ public class MovingAverage {
             return isDayTrendUP;
 
     }
+
+    public boolean isTrend50VS225Up() {
+        boolean is50VS225TrendUP = MA(50, CandlestickInterval.ONE_MINUTE) >= MA(225, CandlestickInterval.ONE_MINUTE);
+        logger.info(String.format("Day trend is %s", is50VS225TrendUP ? "UP" : "DOWN"));
+        return is50VS225TrendUP;
+    }
 }

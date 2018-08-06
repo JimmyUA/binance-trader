@@ -7,6 +7,7 @@ import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.StatisticDTO;
 import io.github.unterstein.statistic.TrendAnalyzer;
+import io.github.unterstein.statistic.amplitude.AmplitudeAnalyser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ public class PriceFetchingTask implements Runnable{
     @Autowired
     private TrendAnalyzer trendAnalyzer;
 
+    @Autowired
+    private AmplitudeAnalyser amplitudeAnalyser;
+
     private Double lastPrice;
 
     @Override
@@ -51,6 +55,7 @@ public class PriceFetchingTask implements Runnable{
             try {
                 lastPrice = tradingClient.lastPrice();
                 updateStatisticDTO();
+                amplitudeAnalyser.notifyAddingPrice();
                 macd.histogramm();
             } catch (Exception e) {
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));

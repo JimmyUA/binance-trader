@@ -6,11 +6,11 @@ public class ManagementConstants {
     public static Boolean sleepSomeTime = false;
     public static Integer minutesFromStart = 0;
     public static Integer rsiPeriods = 0;
-    public static boolean startDayTrend = false;
-    public static boolean isTradesOnDownDayTrendForbidden = true;
-    public static boolean isLongMACDIncluded = false;
-    public static boolean isMACDStopLossAllowed = true;
-    public static boolean isStartedTrading = true;
-    public static boolean isResistanceLineIncluded = true;
-    public static boolean isNegativeMACDRequired = false;
+    public static Boolean startDayTrend = false;
+    public static Boolean isTradesOnDownDayTrendForbidden = true;
+    public static Boolean isLongMACDIncluded = false;
+    public static Boolean isMACDStopLossAllowed = false;
+    public static Boolean isStartedTrading = true;
+    public static Boolean isResistanceLineIncluded = true;
+    public static Boolean isNegativeMACDRequired = true;
 }

@@ -1,9 +1,26 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel>
-    <div wicket:id="dayDownTrend"></div>
-    <div wicket:id="longMACD"></div>
-    <div wicket:id="MACDStopLoss"></div>
-    <div wicket:id="resistanceLine"></div>
-    <div wicket:id="negativeMACD"></div>
+    <form wicket:id="form">
+        <div class="center m-top2">
+            <label wicket:id="resistanceLineLabel"></label>
+            <input type="checkbox" wicket:id="resistanceLine">
+        </div>
+        <div class="center m-top2">
+            <label wicket:id="dayDownTrendLabel"></label>
+            <input type="checkbox" wicket:id="dayDownTrend">
+        </div>
+        <div class="center m-top2">
+            <label wicket:id="longMACDLabel"></label>
+            <input type="checkbox" wicket:id="longMACD">
+        </div>
+        <div class="center m-top2">
+            <label wicket:id="MACDStopLossLabel"></label>
+            <input type="checkbox" wicket:id="MACDStopLoss">
+        </div>
+        <div class="center m-top2">
+            <label wicket:id="negativeMACDLabel"></label>
+            <input type="checkbox" wicket:id="negativeMACD">
+        </div>
+    </form>
 </wicket:panel>
 </html>

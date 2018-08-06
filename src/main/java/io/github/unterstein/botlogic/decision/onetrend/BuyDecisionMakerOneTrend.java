@@ -1,7 +1,6 @@
 package io.github.unterstein.botlogic.decision.onetrend;
 
 import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
-import io.github.unterstein.remoteManagment.ManagementConstants;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +33,14 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
             return false;
         }
         return priceNotNearResistanceLine(ask) &&
-                wasMACDCrossSignal() && isUpTrend() &&
-                isRsiHighEnough() && isMacdAscending();
+                wasMACDCrossSignalUp() && isUpTrend() &&
+                isRsiHighEnough() && isMacdAscending() && trend50VS225IsUp();
     }
+
+    private boolean trend50VS225IsUp() {
+        return marketAnalyzer.isTrend50VS225Up();
+    }
+
 
     private boolean resistanceLineLimit(Double ask) {
         return isResistanceLineIncluded && marketAnalyzer.priceNearResistanceLine(ask, 3 * 60);
@@ -50,8 +54,8 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
         return isTradesOnDownDayTrendForbidden && marketAnalyzer.isDownDayTrend();
     }
 
-    private boolean wasMACDCrossSignal() {
-        return marketAnalyzer.wasMACDCrossSignal();
+    private boolean wasMACDCrossSignalUp() {
+        return marketAnalyzer.wasMACDCrossSignalUp();
     }
 
     private boolean isMACDOverZero() {
