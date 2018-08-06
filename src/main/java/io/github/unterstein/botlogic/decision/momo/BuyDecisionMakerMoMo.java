@@ -28,8 +28,6 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
     public boolean isRightMomentToBuy(Double ask) {
         if (resistanceLineLimit(ask)) {
             return false;
-        } else if (isNegativeMACDRequired && isMACDOverZero()) {
-            return false;
         } else if (isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()) {
             int time = 0;
             while (time < 5 * 60 * 60) {
