@@ -96,6 +96,7 @@ public class BinanceBotApplication {
     logger.info(String.format("Using strategy: %s", strategy.equals("") ? "MA default" : strategy));
     lastPriceVSOrderBook = new LastPriceVSOrderBook(tradingClient);
     logger.info("Starting fetching prices every minute");
+    ManagementConstants.strategyName = strategy;
     ScheduledExecutorService service = Executors
             .newSingleThreadScheduledExecutor();
     service.scheduleAtFixedRate(priceFetchingTask, 0, 1, TimeUnit.MINUTES);

@@ -63,6 +63,9 @@ public class HomePage extends BasePage {
         Label versionLabel = new Label("versionLabel", "V 1.5.1");
         add(versionLabel);
 
+        Label strategyLabel = new Label("strategyLabel", "Strategy: " + strategyName);
+        add(strategyLabel);
+
         isStartedLabel = new Label("isStartedLabel",
                 String.format("Trading is %s", isStartedTrading ? "started": "stopped"));
         isStartedLabel.setOutputMarkupId(true);

@@ -2,10 +2,13 @@ package io.github.unterstein;
 
 import io.github.unterstein.botlogic.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
+import io.github.unterstein.botlogic.decision.momo.BuyDecisionMakerMoMo;
+import io.github.unterstein.botlogic.decision.momo.SellDecisionMakerMoMo;
 import io.github.unterstein.botlogic.decision.onetrend.BuyDecisionMakerOneTrend;
 import io.github.unterstein.botlogic.decision.onetrend.SellDecisionMakerOneTrend;
 import io.github.unterstein.botlogic.executor.TradeExecutor;
 import io.github.unterstein.botlogic.strategy.MAandRSIStrategy;
+import io.github.unterstein.botlogic.strategy.MoMoStrategy;
 import io.github.unterstein.botlogic.strategy.OneTrendStrategy;
 import io.github.unterstein.botlogic.strategy.Strategy;
 import io.github.unterstein.remoteManagment.RemoteManager;
@@ -158,8 +161,10 @@ public class Config {
     public Strategy strategy() {
         if (strategy.equals("ONE")) {
             return new OneTrendStrategy(buyDecisionMakerOneTrend());
+        } else if(strategy.equals("MOMO")){
+            return new MoMoStrategy(buyDecisionMakerMoMo());
         }
-        return new MAandRSIStrategy(buyDecisionMaker());
+        return new OneTrendStrategy(buyDecisionMakerOneTrend());
     }
 
 
@@ -173,6 +178,16 @@ public class Config {
         return new SellDecisionMakerOneTrend();
     }
 
+
+    @Bean
+    public SellDecisionMakerMoMo sellDecisionMakerMoMo() {
+        return new SellDecisionMakerMoMo();
+    }
+
+    @Bean
+    public BuyDecisionMakerMoMo buyDecisionMakerMoMo() {
+        return new BuyDecisionMakerMoMo();
+    }
 
     @Bean
     public RemoteManager remoteManager() {

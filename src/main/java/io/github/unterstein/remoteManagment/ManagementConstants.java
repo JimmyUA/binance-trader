@@ -13,4 +13,5 @@ public class ManagementConstants {
     public static Boolean isStartedTrading = true;
     public static Boolean isResistanceLineIncluded = true;
     public static Boolean isNegativeMACDRequired = true;
+    public static String strategyName = "default";
 }
