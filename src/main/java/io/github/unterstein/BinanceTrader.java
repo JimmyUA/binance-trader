@@ -57,8 +57,8 @@ public class BinanceTrader {
         return tradeAmount;
     }
 
-    public void setSpreadDifference(double spredDifference) {
-        this.spreadDifference = spredDifference;
+    public void setSpreadDifference(double spreadDifference) {
+        this.spreadDifference = spreadDifference;
     }
 
     void tick() {
@@ -81,33 +81,22 @@ public class BinanceTrader {
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
 
-            if (isFall()) {
-                logger.info("Fall burst detected");
-                if (isStartedTrading) {
-                    tradeExecutor.buyProcess();
-                }
-                tradeExecutor.sellProcess();
 
-            }
-            else {
+            performTrading();
 
-                logger.info(String.format("No profit detected, difference %.8f %.3f percent\n", antiBurstValue, antiBurstPercentage));
-            }
 
         } catch (Exception e) {
             logger.error("Unable to perform ticker", e);
         }
     }
 
-    private void checkIfBoughtManualy() {
-        AssetBalance tradingBalance = client.getTradingBalance();
-        String freeTradingBalance = tradingBalance.getFree();
-        double freeTradingBalanceValue = Double.parseDouble(freeTradingBalance);
-        if (freeTradingBalanceValue > tradeAmount){
-            logger.info("Looks like something was bought manually, lets wait");
-            sleepSeconds(3600);
+    private void performTrading() {
+        if (isStartedTrading) {
+            tradeExecutor.buyProcess();
         }
+        tradeExecutor.sellProcess();
     }
+
 
     private void checkWaitSomeTime() {
         if (sleepSomeTime){

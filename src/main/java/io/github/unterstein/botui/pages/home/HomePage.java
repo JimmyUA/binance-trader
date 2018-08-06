@@ -60,7 +60,7 @@ public class HomePage extends BasePage {
         Label tradeAmountLabel = new Label("tradeAmountLabel", "Trade Amount");
         form.add(tradeAmountLabel);
 
-        Label versionLabel = new Label("versionLabel", "V 1.5.1");
+        Label versionLabel = new Label("versionLabel", "V 1.6.1");
         add(versionLabel);
 
         Label strategyLabel = new Label("strategyLabel", "Strategy: " + strategyName);

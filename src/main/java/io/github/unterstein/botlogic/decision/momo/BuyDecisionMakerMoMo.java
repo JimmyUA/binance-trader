@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.*;
 import static io.github.unterstein.statistic.EMA.ExponentialMovingAverage.EMA;
+import static util.Slepper.sleepSeconds;
 
 @Component
 public class BuyDecisionMakerMoMo implements BuyDecisionMaker{
@@ -36,8 +37,16 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker{
         } else if(isNegativeMACDRequired && isMACDOverZero()){
             return false;
         } else if(isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()){
-            trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
-
+            int time = 0;
+            while (time < 5 * 60 * 60) {
+                trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
+                if (ask > trackedEMA20 + trackedEMA20 * 0.005) {
+                    logger.info("Burst detected after histo crossed 0");
+                    return true;
+                }
+                sleepSeconds(3);
+                time += 3;
+            }
         }
         return false;
     }

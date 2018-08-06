@@ -5,7 +5,7 @@
 
     <groupId>io.github.unterstein</groupId>
     <artifactId>binancebot</artifactId>
-    <version>1.5.1-Alex</version>
+    <version>1.6.1-Alex</version>
     <packaging>jar</packaging>
 
 
@@ -124,6 +124,11 @@
             <version>2.5.0</version>
             <type>jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        <groupId>com.vmlens</groupId>
+        <artifactId>concurrent-junit</artifactId>
+        <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.springtestdbunit</groupId>

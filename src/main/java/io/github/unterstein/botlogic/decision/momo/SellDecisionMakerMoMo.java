@@ -1,12 +1,9 @@
 package io.github.unterstein.botlogic.decision.momo;
 
-import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static io.github.unterstein.statistic.EMA.ExponentialMovingAverage.EMA;
 
 public class SellDecisionMakerMoMo {
     private static Logger logger = LoggerFactory.getLogger(SellDecisionMakerMoMo.class);
@@ -34,7 +31,11 @@ public class SellDecisionMakerMoMo {
         return !marketAnalyzer.isMoMoTrendUp();
     }
 
-    public boolean isTimeToSell() {
+    public boolean isTimeToSellFirstHalf() {
+        return false;
+    }
+
+    public boolean isTimeToSellSecondHalf() {
         return false;
     }
 }
