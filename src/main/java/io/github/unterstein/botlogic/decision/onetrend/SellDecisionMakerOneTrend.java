@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.isMACDStopLossAllowed;
+
 public class SellDecisionMakerOneTrend {
 
     private static Logger logger = LoggerFactory.getLogger(SellDecisionMakerOneTrend.class);
@@ -47,7 +49,7 @@ public class SellDecisionMakerOneTrend {
         if(!isMACDBelowZero){
             wasMACDOverZero = true;
         }
-        if (ManagementConstants.isMACDStopLossAllowed && isMACDBelowZero && wasMACDOverZero){
+        if (isMACDStopLossAllowed && isMACDBelowZero && wasMACDOverZero){
             logger.info("MACD fall below zero, no sense to wait profit here!");
             wasMACDOverZero = false;
             return true;

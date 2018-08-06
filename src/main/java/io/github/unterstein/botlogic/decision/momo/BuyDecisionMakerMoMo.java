@@ -14,7 +14,7 @@ import static io.github.unterstein.statistic.EMA.ExponentialMovingAverage.EMA;
 import static util.Slepper.sleepSeconds;
 
 @Component
-public class BuyDecisionMakerMoMo implements BuyDecisionMaker{
+public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
 
 
     private static Logger logger = LoggerFactory.getLogger(BuyDecisionMakerOneTrend.class);
@@ -26,17 +26,11 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker{
 
     @Override
     public boolean isRightMomentToBuy(Double ask) {
-        if (dayTrendLimit()){
-            logger.info("Trades are not allowed on down day trend!!!");
+        if (resistanceLineLimit(ask)) {
             return false;
-        } else if(longMACDLimit()){
-            logger.info("Long MACD is below Signal, trades are not allowed");
+        } else if (isNegativeMACDRequired && isMACDOverZero()) {
             return false;
-        } else if(resistanceLineLimit(ask)){
-            return false;
-        } else if(isNegativeMACDRequired && isMACDOverZero()){
-            return false;
-        } else if(isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()){
+        } else if (isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()) {
             int time = 0;
             while (time < 5 * 60 * 60) {
                 trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);

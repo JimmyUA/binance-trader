@@ -3,19 +3,29 @@ package io.github.unterstein.statistic.EMA;
 import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.TradingClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+@Component
 public class ExponentialMovingAverage {
 
 
     private static LinkedList<Double> prices = new LinkedList<>();
 
     @Autowired
-    private static TradingClient client;
+    private TradingClient client;
+
+    private static TradingClient tradingClient;
 
     private static CandlestickInterval intervalValue;
+
+    @PostConstruct
+    private void initStaticClient () {
+        tradingClient = this.client;
+    }
 
     public static double EMA(Integer period, CandlestickInterval interval) {
         intervalValue = interval;
@@ -47,7 +57,7 @@ public class ExponentialMovingAverage {
     }
 
     private static LinkedList<Double> getSamplesFromExchange() {
-        return new LinkedList<>(client.getPricesFromExchange(intervalValue));
+        return new LinkedList<>(tradingClient.getPricesFromExchange(intervalValue));
     }
 
     private static double notFirstEMA(int period, Double previousEMA, Double currentPrice) {

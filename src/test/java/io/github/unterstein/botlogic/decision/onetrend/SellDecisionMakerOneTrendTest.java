@@ -15,6 +15,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.isMACDStopLossAllowed;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -41,6 +42,7 @@ public class SellDecisionMakerOneTrendTest {
     @Test
     public void needToSellByMACDShouldWorkOnlyAfterItWasAboveZero() throws Exception {
         sellDecisionMakerOneTrend.wasMACDOverZero = false;
+        isMACDStopLossAllowed = true;
 
         doReturn(true).when(marketAnalyzer).isMaCDBelowZero();
         assertFalse(sellDecisionMakerOneTrend.isNeedToSellByMACD());
