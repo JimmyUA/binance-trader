@@ -197,4 +197,16 @@ public class MACDTest {
             fetchTaskThreadSecond.start();
 
     }
+
+    @Test
+    public void shouldTurnHistoCrossedToTrue() throws Exception {
+
+        doCallRealMethod().when(mockMacd).checkHistoCrossedZero();
+        mockMacd.wasHistoCrossZeroUp = false;
+        mockMacd.lastHisto = 0.1;
+
+        mockMacd.checkHistoCrossedZero();
+
+        assertTrue(mockMacd.wasMACDCrossSignalUp);
+    }
 }

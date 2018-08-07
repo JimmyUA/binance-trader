@@ -34,7 +34,7 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
         }
         return priceNotNearResistanceLine(ask) &&
                 wasMACDCrossSignalUp() && isUpTrend() &&
-                isRsiHighEnough() && isMacdAscending() && trend50VS225IsUp();
+                isMacdAscending() && trend50VS225IsUp();
     }
 
     private boolean trend50VS225IsUp() {

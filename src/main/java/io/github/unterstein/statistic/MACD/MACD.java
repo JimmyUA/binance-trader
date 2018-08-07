@@ -32,10 +32,10 @@ public class MACD {
     private TradingClient client;
 
     protected boolean wasMACDCrossSignalUp;
-    private boolean wasHistoCrossZeroUp;
+    protected boolean wasHistoCrossZeroUp;
     protected int crossCounter;
     private LinkedList<Double> prices;
-    private Double lastHisto;
+    protected Double lastHisto;
 
     public MACD() {
     }
@@ -107,7 +107,7 @@ public class MACD {
 
     }
 
-    protected void initPrices() {
+    protected synchronized void initPrices() {
         prices = getSamplesFromExchange();
     }
 
@@ -184,6 +184,7 @@ public class MACD {
 
 
     public synchronized boolean isAscending() {
+        histogramm();
         Double lastHistogram = MACDs.getLast() - signals.getLast();
 
         List<Double> previousMACDs = MACDs.stream().skip(MACDs.size() - 4)
@@ -249,16 +250,17 @@ public class MACD {
     public boolean wasHistoCrossZeroUp() {
 
         if (wasHistoCrossZeroUp) {
-            logger.info(String.format("%s Histo crossed Zero up", name));
+            logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHisto));
             return true;
         } else {
-            logger.info(String.format("%s Histo didnot cross Zero down", name));
+            logger.info(String.format("%s Histo didnot cross Zero up, histo: %.10f", name, lastHisto));
             return false;
         }
     }
 
     protected void checkHistoCrossedZero() {
 
+        logger.info(String.format("LastHisto is %.10f", lastHisto));
         if (lastHisto > 0.0) {
             if (!wasHistoCrossZeroUp) {
                 wasMACDCrossSignalUp = true;

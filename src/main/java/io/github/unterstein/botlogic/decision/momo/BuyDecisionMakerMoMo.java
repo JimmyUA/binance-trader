@@ -28,7 +28,8 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
     public boolean isRightMomentToBuy(Double ask) {
         if (resistanceLineLimit(ask)) {
             return false;
-        } else if (isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()) {
+        }
+        if (isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()) {
             int time = 0;
             while (time < 5 * 60 * 60) {
                 trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
@@ -49,19 +50,6 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
 
     private boolean isMoMoTrendUp() {
         return marketAnalyzer.isMoMoTrendUp();
-    }
-
-    private boolean longMACDLimit() {
-        return isLongMACDIncluded && marketAnalyzer.wasLongMACDCrossSignalDown();
-    }
-
-    private boolean dayTrendLimit() {
-        return isTradesOnDownDayTrendForbidden && marketAnalyzer.isDownDayTrend();
-    }
-
-
-    private boolean isMACDOverZero() {
-        return !marketAnalyzer.isMaCDBelowZero();
     }
 
 
