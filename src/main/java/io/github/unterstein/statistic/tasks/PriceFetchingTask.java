@@ -30,6 +30,10 @@ public class PriceFetchingTask implements Runnable{
     private MACD macd;
 
     @Autowired
+    @Qualifier("momo")
+    private MACD macdMOMO;
+
+    @Autowired
     private RSI rsi;
 
     @Autowired
@@ -57,6 +61,7 @@ public class PriceFetchingTask implements Runnable{
                 updateStatisticDTO();
                 amplitudeAnalyser.notifyAddingPrice();
                 macd.histogramm();
+                macdMOMO.histogramm();
             } catch (Exception e) {
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             }

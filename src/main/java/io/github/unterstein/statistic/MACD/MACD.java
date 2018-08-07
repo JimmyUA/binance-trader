@@ -34,6 +34,7 @@ public class MACD {
     protected boolean wasMACDCrossSignalUp;
     protected boolean wasHistoCrossZeroUp;
     protected int crossCounter;
+    protected int crossHistoCounter;
     private LinkedList<Double> prices;
     protected Double lastHisto;
 
@@ -50,8 +51,8 @@ public class MACD {
         this.signalPeriod = signalPeriod;
         initLists();
 
-        wasMACDCrossSignalUp = false;
         crossCounter = 0;
+        crossHistoCounter = 0;
     }
 
     private void initLists() {
@@ -250,8 +251,13 @@ public class MACD {
     public boolean wasHistoCrossZeroUp() {
 
         if (wasHistoCrossZeroUp) {
+            if(crossHistoCounter < 3){
             logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHisto));
-            return true;
+            return true;}
+            else {
+                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f, too long ago", name, lastHisto));
+                return false;
+            }
         } else {
             logger.info(String.format("%s Histo didnot cross Zero up, histo: %.10f", name, lastHisto));
             return false;
@@ -263,10 +269,12 @@ public class MACD {
         logger.info(String.format("LastHisto is %.10f", lastHisto));
         if (lastHisto > 0.0) {
             if (!wasHistoCrossZeroUp) {
-                wasMACDCrossSignalUp = true;
+                crossHistoCounter = 0;
+                wasHistoCrossZeroUp = true;
             }
+            crossHistoCounter++;
         } else {
-            wasMACDCrossSignalUp = false;
+            wasHistoCrossZeroUp = false;
         }
     }
 
