@@ -62,6 +62,7 @@ public class PriceFetchingTask implements Runnable{
                 amplitudeAnalyser.notifyAddingPrice();
                 macd.histogramm();
                 macdMOMO.histogramm();
+                minutesFromStart++;
             } catch (Exception e) {
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             }

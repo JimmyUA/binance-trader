@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
+
 
 public class MACD {
 
@@ -250,6 +252,9 @@ public class MACD {
 
     public boolean wasHistoCrossZeroUp() {
 
+        if (minutesFromStart < 5){
+            return false;
+        }
         if (wasHistoCrossZeroUp) {
             if(crossHistoCounter < 3){
             logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHisto));
