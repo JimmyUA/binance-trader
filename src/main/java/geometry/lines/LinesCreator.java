@@ -1,37 +1,111 @@
 package geometry.lines;
 
-import com.esri.core.geometry.Line;
-import io.github.unterstein.botlogic.services.StoredPricesService;
-import io.github.unterstein.persistent.entity.StoredPrice;
+import com.binance.api.client.domain.market.CandlestickInterval;
+import io.github.unterstein.TradingClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 @Component
 public class LinesCreator {
 
     @Autowired
-    private StoredPricesService storedPricesService;
+    private TradingClient client;
 
-//    public Line createHallUpLine(Long period){
-//        LinkedList<StoredPrice> prices = storedPricesService.getStoredPricesPortion(period);
-//        StoredPrice firstMax = pollMax(prices);
-//        StoredPrice secondMax = pollMax(prices);
-//
-//        return new Line(firstMax.getPrice(), firstMax.getId(),
-//                        secondMax.getPrice(), secondMax.getId());
-//    }
+    public LineWithPastPeriods createHallUpLine(Long period, CandlestickInterval interval){
 
-    private StoredPrice pollMax(LinkedList<StoredPrice> prices){
-        double max = prices.stream().mapToDouble(StoredPrice::getPrice).max().orElse(0.0);
-        StoredPrice maxStored = prices.stream().filter(price -> price.getPrice().equals(max)).findFirst().orElse(new StoredPrice(0.0));
-        prices.remove(maxStored);
-        return maxStored;
+        LinkedList<Double> cutPrices = getCutPrices(period, interval);
+
+        LinkedList<Double> cutPricesForIndexGetting = new LinkedList<>(cutPrices);
+
+        double firstMax = cutPrices.stream().mapToDouble(d -> d).max().orElse(0.0);
+        int firstMaxIndex = cutPricesForIndexGetting.indexOf(firstMax);
+        cutPrices.remove(firstMax);
+
+        double secondMax = cutPrices.stream().mapToDouble(d -> d).max().orElse(0.0);
+        int secondMaxIndex = cutPricesForIndexGetting.indexOf(secondMax);
+
+        int maxIndex = getMaxIndex(firstMaxIndex, secondMaxIndex);
+
+        Line line = getLine(firstMax, firstMaxIndex, secondMax, secondMaxIndex);
+        int pastPeriods = cutPricesForIndexGetting.size() - maxIndex - 1;
+
+        return new LineWithPastPeriods(line, pastPeriods);
     }
 
-    public Line predictLineAfterMinutes(Line line, long minutesAfter){
-
-        return line;
+    private int getMaxIndex(int firstMaxIndex, int secondMaxIndex) {
+        return getMinIndex(firstMaxIndex, secondMaxIndex);
     }
+
+    public LineWithPastPeriods createHallBottomLine(long period, CandlestickInterval interval) {
+        LinkedList<Double> cutPrices = getCutPrices(period, interval);
+
+        LinkedList<Double> cutPricesForIndexGetting = new LinkedList<>(cutPrices);
+
+        double firstMin = cutPrices.stream().mapToDouble(d -> d).min().orElse(0.0);
+        int firstMinIndex = cutPricesForIndexGetting.indexOf(firstMin);
+        cutPrices.remove(firstMin);
+
+        double secondMin = cutPrices.stream().mapToDouble(d -> d).min().orElse(0.0);
+        int secondMinIndex = cutPricesForIndexGetting.indexOf(secondMin);
+
+        int minIndex = getMinIndex(firstMinIndex, secondMinIndex);
+
+        Line line = getLine(firstMin, firstMinIndex, secondMin, secondMinIndex);
+        int pastPeriods = cutPricesForIndexGetting.size() - minIndex - 1;
+
+        return new LineWithPastPeriods(line, pastPeriods);
+    }
+
+    private int getMinIndex(int firstMinIndex, int secondMinIndex) {
+        return firstMinIndex > secondMinIndex ? firstMinIndex : secondMinIndex;
+    }
+
+    private LinkedList<Double> getCutPrices(Long period, CandlestickInterval interval){
+        LinkedList<Double> prices = new LinkedList<>(client.getPricesFromExchange(interval));
+
+        if (period >= prices.size()){
+            throw new IllegalArgumentException("period should be less than prices amount");
+        }
+        return prices.stream()
+                .skip(prices.size() - period)
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+
+    private Line getLine(Double firstMax, int firstMaxIndex, Double secondMax, int secondMaxIndex){
+        double xStart;
+        double yStart;
+        double xDefining;
+        double yDefining;
+
+        if (firstMaxIndex < secondMaxIndex){
+            xStart = firstMaxIndex;
+            yStart = firstMax;
+            xDefining = secondMaxIndex;
+            yDefining = secondMax;
+        } else {
+            xStart = secondMaxIndex;
+            yStart = secondMax;
+            xDefining = firstMaxIndex;
+            yDefining = firstMax;
+        }
+
+        Point start = new Point(xStart, yStart);
+        Point defining = new Point(xDefining, yDefining);
+        return new Line(start, defining);
+    }
+
+    public Double predictPriceAfterPeriods(LineWithPastPeriods line, int periodsAfter){
+
+        return line.predictPriceAfter(periodsAfter);
+    }
+
+    protected void setClient(TradingClient client) {
+        this.client = client;
+    }
+
+
 }
