@@ -71,6 +71,7 @@ public class MoMoStrategy extends AbstractStrategy {
         int half = tradeAmount / 2;
         client.sellMarket(half);
         tradeService.addSellOrder(lastBid);
+        tradeService.initBuyOrderAfterHalfTrade();
         logger.info(String.format("Sold %d coins to market! Rate: %.8f", half, lastBid));
         logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
     }

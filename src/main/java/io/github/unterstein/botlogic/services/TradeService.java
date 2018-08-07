@@ -51,6 +51,17 @@ public class TradeService {
         trade.setProfitPercent(profitPercent);
     }
 
+    public void initBuyOrderAfterHalfTrade(){
+        trade = new Trade();
+        List<Trade> allTrades = tradeRepository.findAll();
+        Trade lastTrade = allTrades.get(allTrades.size() - 1);
+        Double boughtPrice = lastTrade.getBoughtPrice();
+        trade.setBoughtPrice(boughtPrice);
+        trade.setBoughtDate(lastTrade.getBoughtDate());
+        trade.setBuyDayTrend(trendAnalyzer.isDownDayTrend() ? "DOWN" : "UP");
+        fee += boughtPrice * 0.0005;
+    }
+
     public List<Trade> getAllTrades() {
         return tradeRepository.findAll();
     }
