@@ -1,5 +1,6 @@
 package io.github.unterstein;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.botlogic.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.momo.BuyDecisionMakerMoMo;
@@ -137,6 +138,7 @@ public class Config {
     public MACD momoMACD() {
         MACD momMACD = new MACD(12, 26, 9);
         momMACD.setName("MoMo");
+        momMACD.setCandlestickInterval(CandlestickInterval.FIVE_MINUTES);
         return momMACD;
     }
 

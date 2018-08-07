@@ -39,6 +39,7 @@ public class MACD {
     protected int crossHistoCounter;
     private LinkedList<Double> prices;
     protected Double lastHisto;
+    private CandlestickInterval candlestickInterval;
 
     public MACD() {
     }
@@ -51,6 +52,7 @@ public class MACD {
         this.shortPeriod = shortPeriod;
         this.longPeriod = longPeriod;
         this.signalPeriod = signalPeriod;
+         candlestickInterval = CandlestickInterval.ONE_MINUTE;
         initLists();
 
         crossCounter = 0;
@@ -65,6 +67,9 @@ public class MACD {
         histograms = new LinkedList<>();
     }
 
+    public void setCandlestickInterval(CandlestickInterval candlestickInterval) {
+        this.candlestickInterval = candlestickInterval;
+    }
 
     //Used only for tests
     protected void setClient(TradingClient client) {
@@ -115,7 +120,7 @@ public class MACD {
     }
 
     private LinkedList<Double> getSamplesFromExchange() {
-        return new LinkedList<>(client.getPricesFromExchange(CandlestickInterval.ONE_MINUTE));
+        return new LinkedList<>(client.getPricesFromExchange(candlestickInterval));
     }
 
     public synchronized double MACD() {

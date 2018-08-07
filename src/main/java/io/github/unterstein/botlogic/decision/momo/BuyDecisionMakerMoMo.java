@@ -31,9 +31,10 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
         }
         if (isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()) {
             int time = 0;
-            while (time < 5 * 60 * 60) {
-                trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
-                if (ask > trackedEMA20 + trackedEMA20 * 0.005) {
+            trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
+            double goalPrice = trackedEMA20 + trackedEMA20 * 0.005;
+            while (time < 5 * 60) {
+                if (ask > goalPrice) {
                     logger.info("Burst detected after histo crossed 0");
                     return true;
                 }
