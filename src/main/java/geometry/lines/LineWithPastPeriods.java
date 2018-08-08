@@ -29,4 +29,16 @@ public class LineWithPastPeriods {
     public Double predictPriceAfter(int periodsAfter) {
         return line.predictYAfterX(pastPeriods + periodsAfter);
     }
+
+    public Integer getStartPointIndex(){
+        return line.getStartPointIndex();
+    }
+
+    public Integer getDefiningPointIndex(){
+        return line.getDefiningPointIndex();
+    }
+
+    public Point getStartPoint() {
+        return line.getStartPoint();
+    }
 }

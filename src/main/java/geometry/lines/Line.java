@@ -43,4 +43,16 @@ public class Line {
     public boolean isLineAscending() {
         return start.getY() < defining.getY();
     }
+
+    public Integer getStartPointIndex() {
+        return start.getIndex();
+    }
+
+    public Integer getDefiningPointIndex() {
+        return defining.getIndex();
+    }
+
+    public Point getStartPoint() {
+        return start;
+    }
 }
