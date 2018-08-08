@@ -24,7 +24,7 @@ public class LinesAnalyzerTest {
     @Test
     public void sameLineShouldBeParallel() throws Exception {
 
-        assertTrue(new LinesAnalyzer().isParallel(firstLine, firstLine));
+        assertTrue(new HallLinesAnalyzer().isParallel(firstLine, firstLine));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class LinesAnalyzerTest {
         Point second = new Point(40.0, 0.1);
         firstLine = new Line(first, second);
 
-        assertTrue(new LinesAnalyzer().isParallel(firstLine, secondLine));
+        assertTrue(new HallLinesAnalyzer().isParallel(firstLine, secondLine));
     }
 
     @Test
@@ -42,7 +42,7 @@ public class LinesAnalyzerTest {
         Point second = new Point(45.0, 5.0);
         firstLine = new Line(first, second);
 
-        assertFalse(new LinesAnalyzer().isParallel(firstLine, secondLine));
+        assertFalse(new HallLinesAnalyzer().isParallel(firstLine, secondLine));
     }
 
     @Test
@@ -55,6 +55,6 @@ public class LinesAnalyzerTest {
         second = new Point(45.0, 0.0);
         secondLine = new Line(first, second);
 
-        assertFalse(new LinesAnalyzer().isParallel(firstLine, secondLine));
+        assertFalse(new HallLinesAnalyzer().isParallel(firstLine, secondLine));
     }
 }

@@ -81,26 +81,31 @@ public class LinesCreator {
         double xDefining;
         double yDefining;
 
+        int startIndex;
+        int defIndex;
+
         if (firstMaxIndex < secondMaxIndex){
             xStart = firstMaxIndex;
             yStart = firstMax;
             xDefining = secondMaxIndex;
             yDefining = secondMax;
+            startIndex = firstMaxIndex;
+            defIndex = secondMaxIndex;
         } else {
             xStart = secondMaxIndex;
             yStart = secondMax;
             xDefining = firstMaxIndex;
             yDefining = firstMax;
+
+            startIndex = secondMaxIndex;
+            defIndex = firstMaxIndex;
         }
 
         Point start = new Point(xStart, yStart);
+        start.setIndex(startIndex);
         Point defining = new Point(xDefining, yDefining);
+        defining.setIndex(defIndex);
         return new Line(start, defining);
-    }
-
-    public Double predictPriceAfterPeriods(LineWithPastPeriods line, int periodsAfter){
-
-        return line.predictPriceAfter(periodsAfter);
     }
 
     protected void setClient(TradingClient client) {

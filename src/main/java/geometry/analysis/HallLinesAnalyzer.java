@@ -2,7 +2,7 @@ package geometry.analysis;
 
 import geometry.lines.Line;
 
-public class LinesAnalyzer {
+public class HallLinesAnalyzer {
 
     public boolean isLineAscending(Line line) {
         return line.isLineAscending();
