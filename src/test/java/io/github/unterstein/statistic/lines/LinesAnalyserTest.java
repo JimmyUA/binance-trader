@@ -37,8 +37,11 @@ public class LinesAnalyserTest {
         linesAnalyser = new LinesAnalyser();
         linesAnalyser.setClient(client);
 
-        LinkedList<Double> list = DoubleStream.of(0.000000001, 0.000000002, 0.0000000015).boxed()
+        LinkedList<Double> list = DoubleStream.generate(() -> 0.0).limit(30).boxed()
                 .collect(Collectors.toCollection(LinkedList::new));
+        list.addLast(0.000000001);
+        list.addLast(0.000000002);
+        list.addLast(0.0000000015);
 
         doReturn(list).when(client).getPricesFromExchangeReversed(CandlestickInterval.ONE_MINUTE);
     }

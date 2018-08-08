@@ -24,17 +24,29 @@ public class LinesAnalyser {
         Stream<Double> boxedPrices = getBoxedPricesStream(period, interval);
 
 
-        return boxedPrices.max(Comparator.naturalOrder()).orElse(0.0);
+        return boxedPrices.skip(30).max(Comparator.naturalOrder()).orElse(0.0);
     }
 
     public Double getSupportLineForPeriod(Long period, CandlestickInterval interval){
+        Stream<Double> boxedPrices = getBoxedPricesStream(period, interval);
+        return boxedPrices.skip(30).min(Comparator.naturalOrder()).orElse(0.0);
+    }
+
+    public Double geMaxPriceForPeriod(Long period, CandlestickInterval interval){
+        Stream<Double> boxedPrices = getBoxedPricesStream(period, interval);
+
+
+        return boxedPrices.max(Comparator.naturalOrder()).orElse(0.0);
+    }
+
+    public Double getMinPriceForPeriod(Long period, CandlestickInterval interval){
         Stream<Double> boxedPrices = getBoxedPricesStream(period, interval);
         return boxedPrices.min(Comparator.naturalOrder()).orElse(0.0);
     }
 
     private Stream<Double> getBoxedPricesStream(Long period, CandlestickInterval interval) {
         LinkedList<Double> pricesPortion = client.getPricesFromExchangeReversed(interval)
-                .stream().skip(30).limit(period).collect(Collectors.toCollection(LinkedList::new));
+                .stream().limit(period).collect(Collectors.toCollection(LinkedList::new));
         Stream<Double> stream;
         stream = pricesPortion.stream();
 

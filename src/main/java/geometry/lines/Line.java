@@ -5,12 +5,12 @@ public class Line {
 
     private Point start;
     private Point defining;
-    private Double tg;
+    private Double tan;
 
     public Line(Point start, Point defining) {
         this.start = start;
         this.defining = defining;
-        this.tg = calculateTan();
+        this.tan = calculateTan();
     }
 
     protected Double calculateTan() {
@@ -18,15 +18,20 @@ public class Line {
         Double a = parallelToStart.getX() - start.getX();
         Double b = Math.abs(parallelToStart.getY() - defining.getY());
 
-        tg = b / a;
-        return tg;
+        tan = b / a;
+        return tan;
     }
+
+    public Double getTan() {
+        return tan;
+    }
+
 
 
     public Double predictYAfterX(double x) {
         Point predictedParallelToStart = new Point(defining.getX() + x, start.getY());
         Double a = predictedParallelToStart.getX() - start.getX();
-        Double b = a * tg;
+        Double b = a * tan;
 
         if (isLineAscending()) {
             return start.getY() + b;

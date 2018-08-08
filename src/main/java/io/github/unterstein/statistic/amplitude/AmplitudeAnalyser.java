@@ -28,8 +28,8 @@ public class AmplitudeAnalyser {
 
     public void stop(){
         isStarted = false;
-        Double max = linesAnalyser.getResistanceLineForPeriod(counter, CandlestickInterval.ONE_MINUTE) - startPrice;
-        Double min = linesAnalyser.getSupportLineForPeriod(counter, CandlestickInterval.ONE_MINUTE) - startPrice;
+        Double max = linesAnalyser.geMaxPriceForPeriod(counter, CandlestickInterval.ONE_MINUTE) - startPrice;
+        Double min = linesAnalyser.getMinPriceForPeriod(counter, CandlestickInterval.ONE_MINUTE) - startPrice;
         Double maxPercent = (max/startPrice) * 100;
         Double minPercent = (min/startPrice) * 100;
         Amplitude amplitude = new Amplitude();

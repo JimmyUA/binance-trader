@@ -3,7 +3,6 @@ package io.github.unterstein.statistic.tasks;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MACD.MACD;
-import io.github.unterstein.statistic.PricesAccumulator;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.StatisticDTO;
 import io.github.unterstein.statistic.TrendAnalyzer;
@@ -18,6 +17,7 @@ import java.util.Arrays;
 
 import static io.github.unterstein.remoteManagment.ManagementConstants.isStartedTrading;
 import static io.github.unterstein.remoteManagment.ManagementConstants.minutesFromStart;
+import static io.github.unterstein.remoteManagment.ManagementConstants.strategyName;
 
 @Component
 public class PriceFetchingTask implements Runnable{
@@ -70,6 +70,10 @@ public class PriceFetchingTask implements Runnable{
     }
 
     private void updateStatisticDTO() {
+        MACD workingMACD = macd;
+        if(strategyName.equals("MOMO")){
+            workingMACD = macdMOMO;
+        }
         int tradeAmount = trader.getTradeAmount();
         statisticDTO.setLastPrice(lastPrice)
                 .setLastAskAverage(tradingClient.getLastAsksAverage(tradeAmount, 3))

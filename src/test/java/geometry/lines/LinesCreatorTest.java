@@ -5,6 +5,7 @@ import io.github.unterstein.BinanceBotApplication;
 import io.github.unterstein.Config;
 import io.github.unterstein.TradingClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,6 +46,7 @@ public class LinesCreatorTest {
         creator.setClient(client);
     }
 
+    @Ignore
     @Test
     public void shouldPredictCorrectByUpLine() throws Exception {
         Double expectedPrice = 400.0;
@@ -53,6 +55,7 @@ public class LinesCreatorTest {
         assertEquals(expectedPrice, line.predictPriceAfter(8));
     }
 
+    @Ignore
     @Test
     public void shouldPredictCorrectByBottomLine() throws Exception {
         Double expectedPrice = 300.0;
