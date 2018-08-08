@@ -42,13 +42,17 @@ public abstract class AbstractStrategy implements Strategy {
     public void buyProcess() {
         double lastAsk = getLastAsk();
         if (buyDecisionMaker.isRightMomentToBuy(lastAsk)){
-            client.buyMarket(tradeAmount);
-            tradeService.addBuyOrder(lastAsk);
-            boughtPrice = lastAsk;
-            logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
-            isBought = true;
-            amplitudeAnalyser.start(boughtPrice);
+            executePurchase(lastAsk);
         }
+    }
+
+    protected void executePurchase(double lastAsk) {
+        client.buyMarket(tradeAmount);
+        tradeService.addBuyOrder(lastAsk);
+        boughtPrice = lastAsk;
+        logger.info(String.format("Bought %d coins from market! at %.8f rate", tradeAmount, boughtPrice));
+        isBought = true;
+        amplitudeAnalyser.start(boughtPrice);
     }
 
     @Override

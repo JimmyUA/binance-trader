@@ -77,7 +77,7 @@ public class BinanceTrader {
 
 
             double burstDetectionDifference = lastAsk - profitablePrice;
-            logger.info(String.format("bid:%.8f ask:%.8f price:%.8f profitablePrice:%.8f diff:%.8f\n  ",
+            logger.info(String.format("bid:%.8f ask:%.8f price:%.8f\n  ",
                     lastBid, lastAsk, lastPrice, profitablePrice, burstDetectionDifference));
             checkShutDown();
 

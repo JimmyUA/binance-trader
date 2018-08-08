@@ -1,5 +1,6 @@
 package io.github.unterstein.botlogic.decision.onetrend;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
 import io.github.unterstein.statistic.MarketAnalyzer;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class BuyDecisionMakerOneTrend implements BuyDecisionMaker {
 
 
     private boolean resistanceLineLimit(Double ask) {
-        return isResistanceLineIncluded && marketAnalyzer.priceNearResistanceLine(ask, 3 * 60);
+        return isResistanceLineIncluded && marketAnalyzer.priceNearResistanceLine(ask, 5 * 60, CandlestickInterval.ONE_MINUTE);
     }
 
     private boolean longMACDLimit() {

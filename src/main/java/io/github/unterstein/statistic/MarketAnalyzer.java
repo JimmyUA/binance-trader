@@ -175,26 +175,20 @@ public class MarketAnalyzer {
         return longMACD.wasMACDCrossSignalDown();
     }
 
-    public boolean priceNearResistanceLine(Double ask, int periodInMinutes) {
-        Double resistanceLine = linesAnalyser.getResistanceLineForPeriod((long) periodInMinutes);
+    public boolean priceNearResistanceLine(Double ask, int period, CandlestickInterval interval) {
+        Double resistanceLine = linesAnalyser.getResistanceLineForPeriod((long) period, interval);
         Double askInterval = resistanceLine - (resistanceLine * 0.008);
-        if (ask >= askInterval) {
-            logger.info("Current ask near resistance line, it's dangerous to buy");
+        if (ask >= askInterval && ask < resistanceLine) {
+            logger.info(String.format(
+                    "Current ask %.10f less than 0.8 percent near resistance line: %.10f, it's dangerous to buy",
+                    ask, resistanceLine));
             return true;
         }
         return false;
     }
 
     public boolean isMoMoTrendUp() {
-        Double ema20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
-        Double ema100 = EMA(100, CandlestickInterval.FIVE_MINUTES);
-        if (ema20 > ema100){
-            logger.info(String.format("MoMo up trend detected, EMA20: %.10f, EMA100: %.10f", ema20, ema100));
-            return true;
-        } else {
-            logger.info(String.format("MoMo down trend detected, EMA20: %.10f, EMA100: %.10f", ema20, ema100));
-            return false;
-        }
+        return trendAnalyzer.isMoMotrendUp();
     }
 
     public boolean momoMACDHistogramCrossedZeroUp() {

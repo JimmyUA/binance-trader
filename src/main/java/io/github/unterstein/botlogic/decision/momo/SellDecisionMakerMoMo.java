@@ -11,11 +11,11 @@ public class SellDecisionMakerMoMo {
     @Autowired
     MarketAnalyzer marketAnalyzer;
 
-    public boolean isCrossedStopLoss(double stopLossPrice, Double lastBid) {
-        if (lastBid < stopLossPrice){
+    public boolean isCrossedStopLoss(double stopLossPrice, Double lastPrice) {
+        if (lastPrice < stopLossPrice){
             logger.info(String.format(
                     "Too dangerous too keep holding coins lastBid: %.8f lower than stop loss: %.8f and price keep fail",
-                    lastBid, stopLossPrice));
+                    lastPrice, stopLossPrice));
             return true;
 
         } else if(isDownMoMoTrend()){

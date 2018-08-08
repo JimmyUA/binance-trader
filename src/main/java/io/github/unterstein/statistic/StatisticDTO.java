@@ -12,10 +12,12 @@ public class StatisticDTO {
     private Double tradingBalance;
     private Double RSI;
     private Double MACD;
-    private Double Signal;
+    private Double signal;
+    private Double histo;
     private String dayTrend;
     private String shortTrend;
     private String longTrend;
+    private String momoTrend;
 
     public Double getLastBidAverage() {
         return lastBidAverage;
@@ -72,11 +74,11 @@ public class StatisticDTO {
     }
 
     public Double getSignal() {
-        return Signal;
+        return signal;
     }
 
     public StatisticDTO setSignal(Double signal) {
-        Signal = signal;
+        this.signal = signal;
         return this;
     }
 
@@ -104,6 +106,24 @@ public class StatisticDTO {
 
     public StatisticDTO setLongTrend(String longTrend) {
         this.longTrend = longTrend;
+        return this;
+    }
+
+    public Double getHisto() {
+        return histo;
+    }
+
+    public StatisticDTO setHisto(Double histo) {
+        this.histo = histo;
+        return this;
+    }
+
+    public String getMomoTrend() {
+        return momoTrend;
+    }
+
+    public StatisticDTO setMomoTrend(String momoTrend) {
+        this.momoTrend = momoTrend;
         return this;
     }
 }

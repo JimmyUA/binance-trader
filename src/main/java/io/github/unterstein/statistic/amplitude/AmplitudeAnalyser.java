@@ -1,5 +1,6 @@
 package io.github.unterstein.statistic.amplitude;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.botlogic.services.AmplitudeService;
 import io.github.unterstein.persistent.entity.Amplitude;
 import io.github.unterstein.statistic.lines.LinesAnalyser;
@@ -27,8 +28,8 @@ public class AmplitudeAnalyser {
 
     public void stop(){
         isStarted = false;
-        Double max = linesAnalyser.getResistanceLineForPeriod(counter) - startPrice;
-        Double min = linesAnalyser.getSupportLineForPeriod(counter) - startPrice;
+        Double max = linesAnalyser.getResistanceLineForPeriod(counter, CandlestickInterval.ONE_MINUTE) - startPrice;
+        Double min = linesAnalyser.getSupportLineForPeriod(counter, CandlestickInterval.ONE_MINUTE) - startPrice;
         Double maxPercent = (max/startPrice) * 100;
         Double minPercent = (min/startPrice) * 100;
         Amplitude amplitude = new Amplitude();

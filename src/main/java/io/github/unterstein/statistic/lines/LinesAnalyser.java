@@ -2,7 +2,6 @@ package io.github.unterstein.statistic.lines;
 
 import com.binance.api.client.domain.market.CandlestickInterval;
 import io.github.unterstein.TradingClient;
-import io.github.unterstein.botlogic.services.StoredPricesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,21 +20,21 @@ public class LinesAnalyser {
         this.client = client;
     }
 
-    public Double getResistanceLineForPeriod(Long periodInMinutes){
-        Stream<Double> boxedPrices = getBoxedPricesStream(periodInMinutes);
+    public Double getResistanceLineForPeriod(Long period, CandlestickInterval interval){
+        Stream<Double> boxedPrices = getBoxedPricesStream(period, interval);
 
 
         return boxedPrices.max(Comparator.naturalOrder()).orElse(0.0);
     }
 
-    public Double getSupportLineForPeriod(Long periodInMinutes){
-        Stream<Double> boxedPrices = getBoxedPricesStream(periodInMinutes);
+    public Double getSupportLineForPeriod(Long period, CandlestickInterval interval){
+        Stream<Double> boxedPrices = getBoxedPricesStream(period, interval);
         return boxedPrices.min(Comparator.naturalOrder()).orElse(0.0);
     }
 
-    private Stream<Double> getBoxedPricesStream(Long periodInMinutes) {
-        LinkedList<Double> pricesPortion = client.getPricesFromExchangeReversed(CandlestickInterval.ONE_MINUTE)
-                .stream().limit(periodInMinutes).collect(Collectors.toCollection(LinkedList::new));
+    private Stream<Double> getBoxedPricesStream(Long period, CandlestickInterval interval) {
+        LinkedList<Double> pricesPortion = client.getPricesFromExchangeReversed(interval)
+                .stream().skip(30).limit(period).collect(Collectors.toCollection(LinkedList::new));
         Stream<Double> stream;
         stream = pricesPortion.stream();
 

@@ -292,4 +292,8 @@ public class MACD {
         checkMACDCrossedSignal();
         checkHistoCrossedZero();
     }
+
+    public Double getLastHisto() {
+        return lastHisto;
+    }
 }

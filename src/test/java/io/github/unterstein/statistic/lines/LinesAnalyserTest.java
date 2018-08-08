@@ -46,12 +46,12 @@ public class LinesAnalyserTest {
     @Test
     public void shouldFindMaxPrice() throws Exception {
         Double expectedMaxPrice = 0.000000002;
-        assertEquals(expectedMaxPrice, linesAnalyser.getResistanceLineForPeriod(50L), 0.00000000001);
+        assertEquals(expectedMaxPrice, linesAnalyser.getResistanceLineForPeriod(50L, CandlestickInterval.ONE_MINUTE), 0.00000000001);
     }
 
     @Test
     public void shouldFindMinPrice() throws Exception {
         Double expectedMinPrice = 0.000000001;
-        assertEquals(expectedMinPrice, linesAnalyser.getSupportLineForPeriod(50L), 0.000000000001);
+        assertEquals(expectedMinPrice, linesAnalyser.getSupportLineForPeriod(50L, CandlestickInterval.ONE_MINUTE), 0.000000000001);
     }
 }

@@ -69,8 +69,6 @@ public class BinanceBotApplication {
   @Value("${STRATEGY}")
   private String strategy;
 
-  @Value("${ONE_TREND.STRATEGY.START_TREND}")
-  private String dayTrend;
 
   static LastPriceVSOrderBook lastPriceVSOrderBook;
 
@@ -89,7 +87,6 @@ public class BinanceBotApplication {
 
   @PostConstruct
   public void init() {
-    initDayTrend();
     marketAnalyzer.setRsiPeriod(rsiPeriods);
     ManagementConstants.rsiPeriods = rsiPeriods;
     logger.info(String.format("Starting app with diff=%.8f, profit=%.8f amount=%d base=%s trade=%s", tradeDifference, tradeProfit, tradeAmount, baseCurrency, tradeCurrency));
@@ -100,18 +97,6 @@ public class BinanceBotApplication {
     ScheduledExecutorService service = Executors
             .newSingleThreadScheduledExecutor();
     service.scheduleAtFixedRate(priceFetchingTask, 0, 1, TimeUnit.MINUTES);
-  }
-
-  private void initDayTrend() {
-    switch (dayTrend){
-      case "UP":
-        startDayTrend = true;
-        break;
-      case "DOWN":
-        startDayTrend = false;
-        break;
-        default:startDayTrend = true;
-    }
   }
 
   // tick every 2 seconds
