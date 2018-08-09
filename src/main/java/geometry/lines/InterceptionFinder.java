@@ -1,5 +1,8 @@
 package geometry.lines;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class InterceptionFinder {
 
     public Point findInterception(Line firstLine, Line secondLine){

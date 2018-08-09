@@ -69,4 +69,22 @@ public class Line {
     public LineEquation getLineEquation() {
         return lineEquation;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Line)) return false;
+
+        Line line = (Line) o;
+
+        if (!start.equals(line.start)) return false;
+        return defining.equals(line.defining);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start.hashCode();
+        result = 31 * result + defining.hashCode();
+        return result;
+    }
 }
