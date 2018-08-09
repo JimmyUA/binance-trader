@@ -83,9 +83,9 @@ public class PriceFetchingTask implements Runnable{
                 .setLongTrend(trendAnalyzer.isUpTrendLongPeriod() ? "UP" : "Down")
                 .setMomoTrend(trendAnalyzer.isMoMotrendUp() ? "UP" : "Down")
                 .setRSI(rsi.getRSI(21))
-                .setMACD(macd.MACD())
-                .setSignal(macd.signal())
-                .setHisto(macd.getLastHisto())
+                .setMACD(workingMACD.MACD())
+                .setSignal(workingMACD.signal())
+                .setHisto(workingMACD.getLastHisto())
                 .setTradingBalance(tradingClient.getFreeTradingBalance());
     }
 }

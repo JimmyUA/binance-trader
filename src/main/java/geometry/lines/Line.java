@@ -6,11 +6,17 @@ public class Line {
     private Point start;
     private Point defining;
     private Double tan;
+    private LineEquation lineEquation;
 
     public Line(Point start, Point defining) {
         this.start = start;
         this.defining = defining;
+        this.lineEquation = calculateEquation();
         this.tan = calculateTan();
+    }
+
+    private LineEquation calculateEquation() {
+        return new LineEquation(start, defining);
     }
 
     protected Double calculateTan() {
@@ -54,5 +60,13 @@ public class Line {
 
     public Point getStartPoint() {
         return start;
+    }
+
+    public Point getDefiningPoint() {
+        return defining;
+    }
+
+    public LineEquation getLineEquation() {
+        return lineEquation;
     }
 }

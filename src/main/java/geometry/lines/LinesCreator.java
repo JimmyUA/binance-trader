@@ -113,4 +113,31 @@ public class LinesCreator {
     }
 
 
+    public Line createParallelLine(Line sourceLine, Point startPoint) {
+        Point start = startPoint;
+
+        Point defining = calculateDefiningPoint(startPoint, sourceLine);
+
+        Line resultLine = new Line(start, defining);
+
+        return resultLine;
+    }
+
+    private Point calculateDefiningPoint(Point startPoint, Line line) {
+        double y1 = startPoint.getY();
+        double x1 = startPoint.getX();
+        double A2 = y1;
+
+        double y2 = 0;
+
+        LineEquation lineEquation = line.getLineEquation();
+        double A1 = lineEquation.getA();
+        double B1 = lineEquation.getB();
+        double C1 = lineEquation.getC();
+
+        double B2 = (A2*B1)/B1;
+        double x2 = B2 - x1;
+
+        return new Point(x2, y2);
+    }
 }

@@ -28,8 +28,8 @@ public class MoMoStrategy extends AbstractStrategy {
     public void buyProcess() {
         double lastPrice = getLastPrice();
         double lastAsk = getLastAsk();
-        if (buyDecisionMaker.isRightMomentToBuy(lastPrice)){
-           super.executePurchase(lastAsk);
+        if (buyDecisionMaker.isRightMomentToBuy(lastPrice)) {
+            super.executePurchase(lastAsk);
         }
     }
 
@@ -49,30 +49,45 @@ public class MoMoStrategy extends AbstractStrategy {
             }
             sleepSeconds(3);
             updateLastPrice();
+            updateLastBid();
 
             if (halfNotSold && isTimeToSellFirstHalf()) {
                 logger.info(String.format("Last price: %.8f is over goal price: %.8f, percentage: %.2f, selling first half",
                         lastBid, goalSellPrice, ((lastPrice - goalSellPrice) / goalSellPrice) * 100));
                 sellToMarketHalf();
+            } else if (!halfNotSold && isTimeToSellSecondHalf()) {
+                sellToMarketSecondHalf();
+                break;
             }
-            if (!halfNotSold && isTimeToSellSecondHalf()) {
+            if (sellDecisionMaker.isCrossedStopLoss(stopLossPrice, lastPrice)) {
                 sellToMarket();
                 break;
-            } else if (sellDecisionMaker.isCrossedStopLoss(stopLossPrice, lastBid)) {
-            sellToMarket();
-            break;
+            }
+
         }
-    }
         amplitudeAnalyser.stop();
-}
+    }
+
+    private void sellToMarketSecondHalf() {
+        updateLastBid();
+        client.sellMarket(tradeAmount / 2);
+        tradeService.addSellOrder(lastBid);
+        logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
+        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount / 2));
+        isBought = false;
+        wasOverGoalPrice = false;
+    }
+
 
     private boolean isTimeToSellFirstHalf() {
-        return lastPrice > goalSellPrice;
+        return lastBid > goalSellPrice;
     }
+
 
     private boolean isTimeToSellSecondHalf() {
         double ema20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
-        return lastPrice <= ema20 - (ema20 * 0.01);
+        double secondHalfStopLoss = ema20 - (ema20 * 0.01);
+        return lastPrice <= secondHalfStopLoss;
     }
 
     private void sellToMarketHalf() {
@@ -83,7 +98,7 @@ public class MoMoStrategy extends AbstractStrategy {
         tradeService.addSellOrder(lastBid);
         tradeService.initBuyOrderAfterHalfTrade();
         logger.info(String.format("Sold %d coins to market! Rate: %.8f", half, lastBid));
-        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));
+        logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount / 2));
     }
 
     private void updateLastPrice() {

@@ -41,4 +41,8 @@ public class LineWithPastPeriods {
     public Point getStartPoint() {
         return line.getStartPoint();
     }
+
+    public Point getDefiningPoint() {
+        return line.getDefiningPoint();
+    }
 }
