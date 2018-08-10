@@ -200,7 +200,6 @@ public class MarketAnalyzer {
     }
 
     public boolean isHistoAscending() {
-        momoMACD.isHistoAscending();
-        return false;
+        return momoMACD.isHistoAscending();
     }
 }

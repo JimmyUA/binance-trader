@@ -2,5 +2,5 @@ package geometry.prediction.situation;
 
 public enum PointsChainSituation {
 
-    PLATO, BACK_BLADE, FRONT_BLADE
+    PLATO, REVERSED_PLATO, BACK_BLADE, FRONT_BLADE
 }

@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class SituationDetector {
 
-    private  Integer upStartIndex;
-    private  Integer upDefiningIndex;
-    private  Integer bottomStartIndex;
-    private  Integer bottomDefiningIndex;
+    private Integer upStartIndex;
+    private Integer upDefiningIndex;
+    private Integer bottomStartIndex;
+    private Integer bottomDefiningIndex;
 
     public PointsChainSituation detectSituation(Integer upStartIndex, Integer upDefiningIndex,
                                                 Integer bottomStartIndex, Integer bottomDefiningIndex) {
@@ -20,13 +20,19 @@ public class SituationDetector {
         this.bottomDefiningIndex = bottomDefiningIndex;
 
 
-        if(isPlatoSituation()){
+        if (isPlatoSituation()) {
             return PointsChainSituation.PLATO;
-        } else if (isFrontBladeSituation()){
+        } else if (isReversedPlatoSituation()) {
+            return PointsChainSituation.REVERSED_PLATO;
+        } else if (isFrontBladeSituation()) {
             return PointsChainSituation.FRONT_BLADE;
         } else {
             return PointsChainSituation.BACK_BLADE;
         }
+    }
+
+    private boolean isReversedPlatoSituation() {
+        return !isBottomStartBetweenUpPoints() && !isBottomDefiningBetweenUpPoints();
     }
 
     private boolean isFrontBladeSituation() {
@@ -35,7 +41,7 @@ public class SituationDetector {
 
     private boolean isPlatoSituation() {
 
-        return  isBottomStartBetweenUpPoints() && isBottomDefiningBetweenUpPoints();
+        return isBottomStartBetweenUpPoints() && isBottomDefiningBetweenUpPoints();
     }
 
     private boolean isBottomDefiningBetweenUpPoints() {

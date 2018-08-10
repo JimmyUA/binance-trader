@@ -54,13 +54,15 @@ public class ArrowsCreator {
             lastArrowInterceptedLine = prediction.getUpLine().getLine();
         }
         Point startPoint = interceptionFinder.findInterception(forthArrow, lastArrowInterceptedLine);
-        return linesCreator.createParallelLine(secondArrow, startPoint);
+        return linesCreator.createParallelLine(thirdArrow, startPoint);
     }
 
     protected Line getForthArrow() {
         Point startPoint;
         if (pointChain.getSituation().equals(PointsChainSituation.PLATO)) {
             startPoint = interceptionFinder.findInterception(thirdArrow, prediction.getBottomLine().getLine());
+        } else if (pointChain.getSituation().equals(PointsChainSituation.REVERSED_PLATO)) {
+            startPoint = interceptionFinder.findInterception(thirdArrow, prediction.getUpLine().getLine());
         } else {
             startPoint = pointChain.getForthPoint();
         }
@@ -68,7 +70,8 @@ public class ArrowsCreator {
     }
 
     protected Line getThirdArrow() {
-        if (!pointChain.getSituation().equals(PointsChainSituation.PLATO)) {
+        if (pointChain.getSituation().equals(PointsChainSituation.BACK_BLADE) ||
+                pointChain.getSituation().equals(PointsChainSituation.FRONT_BLADE)) {
             return new Line(pointChain.getThirdPoint(), pointChain.getForthPoint());
         } else {
             return linesCreator.createParallelLine(firstArrow, pointChain.getThirdPoint());
@@ -84,8 +87,32 @@ public class ArrowsCreator {
         return new Line(pointChain.getStartPoint(), pointChain.getSecondPoint());
     }
 
-    protected void setInfoForTest(PredictionHallInfo prediction, PointChain pointChain){
+    protected void setInfoForTest(PredictionHallInfo prediction, PointChain pointChain) {
         this.prediction = prediction;
         this.pointChain = pointChain;
+    }
+
+    protected void setLinesCreator(LinesCreator linesCreator) {
+        this.linesCreator = linesCreator;
+    }
+
+    protected void setFirstArrow(Line firstArrow) {
+        this.firstArrow = firstArrow;
+    }
+
+    protected void setSecondArrow(Line secondArrow) {
+        this.secondArrow = secondArrow;
+    }
+
+    protected void setThirdArrow(Line thirdArrow) {
+        this.thirdArrow = thirdArrow;
+    }
+
+    protected void setInterceptionFinder(InterceptionFinder interceptionFinder) {
+        this.interceptionFinder = interceptionFinder;
+    }
+
+    public void setForthArrow(Line forthArrow) {
+        this.forthArrow = forthArrow;
     }
 }

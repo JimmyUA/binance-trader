@@ -45,4 +45,12 @@ public class LineWithPastPeriods {
     public Point getDefiningPoint() {
         return line.getDefiningPoint();
     }
+
+    @Override
+    public String toString() {
+        return "LineWithPastPeriods{" +
+                "line=" + line +
+                ", pastPeriods=" + pastPeriods +
+                '}';
+    }
 }

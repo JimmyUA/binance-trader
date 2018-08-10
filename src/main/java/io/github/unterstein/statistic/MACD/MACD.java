@@ -269,16 +269,17 @@ public class MACD {
         if (minutesFromStart < 5) {
             return false;
         }
+        Double lastHisto = lastHistos.getLast();
         if (wasHistoCrossZeroUp) {
             if (crossHistoCounter < 3) {
-                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHistos));
+                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHisto));
                 return true;
             } else {
-                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f, too long ago", name, lastHistos));
+                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f, too long ago", name, lastHisto));
                 return false;
             }
         } else {
-            logger.info(String.format("%s Histo didnot cross Zero up, histo: %.10f", name, lastHistos));
+            logger.info(String.format("%s Histo didnot cross Zero up, histo: %.10f", name, lastHisto));
             return false;
         }
     }

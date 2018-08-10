@@ -30,16 +30,39 @@ import static org.mockito.Mockito.doReturn;
 @TestExecutionListeners({MockitoTestExecutionListener.class})
 public class LinesCreatorTest {
 
+    private LinesCreator creator;
+    private HallLinesAnalyzer analyser;
+
+
+    @Before
+    public void setUp() throws Exception {
+        creator = new LinesCreator();
+        analyser = new HallLinesAnalyzer();
+
+    }
+
     @Test
     public void shouldCreateParallelLine() throws Exception {
-        LinesCreator creator = new LinesCreator();
-        HallLinesAnalyzer analyser = new HallLinesAnalyzer();
 
         Point first = new Point(0.0, 0.0);
         Point second = new Point(45.0, 0.0);
         Line firstLine = new Line(first, second);
 
         Point third = new Point(45.0, 2.1);
+
+        Line parallelLine = creator.createParallelLine(firstLine, third);
+
+        assertTrue(analyser.isParallel(firstLine, parallelLine));
+    }
+
+    @Test
+    public void shouldCreateParallelLineInThisSituation() throws Exception {
+
+        Point first = new Point(0.0, 1.0);
+        Point second = new Point(2.0, 0.0);
+        Line firstLine = new Line(first, second);
+
+        Point third = new Point(3.0, 1.0);
 
         Line parallelLine = creator.createParallelLine(firstLine, third);
 

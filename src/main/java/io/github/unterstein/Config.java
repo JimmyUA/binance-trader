@@ -1,6 +1,7 @@
 package io.github.unterstein;
 
 import com.binance.api.client.domain.market.CandlestickInterval;
+import geometry.prediction.Predictor;
 import geometry.prediction.situation.SituationDetector;
 import io.github.unterstein.botlogic.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
@@ -196,6 +197,5 @@ public class Config {
     public RemoteManager remoteManager() {
         return new RemoteManager();
     }
-
 
 }

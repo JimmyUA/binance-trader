@@ -5,8 +5,6 @@ public class Point {
     private Double x;
     private Double y;
 
-    private Integer index;
-
     public Point(Double x, Double y) {
         this.x = x;
         this.y = y;
@@ -29,11 +27,7 @@ public class Point {
     }
 
     public Integer getIndex() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
+        return x.intValue();
     }
 
     @Override
@@ -52,5 +46,13 @@ public class Point {
         int result = getX().hashCode();
         result = 31 * result + getY().hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

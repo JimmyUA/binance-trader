@@ -87,4 +87,14 @@ public class Line {
         result = 31 * result + defining.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Line{" +
+                "start=" + start +
+                ", defining=" + defining +
+                ", tan=" + tan +
+                ", lineEquation=" + lineEquation +
+                '}';
+    }
 }

@@ -14,12 +14,12 @@ public class PointsChainCreator {
     @Autowired
     private SituationDetector detector;
 
-    private  Integer upStartIndex;
-    private  Integer upDefiningIndex;
-    private  Integer bottomStartIndex;
-    private  Integer bottomDefiningIndex;
+    private Integer upStartIndex;
+    private Integer upDefiningIndex;
+    private Integer bottomStartIndex;
+    private Integer bottomDefiningIndex;
 
-    public  PointChain createChain(LineWithPastPeriods upLine, LineWithPastPeriods bottomLine) throws BadPredictionSituationException {
+    public PointChain createChain(LineWithPastPeriods upLine, LineWithPastPeriods bottomLine) throws BadPredictionSituationException {
         upStartIndex = upLine.getStartPointIndex();
         upDefiningIndex = upLine.getDefiningPointIndex();
 
@@ -33,12 +33,16 @@ public class PointsChainCreator {
             Point secondPoint;
             Point thirdPoint;
             Point forthPoint = null;
-            if (situation.equals(PointsChainSituation.PLATO)){
+            if (situation.equals(PointsChainSituation.PLATO)) {
                 startPoint = upLine.getStartPoint();
                 secondPoint = bottomLine.getDefiningPoint();
                 thirdPoint = upLine.getDefiningPoint();
 
-            } else if(situation.equals(PointsChainSituation.FRONT_BLADE)){
+            } else if (situation.equals(PointsChainSituation.REVERSED_PLATO)) {
+                startPoint = bottomLine.getStartPoint();
+                secondPoint = upLine.getDefiningPoint();
+                thirdPoint = bottomLine.getDefiningPoint();
+            } else if (situation.equals(PointsChainSituation.FRONT_BLADE)) {
                 startPoint = upLine.getStartPoint();
                 secondPoint = bottomLine.getStartPoint();
                 thirdPoint = upLine.getDefiningPoint();
@@ -68,11 +72,11 @@ public class PointsChainCreator {
 
     private boolean isValidSituation() {
 
-        return (bottomStartIndex > upStartIndex && bottomStartIndex < upDefiningIndex) ||
+        return (bottomStartIndex < upDefiningIndex) ||
                 bottomDefiningIndex > upStartIndex && bottomDefiningIndex < upDefiningIndex;
     }
 
-    protected void setDetector(SituationDetector detector){
+    protected void setDetector(SituationDetector detector) {
         this.detector = detector;
     }
 }

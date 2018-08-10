@@ -42,4 +42,7 @@ public class PredictorTest {
 
         assertEquals(expectedPrice, predictor.predictPriceAfterPeriodsOnLine(line, 9));
     }
+
+
+
 }
