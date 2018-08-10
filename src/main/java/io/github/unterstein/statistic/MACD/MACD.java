@@ -38,7 +38,7 @@ public class MACD {
     protected int crossCounter;
     protected int crossHistoCounter;
     private LinkedList<Double> prices;
-    protected Double lastHisto;
+    protected LinkedList<Double> lastHistos;
     private CandlestickInterval candlestickInterval;
 
     public MACD() {
@@ -52,7 +52,8 @@ public class MACD {
         this.shortPeriod = shortPeriod;
         this.longPeriod = longPeriod;
         this.signalPeriod = signalPeriod;
-         candlestickInterval = CandlestickInterval.ONE_MINUTE;
+        candlestickInterval = CandlestickInterval.ONE_MINUTE;
+        lastHistos = new LinkedList();
         initLists();
 
         crossCounter = 0;
@@ -185,9 +186,17 @@ public class MACD {
     public synchronized Double histogramm() {
         double macd = MACD();
         Double signal = signal();
-        lastHisto = macd - signal;
+        double lastHisto = macd - signal;
+        addLastHisto(lastHisto, lastHistos);
         checkCrosses();
-        return lastHisto;
+        return lastHistos.getLast();
+    }
+
+    private void addLastHisto(double lastHisto, LinkedList lastHistos) {
+        if (lastHistos.size() > 5) {
+            lastHistos.pollFirst();
+        }
+        lastHistos.addLast(lastHisto);
     }
 
 
@@ -257,24 +266,25 @@ public class MACD {
 
     public boolean wasHistoCrossZeroUp() {
 
-        if (minutesFromStart < 5){
+        if (minutesFromStart < 5) {
             return false;
         }
         if (wasHistoCrossZeroUp) {
-            if(crossHistoCounter < 3){
-            logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHisto));
-            return true;}
-            else {
-                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f, too long ago", name, lastHisto));
+            if (crossHistoCounter < 3) {
+                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f", name, lastHistos));
+                return true;
+            } else {
+                logger.info(String.format("%s Histo crossed Zero up, histo: %.10f, too long ago", name, lastHistos));
                 return false;
             }
         } else {
-            logger.info(String.format("%s Histo didnot cross Zero up, histo: %.10f", name, lastHisto));
+            logger.info(String.format("%s Histo didnot cross Zero up, histo: %.10f", name, lastHistos));
             return false;
         }
     }
 
     protected void checkHistoCrossedZero() {
+        double lastHisto = lastHistos.getLast();
 
         logger.info(String.format("LastHisto is %.10f", lastHisto));
         if (lastHisto > 0.0) {
@@ -294,6 +304,22 @@ public class MACD {
     }
 
     public Double getLastHisto() {
-        return lastHisto;
+        return lastHistos.size() > 0 ? lastHistos.getLast() : 0.0;
+    }
+
+    public boolean isHistoAscending() {
+        Double lastHisto = getLastHisto();
+        Double lastFourAverage = lastHistos.stream()
+                .limit(4).mapToDouble(d -> d)
+                .average().orElse(0.0);
+        if (lastHistos.size() < 4) {
+            return false;
+        } else if (lastHisto > lastFourAverage) {
+            logger.info(String.format("Histo is ascending last histo: %.10f, last 4 average: %.10f", lastHisto, lastFourAverage));
+            return true;
+        } else {
+            logger.info(String.format("Histo is descending last histo: %.10f, last 4 average: %.10f", lastHisto, lastFourAverage));
+            return false;
+        }
     }
 }

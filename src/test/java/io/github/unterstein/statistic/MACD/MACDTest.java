@@ -203,10 +203,11 @@ public class MACDTest {
 
         doCallRealMethod().when(mockMacd).checkHistoCrossedZero();
         mockMacd.wasHistoCrossZeroUp = false;
-        mockMacd.lastHisto = 0.1;
+        mockMacd.lastHistos = new LinkedList<>();
+        mockMacd.lastHistos.addLast(0.1);
 
         mockMacd.checkHistoCrossedZero();
 
-        assertTrue(mockMacd.wasMACDCrossSignalUp);
+        assertTrue(mockMacd.wasHistoCrossZeroUp);
     }
 }

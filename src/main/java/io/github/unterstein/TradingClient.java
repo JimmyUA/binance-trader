@@ -220,7 +220,7 @@ public class TradingClient {
 
   private Stream<Double> getPricesStream(CandlestickInterval interval) {
     List<Candlestick> candleStickBars = getCandleStickBars(interval);
-    return candleStickBars.stream()
+    return candleStickBars.stream().limit(candleStickBars.size() - 1)
             .map(Candlestick::getClose).mapToDouble(Double::valueOf)
             .boxed();
   }

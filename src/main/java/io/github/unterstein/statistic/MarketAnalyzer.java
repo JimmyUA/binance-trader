@@ -198,4 +198,9 @@ public class MarketAnalyzer {
     public boolean isTrend50VS225Up() {
        return trendAnalyzer.isTrend50VS225Up();
     }
+
+    public boolean isHistoAscending() {
+        momoMACD.isHistoAscending();
+        return false;
+    }
 }

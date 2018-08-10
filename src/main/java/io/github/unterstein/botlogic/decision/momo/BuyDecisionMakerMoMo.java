@@ -33,7 +33,7 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
         if (resistanceLineLimit(price)) {
             return false;
         }
-        if (isMoMoTrendUp() && momoMACDHistogramCrossedZeroUp()) {
+        if (isMoMoTrendUp() && histoISAscending() && momoMACDHistogramCrossedZeroUp()) {
             int time = 0;
             trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
             double goalPrice = trackedEMA20 + trackedEMA20 * 0.005;
@@ -50,6 +50,10 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
             }
         }
         return false;
+    }
+
+    private boolean histoISAscending() {
+        return marketAnalyzer.isHistoAscending();
     }
 
     private boolean momoMACDHistogramCrossedZeroUp() {
