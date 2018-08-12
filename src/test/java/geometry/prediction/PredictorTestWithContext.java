@@ -25,17 +25,13 @@ public class PredictorTestWithContext {
 
 
         Point first = new Point(10.0, 100.0);
-        first.setIndex(10);
         Point second = new Point(50.0, 200.0);
-        second.setIndex(50);
         Line simpleLine = new Line(first, second);
         LineWithPastPeriods bottomLine = new LineWithPastPeriods(simpleLine, 11);
 
 
         Point firstUp = new Point(1.0, 600.0);
-        firstUp.setIndex(1);
         Point secondUp = new Point(30.0, 500.0);
-        secondUp.setIndex(30);
         Line simpleLineUp = new Line(firstUp, secondUp);
         LineWithPastPeriods upLine = new LineWithPastPeriods(simpleLineUp, 12);
 

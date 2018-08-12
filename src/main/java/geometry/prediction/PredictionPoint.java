@@ -11,16 +11,18 @@ public class PredictionPoint {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public PredictionPoint setDate(LocalDate date) {
         this.date = date;
+        return this;
     }
 
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public PredictionPoint setPrice(Double price) {
         this.price = price;
+        return this;
     }
 
     @Override

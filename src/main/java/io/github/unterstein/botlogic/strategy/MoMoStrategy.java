@@ -55,6 +55,7 @@ public class MoMoStrategy extends AbstractStrategy {
                 logger.info(String.format("Last price: %.8f is over goal price: %.8f, percentage: %.2f, selling first half",
                         lastBid, goalSellPrice, ((lastPrice - goalSellPrice) / goalSellPrice) * 100));
                 sellToMarketHalf();
+                halfNotSold = false;
             } else if (!halfNotSold && isTimeToSellSecondHalf()) {
                 sellToMarketSecondHalf();
                 break;

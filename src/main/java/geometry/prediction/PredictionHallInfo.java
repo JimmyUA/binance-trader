@@ -11,7 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Scope("prototype")
@@ -28,11 +36,59 @@ public class PredictionHallInfo {
     private LineWithPastPeriods upLine;
     private LineWithPastPeriods bottomLine;
     private long creationTime;
-    private Integer intervalDivider;
+    private Integer intervalKof;
     private PointsChainSituation situation;
 
+
+    public PredictionPoint getMaxPricePrediction(){
+        Integer currentIndex = calculateCurrentIndex();
+        List<Line> ascendingArrows = getAscendingArrows();
+        Stream<Point> pointStream = ascendingArrows.stream()
+                .map(arrow -> interceptionFinder.findInterception(arrow, upLine.getLine()))
+                .filter(point -> point.getX() > currentIndex);
+        double price = pointStream
+                .map(Point::getY)
+                .mapToDouble(d -> d).max()
+                .orElse(0.0);
+        Double pointIndex = pointStream.
+                filter(point -> point.getY().equals(price))
+                .findFirst()
+                .orElse(new Point(0.0, 0.0))
+                .getX();
+        LocalDate pointTime = calculateTime(pointIndex);
+        return new PredictionPoint()
+                .setPrice(price)
+                .setDate(pointTime);
+    }
+
+    public PredictionPoint getMinPricePrediction(){
+        Integer currentIndex = calculateCurrentIndex();
+        List<Line> descendingArrows = getDescendingArrows();
+        Stream<Point> pointStream = descendingArrows.stream()
+                .map(arrow -> interceptionFinder.findInterception(arrow, upLine.getLine()))
+                .filter(point -> point.getX() > currentIndex);
+        double price = pointStream
+                .map(Point::getY)
+                .mapToDouble(d -> d).min()
+                .orElse(0.0);
+        Double pointIndex = pointStream.
+                filter(point -> point.getY().equals(price))
+                .findFirst()
+                .orElse(new Point(0.0, 0.0))
+                .getX();
+        LocalDate pointTime = calculateTime(pointIndex);
+        return new PredictionPoint()
+                .setPrice(price)
+                .setDate(pointTime);
+    }
+
     public PredictionPoint getFinalPrediction(){
-        return new PredictionPoint();
+        Point lastInterception = findLastArrowInterception();
+        PredictionPoint predictionPoint = new PredictionPoint();
+        predictionPoint.setPrice(lastInterception.getX());
+        LocalDate pointTime = calculateTime(lastInterception.getX());
+        predictionPoint.setDate(pointTime);
+        return predictionPoint;
     }
 
     public Double predictPriceAfterPeriod(long period) throws TooLongFutureAccessRequestException {
@@ -48,6 +104,32 @@ public class PredictionHallInfo {
 
 
         return findPriceByIndex(requestedIndex);
+    }
+
+    private Integer calculateCurrentIndex() {
+        long currentTime = System.currentTimeMillis();
+        return Math.toIntExact(((currentTime - creationTime) / intervalKof) + 500);
+    }
+
+    private List<Line> getAscendingArrows() {
+        return Stream.of(firstArrow, secondArrow, thirdArrow, forthArrow, fifthArrow)
+                .filter(Objects::nonNull)
+                .filter(Line::isLineAscending).collect(Collectors.toCollection(LinkedList::new));
+    }
+
+
+    private List<Line> getDescendingArrows() {
+        return Stream.of(firstArrow, secondArrow, thirdArrow, forthArrow, fifthArrow)
+                .filter(Objects::nonNull)
+                .filter(Line::isLineDescending).collect(Collectors.toCollection(LinkedList::new));
+    }
+
+
+
+    private LocalDate calculateTime(Double index) {
+        long timeFromCreation = (long) (index - 500) * intervalKof;
+        long predictionPointTime = creationTime + timeFromCreation;
+        return Instant.ofEpochMilli(predictionPointTime).atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private Double findPriceByIndex(long requestedIndex) {
@@ -107,7 +189,7 @@ public class PredictionHallInfo {
 
     private long calculatePeriodsLeftAfterCreation(){
         long currentTime = System.currentTimeMillis();
-        return (currentTime - creationTime) / intervalDivider;
+        return (currentTime - creationTime) / intervalKof;
     }
 
     protected void setUpLine(LineWithPastPeriods upLine) {
@@ -185,13 +267,13 @@ public class PredictionHallInfo {
 
     public void setInterval(CandlestickInterval interval) {
        if(interval.equals(CandlestickInterval.ONE_MINUTE)){
-           intervalDivider = 1000 * 60;
+           intervalKof = 1000 * 60;
        } else if(interval.equals(CandlestickInterval.FIVE_MINUTES)){
-           intervalDivider = 1000 * 60 * 5;
+           intervalKof = 1000 * 60 * 5;
        }else if(interval.equals(CandlestickInterval.FIFTEEN_MINUTES)){
-           intervalDivider = 1000 * 60 * 15;
+           intervalKof = 1000 * 60 * 15;
        }else if(interval.equals(CandlestickInterval.HALF_HOURLY)){
-           intervalDivider = 1000 * 60 * 30;
+           intervalKof = 1000 * 60 * 30;
        }
     }
 

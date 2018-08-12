@@ -1,8 +1,6 @@
 package io.github.unterstein;
 
 import com.binance.api.client.domain.market.CandlestickInterval;
-import geometry.prediction.Predictor;
-import geometry.prediction.situation.SituationDetector;
 import io.github.unterstein.botlogic.decision.maandrsi.BuyDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.maandrsi.SellDecisionMakerMARSI;
 import io.github.unterstein.botlogic.decision.momo.BuyDecisionMakerMoMo;
@@ -10,7 +8,6 @@ import io.github.unterstein.botlogic.decision.momo.SellDecisionMakerMoMo;
 import io.github.unterstein.botlogic.decision.onetrend.BuyDecisionMakerOneTrend;
 import io.github.unterstein.botlogic.decision.onetrend.SellDecisionMakerOneTrend;
 import io.github.unterstein.botlogic.executor.TradeExecutor;
-import io.github.unterstein.botlogic.strategy.MAandRSIStrategy;
 import io.github.unterstein.botlogic.strategy.MoMoStrategy;
 import io.github.unterstein.botlogic.strategy.OneTrendStrategy;
 import io.github.unterstein.botlogic.strategy.Strategy;

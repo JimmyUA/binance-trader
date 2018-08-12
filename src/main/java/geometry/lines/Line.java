@@ -97,4 +97,8 @@ public class Line {
                 ", lineEquation=" + lineEquation +
                 '}';
     }
+
+    public boolean isLineDescending() {
+        return !isLineAscending();
+    }
 }
