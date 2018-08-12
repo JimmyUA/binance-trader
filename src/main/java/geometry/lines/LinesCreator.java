@@ -22,7 +22,7 @@ public class LinesCreator {
 
         double firstMax = cutPrices.stream().mapToDouble(d -> d).max().orElse(0.0);
         int firstMaxIndex = cutPricesForIndexGetting.indexOf(firstMax);
-        cutPrices.remove(firstMax);
+        clearRegion(firstMax, cutPrices, period);
 
         double secondMax = cutPrices.stream().mapToDouble(d -> d).max().orElse(0.0);
         int secondMaxIndex = cutPricesForIndexGetting.indexOf(secondMax);
@@ -46,7 +46,7 @@ public class LinesCreator {
 
         double firstMin = cutPrices.stream().mapToDouble(d -> d).min().orElse(0.0);
         int firstMinIndex = cutPricesForIndexGetting.indexOf(firstMin);
-        cutPrices.remove(firstMin);
+        clearRegion(firstMin, cutPrices, period);
 
         double secondMin = cutPrices.stream().mapToDouble(d -> d).min().orElse(0.0);
         int secondMinIndex = cutPricesForIndexGetting.indexOf(secondMin);
@@ -57,6 +57,15 @@ public class LinesCreator {
         int pastPeriods = cutPricesForIndexGetting.size() - minIndex - 1;
 
         return new LineWithPastPeriods(line, pastPeriods);
+    }
+
+    private void clearRegion(double price, LinkedList<Double> cutPrices, long period) {
+        int index = cutPrices.indexOf(price);
+        int regionKof = (int)period / 10;
+        int start = index - regionKof > 0 ? index - regionKof : 0;
+        int end = index + regionKof < cutPrices.size() ? index + regionKof : cutPrices.size();
+        cutPrices.subList(start, end).clear();
+
     }
 
     private int getMinIndex(int firstMinIndex, int secondMinIndex) {

@@ -1,5 +1,8 @@
 package io.github.unterstein.statistic.tasks;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
+import geometry.prediction.PredictionHallInfo;
+import geometry.prediction.Predictor;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
 import io.github.unterstein.statistic.MACD.MACD;
@@ -51,7 +54,12 @@ public class PriceFetchingTask implements Runnable{
     @Autowired
     private AmplitudeAnalyser amplitudeAnalyser;
 
+    @Autowired
+    private Predictor predictor;
+
     private Double lastPrice;
+
+    private PredictionHallInfo predictionHallInfo;
 
     @Override
     public void run() {
@@ -62,6 +70,7 @@ public class PriceFetchingTask implements Runnable{
                 amplitudeAnalyser.notifyAddingPrice();
                 macd.histogramm();
                 macdMOMO.histogramm();
+                predictionHallInfo = predictor.createPrediction(8 * 12, CandlestickInterval.FIVE_MINUTES);
                 minutesFromStart++;
             } catch (Exception e) {
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));

@@ -33,12 +33,13 @@ public class Predictor {
         PredictionHallInfo prediction = getPredictionHallInfo(upLine, bottomLine);
         prediction.setCreationTime(System.currentTimeMillis());
         prediction.setInterval(interval);
+        prediction.setCreationPeriod(period);
         return prediction;
     }
 
     protected PredictionHallInfo getPredictionHallInfo(LineWithPastPeriods upLine, LineWithPastPeriods bottomLine) throws BadPredictionSituationException {
         prediction.setUpLine(upLine);
-        prediction.setBottomLine(upLine);
+        prediction.setBottomLine(bottomLine);
         PointChain pointChain = chainCreator.createChain(upLine, bottomLine);
         prediction.setSituation(pointChain.getSituation());
         arrowsCreator.createAndInjectArrows(prediction, pointChain);

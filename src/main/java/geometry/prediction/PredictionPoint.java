@@ -1,18 +1,18 @@
 package geometry.prediction;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PredictionPoint {
 
-    private LocalDate date;
+    private LocalDateTime time;
     private Double price;
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getTime() {
+        return time;
     }
 
-    public PredictionPoint setDate(LocalDate date) {
-        this.date = date;
+    public PredictionPoint setTime(LocalDateTime time) {
+        this.time = time;
         return this;
     }
 
@@ -28,7 +28,7 @@ public class PredictionPoint {
     @Override
     public String toString() {
         return "PredictionPoint{" +
-                "date=" + date +
+                "time=" + time +
                 ", price=" + price +
                 '}';
     }
