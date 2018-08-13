@@ -51,4 +51,15 @@ public class LineTest {
 
         assertEquals(expectedY, line.findYByX(6.0), 0.0001 );
     }
+
+    @Test
+    public void shouldFindThree() {
+        double expectedY = 3.0;
+
+        Point start = new Point(0.0, 0.0);
+        Point defining = new Point(1.0, 1.0);
+        Line line = new Line(start, defining);
+
+        assertEquals(expectedY, line.findYByX(3.0), 0.0001 );
+    }
 }

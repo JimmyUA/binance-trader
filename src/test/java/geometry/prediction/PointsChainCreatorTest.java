@@ -99,6 +99,8 @@ public class PointsChainCreatorTest{
     }
 
 
+
+
     private void initLines(Point firstStart, Point firstDefining,
                            Point secondStart, Point secondDefining){
 

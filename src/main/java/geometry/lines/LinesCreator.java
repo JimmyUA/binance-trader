@@ -5,7 +5,7 @@ import io.github.unterstein.TradingClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,6 +30,7 @@ public class LinesCreator {
         int maxIndex = getMaxIndex(firstMaxIndex, secondMaxIndex);
 
         Line line = getLine(firstMax, firstMaxIndex, secondMax, secondMaxIndex);
+        line = correctLine(line, cutPricesForIndexGetting, "up");
         int pastPeriods = cutPricesForIndexGetting.size() - maxIndex - 1;
 
         return new LineWithPastPeriods(line, pastPeriods);
@@ -54,9 +55,48 @@ public class LinesCreator {
         int minIndex = getMinIndex(firstMinIndex, secondMinIndex);
 
         Line line = getLine(firstMin, firstMinIndex, secondMin, secondMinIndex);
+
+        line = correctLine(line, cutPricesForIndexGetting, "bottom");
+
         int pastPeriods = cutPricesForIndexGetting.size() - minIndex - 1;
 
         return new LineWithPastPeriods(line, pastPeriods);
+    }
+
+
+    private Line correctLine(Line line, LinkedList<Double> prices, String lineType) {
+        Map<Double, Point> outPoints = new HashMap<>();
+        int startIndex = line.getStartPoint().getX().intValue();
+        for (int i = startIndex; i < prices.size(); i++) {
+            Double price = prices.get(i);
+            double X = i;
+            Double Y = line.findYByX(X);
+            double delta = 0.0;
+            if (lineType.equals("bottom")) {
+                if (price < Y && price > 0.0){
+                delta = Y - price;
+                outPoints.put(delta, new Point(X, price));
+                }
+            } else if (lineType.equals("up")){
+                if (price > Y && Y > 0.0){
+                delta = price - Y;
+                outPoints.put(delta, new Point(X, price));
+                }
+            }
+        }
+
+        if(outPoints.size() == 0){
+            return line;
+        }
+
+        double maxDelta = outPoints.keySet().stream().mapToDouble(d -> d).max().orElse(0.0);
+        Point maxDeltaPoint = outPoints.get(maxDelta);
+
+        if (maxDeltaPoint != null){
+            line = new Line(line.getStartPoint(), maxDeltaPoint);
+        }
+
+        return line;
     }
 
     private void clearRegion(double price, LinkedList<Double> cutPrices, long period) {
@@ -75,7 +115,7 @@ public class LinesCreator {
     private LinkedList<Double> getCutPrices(Long period, CandlestickInterval interval){
         LinkedList<Double> prices = new LinkedList<>(client.getPricesFromExchange(interval));
 
-        if (period >= prices.size()){
+        if (period > prices.size()){
             throw new IllegalArgumentException("period should be less than prices amount");
         }
         return prices.stream()
