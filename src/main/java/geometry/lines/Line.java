@@ -32,6 +32,15 @@ public class Line {
         return tan;
     }
 
+    public Double findYByX(Double X){
+        double A = lineEquation.getA();
+        double B = lineEquation.getB();
+        double C = lineEquation.getC();
+
+        double Y = ((-A * X) - C) / B;
+
+        return Y;
+    }
 
 
     public Double predictYAfterX(double x) {
@@ -48,6 +57,10 @@ public class Line {
 
     public boolean isLineAscending() {
         return start.getY() < defining.getY();
+    }
+
+    public boolean isLineDescending() {
+        return !isLineAscending();
     }
 
     public Integer getStartPointIndex() {
@@ -98,7 +111,5 @@ public class Line {
                 '}';
     }
 
-    public boolean isLineDescending() {
-        return !isLineAscending();
-    }
+
 }

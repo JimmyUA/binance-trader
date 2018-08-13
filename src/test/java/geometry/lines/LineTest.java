@@ -40,4 +40,15 @@ public class LineTest {
 
         assertEquals(expectedY, line.predictYAfterX(3.0));
     }
+
+    @Test
+    public void shouldFindZero() {
+        double expectedY = 0.0;
+
+        Point start = new Point(0.0, 0.0);
+        Point defining = new Point(3.0, 0.0);
+        Line line = new Line(start, defining);
+
+        assertEquals(expectedY, line.findYByX(6.0), 0.0001 );
+    }
 }
