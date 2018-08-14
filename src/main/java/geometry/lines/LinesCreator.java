@@ -14,6 +14,8 @@ public class LinesCreator {
     @Autowired
     private TradingClient client;
 
+    private int clearRegionKof = 5;
+
     public LineWithPastPeriods createHallUpLine(Long period, CandlestickInterval interval){
 
         LinkedList<Double> cutPrices = getCutPrices(period, interval);
@@ -30,7 +32,7 @@ public class LinesCreator {
         int maxIndex = getMaxIndex(firstMaxIndex, secondMaxIndex);
 
         Line line = getLine(firstMax, firstMaxIndex, secondMax, secondMaxIndex);
-        line = correctLine(line, cutPricesForIndexGetting, "up");
+        line = correctLine(line, cutPricesForIndexGetting, "up", period);
         int pastPeriods = cutPricesForIndexGetting.size() - maxIndex - 1;
 
         return new LineWithPastPeriods(line, pastPeriods);
@@ -56,7 +58,7 @@ public class LinesCreator {
 
         Line line = getLine(firstMin, firstMinIndex, secondMin, secondMinIndex);
 
-        line = correctLine(line, cutPricesForIndexGetting, "bottom");
+        line = correctLine(line, cutPricesForIndexGetting, "bottom", period);
 
         int pastPeriods = cutPricesForIndexGetting.size() - minIndex - 1;
 
@@ -64,12 +66,11 @@ public class LinesCreator {
     }
 
 
-    private Line correctLine(Line line, LinkedList<Double> prices, String lineType) {
+    private Line correctLine(Line line, LinkedList<Double> prices, String lineType, Long period) {
         Map<Double, Point> outPoints = new HashMap<>();
-        int startIndex = line.getStartPoint().getX().intValue();
+        int startIndex = line.getStartPoint().getX().intValue() + (int)(period/clearRegionKof);
         for (int i = startIndex; i < prices.size(); i++) {
-            Double price = prices.get(i);
-            double X = i;
+            Double price = prices.get(i);            double X = i;
             Double Y = line.findYByX(X);
             double delta = 0.0;
             if (lineType.equals("bottom")) {
@@ -101,7 +102,7 @@ public class LinesCreator {
 
     private void clearRegion(double price, LinkedList<Double> cutPrices, long period) {
         int index = cutPrices.indexOf(price);
-        int regionKof = (int)period / 10;
+        int regionKof = (int)period / clearRegionKof;
         int start = index - regionKof > 0 ? index - regionKof : 0;
         int end = index + regionKof < cutPrices.size() ? index + regionKof : cutPrices.size();
         cutPrices.subList(start, end).clear();
@@ -183,5 +184,9 @@ public class LinesCreator {
         double x2 = B2 + x1;
 
         return new Point(x2, y2);
+    }
+
+    public void doubleClearRegionKof() {
+        clearRegionKof *=2;
     }
 }

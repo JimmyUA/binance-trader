@@ -72,7 +72,7 @@ public class PointsChainCreator {
 
     private boolean isValidSituation() {
 
-        return (bottomStartIndex < upDefiningIndex) ||
+        return ((bottomStartIndex < upDefiningIndex) && (bottomDefiningIndex > upDefiningIndex)) ||
                 bottomDefiningIndex > upStartIndex && bottomDefiningIndex < upDefiningIndex;
     }
 

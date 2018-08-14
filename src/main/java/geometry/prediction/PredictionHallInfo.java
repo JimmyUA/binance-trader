@@ -288,4 +288,8 @@ public class PredictionHallInfo {
     public void setCreationPeriod(long creationPeriod) {
         this.creationPeriod = creationPeriod;
     }
+
+    protected void setInterceptionFinder(InterceptionFinder interceptionFinder) {
+        this.interceptionFinder = interceptionFinder;
+    }
 }

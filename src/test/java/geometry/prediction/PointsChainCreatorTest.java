@@ -38,6 +38,32 @@ public class PointsChainCreatorTest{
         creator.createChain(upLine, bottomLine);
     }
 
+    @Test(expected = BadPredictionSituationException.class)
+    public void throwsExceptionIfTwoBottomIndexesLowerThanTwoUp() throws Exception {
+        Point firstStart = new Point(87.0, 0.1);
+        Point firstDefining = new Point(88.1, 0.2);
+
+        Point secondStart = new Point(13.0, 0.1);
+        Point secondDefining = new Point(23.0, 0.2);
+
+        initLines(firstStart, firstDefining, secondStart, secondDefining);
+
+        creator.createChain(upLine, bottomLine);
+    }
+
+    @Test(expected = BadPredictionSituationException.class)
+    public void throwsExceptionIfTwoUpIndexesLowerThanTwoBottom() throws Exception {
+        Point firstStart = new Point(1.0, 0.1);
+        Point firstDefining = new Point(13.1, 0.2);
+
+        Point secondStart = new Point(83.0, 0.1);
+        Point secondDefining = new Point(87.0, 0.2);
+
+        initLines(firstStart, firstDefining, secondStart, secondDefining);
+
+        creator.createChain(upLine, bottomLine);
+    }
+
     @Test
     public void shouldBeReversedPlatoSituation() throws Exception {
 

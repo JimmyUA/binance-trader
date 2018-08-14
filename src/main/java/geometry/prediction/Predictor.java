@@ -4,11 +4,16 @@ import com.binance.api.client.domain.market.CandlestickInterval;
 import geometry.lines.LineWithPastPeriods;
 import geometry.lines.LinesCreator;
 import geometry.prediction.exception.BadPredictionSituationException;
+import io.github.unterstein.botlogic.strategy.Strategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Predictor {
+
+    protected static Logger logger = LoggerFactory.getLogger(Strategy.class);
 
     @Autowired
     private PointsChainCreator chainCreator;
@@ -22,6 +27,7 @@ public class Predictor {
     @Autowired
     private PredictionHallInfo prediction;
 
+
     public Double predictPriceAfterPeriodsOnLine(LineWithPastPeriods line, int periodsAfter){
 
         return line.predictPriceAfter(periodsAfter);
@@ -30,7 +36,14 @@ public class Predictor {
     public PredictionHallInfo createPrediction(long period, CandlestickInterval interval) throws BadPredictionSituationException {
         LineWithPastPeriods upLine = linesCreator.createHallUpLine(period, interval);
         LineWithPastPeriods bottomLine = linesCreator.createHallBottomLine(period, interval);
-        PredictionHallInfo prediction = getPredictionHallInfo(upLine, bottomLine);
+        PredictionHallInfo prediction = null;
+        try {
+            prediction = getPredictionHallInfo(upLine, bottomLine);
+        } catch (BadPredictionSituationException e) {
+            linesCreator.doubleClearRegionKof();
+            upLine = linesCreator.createHallUpLine(period, interval);
+            prediction = getPredictionHallInfo(upLine, bottomLine);
+        }
         prediction.setCreationTime(System.currentTimeMillis());
         prediction.setInterval(interval);
         prediction.setCreationPeriod(period);
