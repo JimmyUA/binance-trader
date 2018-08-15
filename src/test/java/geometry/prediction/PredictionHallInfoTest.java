@@ -3,6 +3,7 @@ package geometry.prediction;
 import com.binance.api.client.domain.market.CandlestickInterval;
 import geometry.lines.*;
 import geometry.prediction.situation.PointsChainSituation;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,13 +11,13 @@ import static org.junit.Assert.assertEquals;
 public class PredictionHallInfoTest {
 
 
+    private PredictionHallInfo prediction;
 
-
-    @Test
-    public void shouldPredictFinalPointCorrect () {
+    @Before
+    public void setUp() throws Exception {
         LinesCreator linesCreator = new LinesCreator();
         InterceptionFinder interceptionFinder = new InterceptionFinder();
-        PredictionHallInfo prediction = new PredictionHallInfo();
+        prediction = new PredictionHallInfo();
         prediction.setSituation(PointsChainSituation.REVERSED_PLATO);
         prediction.setInterceptionFinder(interceptionFinder);
         prediction.setCreationPeriod(10);
@@ -44,10 +45,20 @@ public class PredictionHallInfoTest {
         Line forthArrow = linesCreator.createParallelLine(secondArrow,
                 interceptionFinder.findInterception(thirdArrow, upLine));
         prediction.setForthArrow(forthArrow);
+    }
+
+    @Test
+    public void shouldPredictFinalPointCorrect () {
+
 
         Double expectedPrice = 23.0;
 
         assertEquals(expectedPrice, prediction.getFinalPrediction().getPrice(), 0.01);
+    }
+
+    @Test
+    public void shouldPredictMaxPointCorrect () {
+
         System.out.println(prediction.getMaxPricePrediction());
         System.out.println(prediction.getMinPricePrediction());
     }

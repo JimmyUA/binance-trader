@@ -11,8 +11,17 @@ public class Line {
     public Line(Point start, Point defining) {
         this.start = start;
         this.defining = defining;
+        if (start.getX() > defining.getX()){
+            swapPoints();
+        }
         this.lineEquation = calculateEquation();
         this.tan = calculateTan();
+    }
+
+    private void swapPoints() {
+        Point temp = start;
+        start = defining;
+        defining = temp;
     }
 
     private LineEquation calculateEquation() {

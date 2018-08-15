@@ -68,7 +68,7 @@ public class PredictionHallInfo {
         Integer currentIndex = calculateCurrentIndex();
         List<Line> descendingArrows = getDescendingArrows();
         double price = descendingArrows.stream()
-                .map(arrow -> interceptionFinder.findInterception(arrow, upLine.getLine()))
+                .map(arrow -> interceptionFinder.findInterception(arrow, bottomLine.getLine()))
                 .filter(point -> point.getX() > currentIndex)
                 .map(Point::getY)
                 .mapToDouble(d -> d).min()
