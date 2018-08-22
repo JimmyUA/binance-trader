@@ -5,6 +5,7 @@ import io.github.unterstein.TradingClient;
 import io.github.unterstein.botlogic.decision.BuyDecisionMaker;
 import io.github.unterstein.botlogic.decision.onetrend.BuyDecisionMakerOneTrend;
 import io.github.unterstein.statistic.MarketAnalyzer;
+import io.github.unterstein.statistic.spread.SpreadTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
     @Autowired
     private MarketAnalyzer marketAnalyzer;
 
+    @Autowired
+    private SpreadTracker spreadTracker;
+
     @Override
     public boolean isRightMomentToBuy(Double price) {
         if (resistanceLineLimit(price)) {
@@ -36,8 +40,8 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
         if (isMoMoTrendUp() && histoISAscending() && momoMACDHistogramCrossedZeroUp()) {
             int time = 0;
             trackedEMA20 = EMA(20, CandlestickInterval.FIVE_MINUTES);
-            double goalPrice = trackedEMA20 + trackedEMA20 * 0.005;
-            while (time < 5 * 60) {
+            double goalPrice = trackedEMA20 + trackedEMA20 * (0.005 + getSpreadOrZero(60));
+            while (histoISAscending()) {
                 if (price > goalPrice) {
                     logger.info("Burst detected after histo crossed 0");
                     return true;
@@ -50,6 +54,10 @@ public class BuyDecisionMakerMoMo implements BuyDecisionMaker {
             }
         }
         return false;
+    }
+
+    protected double getSpreadOrZero(int period) {
+        return isSpreadTrackingIncluded ? spreadTracker.getAverageForPeriod(period) : 0.0;
     }
 
     private boolean histoISAscending() {

@@ -4,10 +4,8 @@ import io.github.unterstein.persistent.entity.Trade;
 import io.github.unterstein.persistent.repository.TradeRepository;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -32,15 +30,31 @@ public class TradeService {
     }
 
     public void addSellOrder(Double sellPrice){
+        setNotCalculateAbleParameters(sellPrice);
+        calculateProfit();
+        tradeRepository.save(trade);
+        clearData();
+    }
+
+    public void addHalfSellOrder(Double sellPrice){
+        setNotCalculateAbleParameters(sellPrice);
+        calculateHalfProfit();
+        tradeRepository.save(trade);
+        clearData();
+    }
+
+    protected void setNotCalculateAbleParameters(Double sellPrice) {
         trade.setSellPrice(sellPrice);
         trade.setSellDate(new Date());
         trade.setSellDayTrend(trendAnalyzer.isDownDayTrend() ? "DOWN" : "UP");
         fee += sellPrice * 0.0005;
-        calculateProfit();
-        tradeRepository.save(trade);
+    }
+
+    protected void clearData() {
         trade = null;
         fee = 0;
     }
+
 
     private void calculateProfit() {
         Double boughtPrice = trade.getBoughtPrice();
@@ -49,6 +63,15 @@ public class TradeService {
         trade.setProfit(profit);
         double profitPercent = profit / boughtPrice * 100;
         trade.setProfitPercent(profitPercent);
+    }
+
+    private void calculateHalfProfit() {
+        Double boughtPrice = trade.getBoughtPrice();
+        Double sellPrice = trade.getSellPrice();
+        double profit = sellPrice - boughtPrice - fee;
+        trade.setProfit(profit/2);
+        double profitPercent = profit / boughtPrice * 100;
+        trade.setProfitPercent(profitPercent/2);
     }
 
     public void initBuyOrderAfterHalfTrade(){

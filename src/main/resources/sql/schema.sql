@@ -28,3 +28,10 @@ CREATE TABLE amplitude (
   min_percent   DOUBLE NOT NULL ,
   PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS spreads;
+CREATE TABLE spreads (
+  id       INTEGER NOT NULL AUTO_INCREMENT,
+  spread   DOUBLE NOT NULL ,
+  PRIMARY KEY (id)
+);

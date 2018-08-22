@@ -5,11 +5,13 @@ import geometry.prediction.PredictionHallInfo;
 import geometry.prediction.Predictor;
 import io.github.unterstein.BinanceTrader;
 import io.github.unterstein.TradingClient;
+import io.github.unterstein.persistent.entity.Spread;
 import io.github.unterstein.statistic.MACD.MACD;
 import io.github.unterstein.statistic.RSI.RSI;
 import io.github.unterstein.statistic.StatisticDTO;
 import io.github.unterstein.statistic.TrendAnalyzer;
 import io.github.unterstein.statistic.amplitude.AmplitudeAnalyser;
+import io.github.unterstein.statistic.spread.SpreadTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,9 @@ public class PriceFetchingTask implements Runnable{
     @Autowired
     private Predictor predictor;
 
+    @Autowired
+    private SpreadTracker spreadTracker;
+
     private Double lastPrice;
 
     private PredictionHallInfo predictionHallInfo;
@@ -67,6 +72,7 @@ public class PriceFetchingTask implements Runnable{
             try {
                 lastPrice = tradingClient.lastPrice();
                 updateStatisticDTO();
+                addSpread();
                 amplitudeAnalyser.notifyAddingPrice();
                 macd.histogramm();
                 macdMOMO.histogramm();
@@ -76,6 +82,14 @@ public class PriceFetchingTask implements Runnable{
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             }
         }
+    }
+
+    private void addSpread() {
+        Spread spread = new Spread();
+        Double ask = tradingClient.getLastAsksAverage(trader.getTradeAmount(), 3);
+        Double bid = tradingClient.getLastBidsAverage(trader.getTradeAmount(), 3);
+        spread.setSpread(ask - bid);
+        spreadTracker.addSpread(spread);
     }
 
     private void updateStatisticDTO() {

@@ -10,17 +10,15 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {Config.class, BinanceBotApplication.class})
-@TestPropertySource(locations = "classpath:application_test.properties")
-@TestExecutionListeners({MockitoTestExecutionListener.class})
+
 public class BuyDecisionMakerOneTrendTest {
 
 
     @Test
     public void wasMACDCrossSignalUpShouldReturnTrue() throws Exception {
-        
     }
 }

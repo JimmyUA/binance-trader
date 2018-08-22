@@ -26,18 +26,15 @@ import java.beans.PropertyVetoException;
 @EnableTransactionManagement
 public class PersistenceConfig {
 
-    @Autowired
-    private org.springframework.core.env.Environment env;
 
     @Bean
     public DataSource datasource() throws PropertyVetoException {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        EmbeddedDatabase dataSource = builder
+
+        return builder
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("sql/schema.sql")
                 .build();
-
-        return dataSource;
     }
 
     @Bean

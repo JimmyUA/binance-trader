@@ -37,15 +37,28 @@ public class ChoicesPanel extends Panel {
         AjaxCheckBox MACDStopLoss = getMACDStopLossChoice();
 
         Label negativeMACDLabel = new Label("negativeMACDLabel", "Is negative MACD required: ");
-        AjaxCheckBox negativeMACD = getnegativeMACDChoice();
+        AjaxCheckBox negativeMACD = getNegativeMACDChoice();
+
+        Label spreadLabel = new Label("spreadLabel", "Is spread included: ");
+        AjaxCheckBox spread = getSpreadChoice();
 
         form.add(resistanceLine, resistanceLineLabel, dayDownTrend, dayDownTrendLabel,
                 longMACD, longMACDLabel, MACDStopLoss, MACDStopLossLabel,
-                negativeMACD, negativeMACDLabel);
+                negativeMACD, negativeMACDLabel, spreadLabel, spread);
 
     }
 
-    private AjaxCheckBox getnegativeMACDChoice() {
+    private AjaxCheckBox getSpreadChoice() {
+        return new AjaxCheckBox("spread", Model.of(isSpreadTrackingIncluded)) {
+            @Override
+            protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
+                isSpreadTrackingIncluded = getModelObject();
+                ajaxRequestTarget.add(this);
+            }
+        };
+    }
+
+    private AjaxCheckBox getNegativeMACDChoice() {
         return new AjaxCheckBox("negativeMACD", Model.of(isNegativeMACDRequired)) {
             @Override
             protected void onUpdate(AjaxRequestTarget ajaxRequestTarget) {
