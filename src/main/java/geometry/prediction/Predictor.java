@@ -24,7 +24,6 @@ public class Predictor {
     @Autowired
     private LinesCreator linesCreator;
 
-    @Autowired
     private PredictionHallInfo prediction;
 
 
@@ -36,7 +35,7 @@ public class Predictor {
     public PredictionHallInfo createPrediction(long period, CandlestickInterval interval) throws BadPredictionSituationException {
         LineWithPastPeriods upLine = linesCreator.createHallUpLine(period, interval);
         LineWithPastPeriods bottomLine = linesCreator.createHallBottomLine(period, interval);
-        PredictionHallInfo prediction = null;
+        PredictionHallInfo prediction;
         try {
             prediction = getPredictionHallInfo(upLine, bottomLine);
         } catch (BadPredictionSituationException e) {
@@ -51,6 +50,7 @@ public class Predictor {
     }
 
     protected PredictionHallInfo getPredictionHallInfo(LineWithPastPeriods upLine, LineWithPastPeriods bottomLine) throws BadPredictionSituationException {
+        prediction= new PredictionHallInfo();
         prediction.setUpLine(upLine);
         prediction.setBottomLine(bottomLine);
         PointChain pointChain = chainCreator.createChain(upLine, bottomLine);
@@ -58,15 +58,6 @@ public class Predictor {
         arrowsCreator.createAndInjectArrows(prediction, pointChain);
 
         return prediction;
-    }
-
-
-    public void setChainCreator(PointsChainCreator chainCreator) {
-        this.chainCreator = chainCreator;
-    }
-
-    public void setArrowsCreator(ArrowsCreator arrowsCreator) {
-        this.arrowsCreator = arrowsCreator;
     }
 
 }

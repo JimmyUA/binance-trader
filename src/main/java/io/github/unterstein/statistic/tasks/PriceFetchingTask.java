@@ -69,6 +69,7 @@ public class PriceFetchingTask implements Runnable{
     @Override
     public void run() {
         if(isStartedTrading) {
+            minutesFromStart++;
             try {
                 lastPrice = tradingClient.lastPrice();
                 updateStatisticDTO();
@@ -77,7 +78,6 @@ public class PriceFetchingTask implements Runnable{
                 macd.histogramm();
                 macdMOMO.histogramm();
                 predictionHallInfo = predictor.createPrediction(8 * 12, CandlestickInterval.FIVE_MINUTES);
-                minutesFromStart++;
             } catch (Exception e) {
                 logger.error(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             }

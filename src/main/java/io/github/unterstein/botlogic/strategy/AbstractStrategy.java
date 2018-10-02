@@ -75,7 +75,8 @@ public abstract class AbstractStrategy implements Strategy {
 
     protected void sellToMarket() {
         updateLastBid();
-        client.sellMarket(tradeAmount);
+        Double freeTradingBalance = client.getFreeTradingBalance();
+        client.sellMarket(freeTradingBalance.intValue());
         tradeService.addSellOrder(lastBid);
         logger.info(String.format("Sold %d coins to market! Rate: %.8f", tradeAmount, lastBid));
         logger.info(String.format("Profit %.8f", (boughtPrice - lastBid) * tradeAmount));

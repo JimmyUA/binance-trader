@@ -34,4 +34,5 @@ public class StoredPricesServiceTest {
         LinkedList<Double> prices = storedPricesService.getPricesPortion(1L);
         assertTrue(prices.size() == 1);
     }
+
 }

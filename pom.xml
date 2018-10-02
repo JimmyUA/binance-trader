@@ -5,7 +5,7 @@
 
     <groupId>io.github.unterstein</groupId>
     <artifactId>binancebot</artifactId>
-    <version>1.6.1-Alex</version>
+    <version>1.6.3-Alex</version>
     <packaging>jar</packaging>
 
 
@@ -126,9 +126,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        <groupId>com.vmlens</groupId>
-        <artifactId>concurrent-junit</artifactId>
-        <version>1.0.0</version>
+            <groupId>com.vmlens</groupId>
+            <artifactId>concurrent-junit</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.springtestdbunit</groupId>
@@ -145,11 +145,6 @@
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
             <version>1.3.8</version>
-        </dependency>
-        <dependency>
-            <groupId>com.esri.geometry</groupId>
-            <artifactId>esri-geometry-api</artifactId>
-            <version>2.2.0</version>
         </dependency>
     </dependencies>
 
@@ -198,6 +193,8 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 
